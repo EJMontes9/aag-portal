@@ -152,3 +152,30 @@ if (! function_exists('hex_to_rgb_tuple')) {
         return hexdec(substr($hex, 0, 2)).' '.hexdec(substr($hex, 2, 2)).' '.hexdec(substr($hex, 4, 2));
     }
 }
+
+/**
+ * Devuelve el tuple "R G B" de texto (blanco o navy oscuro) que mejor
+ * contrasta sobre un color de fondo dado (luminancia relativa WCAG).
+ * Uso: color de texto para botones/insignias sobre --color-accent, que
+ * puede ser configurado por el admin como un color claro (amarillo) o
+ * oscuro (azul) -- el texto se adapta solo para mantener buen contraste.
+ */
+if (! function_exists('contrast_text_tuple')) {
+    function contrast_text_tuple(?string $hex, string $dark = '11 30 74', string $light = '255 255 255'): string
+    {
+        $hex = ltrim((string) $hex, '#');
+        if (strlen($hex) === 3) {
+            $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
+        }
+        if (! preg_match('/^[0-9a-f]{6}$/i', $hex)) {
+            return $dark;
+        }
+        // Luminancia relativa aproximada (formula WCAG simplificada).
+        $r = hexdec(substr($hex, 0, 2)) / 255;
+        $g = hexdec(substr($hex, 2, 2)) / 255;
+        $b = hexdec(substr($hex, 4, 2)) / 255;
+        $luminance = 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
+
+        return $luminance > 0.55 ? $dark : $light;
+    }
+}

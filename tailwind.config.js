@@ -35,6 +35,7 @@ export default {
                 on: {
                     navy: 'rgb(var(--color-on-navy) / <alpha-value>)',
                     primary: 'rgb(var(--color-on-primary) / <alpha-value>)',
+                    accent: 'rgb(var(--color-on-accent) / <alpha-value>)',
                 },
             },
             borderRadius: {

@@ -97,7 +97,7 @@
                 @endif
                 @if($ctaEnabled)
                     <a href="{{ settings('header_cta_url', '#') }}"
-                       class="hidden md:inline-flex items-center bg-brand-accent text-on-primary px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.08em] hover:bg-brand-primary transition-colors">
+                       class="hidden md:inline-flex items-center bg-brand-accent text-on-accent px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.08em] hover:bg-brand-primary hover:text-on-primary transition-colors">
                         {{ settings('header_cta_label', 'Estado de vuelos') }}
                     </a>
                 @endif
@@ -168,7 +168,7 @@
                 @endif
             @endforeach
             @if($ctaEnabled)
-                <a href="{{ settings('header_cta_url', '#') }}" class="mt-4 self-start bg-brand-accent text-on-primary px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.08em]">
+                <a href="{{ settings('header_cta_url', '#') }}" class="mt-4 self-start bg-brand-accent text-on-accent px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.08em]">
                     {{ settings('header_cta_label', 'Estado de vuelos') }}
                 </a>
             @endif

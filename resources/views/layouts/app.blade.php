@@ -181,14 +181,35 @@
           title="{{ $siteName }} — Noticias"
           href="{{ route('news.index') }}?format=rss">
 
-    {{-- ══ FUENTES ══════════════════════════════════════════════════════════════ --}}
+    {{-- ══ FUENTES ══════════════════════════════════════════════════════════════
+         Se deduplican familias repetidas (ej. serif=sans=Inter, tipografia
+         "uniforme" tipo Propuesta B) para no pedirle a Google Fonts la misma
+         familia dos veces -- menos peso, menos requests. --}}
+    @php
+        $serifSpec = $fontSerif === 'Fraunces'
+            ? 'ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500'
+            : 'ital,wght@0,400;0,500;0,600;1,400;1,500';
+        $sansSpec = 'wght@400;500;600;700';
+        $monoSpec = 'wght@400;500;600';
+
+        $fontFamilies = [];
+        // Si serif y sans son la misma familia, se unifica en una sola entrada
+        // combinando ambas especificaciones (cubre cursivas de titulares + pesos de UI).
+        if ($fontSerif === $fontSans) {
+            $fontFamilies[$fontSerif] = 'ital,wght@0,400;0,500;0,600;0,700;1,400;1,500';
+        } else {
+            $fontFamilies[$fontSerif] = $serifSpec;
+            $fontFamilies[$fontSans] = $sansSpec;
+        }
+        $fontFamilies[$fontMono] = $monoSpec;
+
+        $fontsUrl = 'https://fonts.googleapis.com/css2?' . collect($fontFamilies)
+            ->map(fn ($spec, $family) => 'family=' . $encodeFontUrl($family) . ':' . $spec)
+            ->implode('&') . '&display=swap';
+    @endphp
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    @if($fontSerif === 'Fraunces')
-        <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family={{ $encodeFontUrl($fontSans) }}:wght@400;500;600;700&family={{ $encodeFontUrl($fontMono) }}:wght@400;500;600&display=swap" rel="stylesheet">
-    @else
-        <link href="https://fonts.googleapis.com/css2?family={{ $encodeFontUrl($fontSerif) }}:ital,wght@0,400;0,500;0,600;1,400;1,500&family={{ $encodeFontUrl($fontSans) }}:wght@400;500;600;700&family={{ $encodeFontUrl($fontMono) }}:wght@400;500;600&display=swap" rel="stylesheet">
-    @endif
+    <link href="{{ $fontsUrl }}" rel="stylesheet">
 
     {{-- ══ VARIABLES CSS ════════════════════════════════════════════════════════ --}}
     <style>
@@ -203,6 +224,7 @@
             --color-soft: {{ $soft }};
             --color-on-navy: 255 255 255;
             --color-on-primary: 255 255 255;
+            --color-on-accent: {{ contrast_text_tuple(settings('color_accent')) }};
 
             --color-bg: {{ $bgLight }};
             --color-fg: {{ $fgLight }};

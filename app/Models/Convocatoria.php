@@ -1,0 +1,151 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
+
+class Convocatoria extends Model
+{
+    use LogsActivity;
+
+    protected $fillable = [
+        'title', 'slug', 'area', 'modality', 'short_description', 'requirements',
+        'bases_pdf', 'opens_at', 'closes_at', 'status', 'alert_mode', 'alert_frequency',
+        'featured_on_home',
+        // Nuevos campos ──────────────────────────────────────────────────────
+        'tipo',             // proceso | aviso
+        'layout_type',      // poster | banner | minimal  (solo para avisos)
+        'imagen',           // imagen para avisos
+        'video_url',        // URL YouTube/Vimeo para avisos
+        'show_logo',        // mostrar logo institucional en avisos
+        'cronograma',       // [{etapa, fecha, hora}] para ambos tipos
+        'enlace_referencia',// URL de referencia para procesos
+        'documentos',       // [{nombre, archivo}] para procesos
+    ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['title', 'tipo', 'status', 'closes_at'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn(string $e) => match($e) {
+                'created' => 'Convocatoria creada',
+                'updated' => 'Convocatoria actualizada',
+                'deleted' => 'Convocatoria eliminada',
+                default   => $e,
+            });
+    }
+
+    protected $casts = [
+        'requirements'  => 'array',
+        'cronograma'    => 'array',
+        'documentos'    => 'array',
+        'opens_at'      => 'datetime',
+        'closes_at'     => 'datetime',
+        'featured_on_home' => 'boolean',
+        'show_logo'     => 'boolean',
+    ];
+
+    protected $appends = ['effective_status', 'embed_url'];
+
+    protected static function booted(): void
+    {
+        static::saving(function (self $m) {
+            if (empty($m->slug)) {
+                $m->slug = Str::slug($m->title);
+            }
+        });
+
+        $bust = fn () => Cache::forget('home_convocatoria');
+        static::saved($bust);
+        static::deleted($bust);
+    }
+
+    /**
+     * Estado efectivo: si el campo BD dice 'vigente' pero ya pasamos closes_at,
+     * reporta 'cerrada'. Las consultas que ya filtran por status='vigente'
+     * deben usar el scope vigentes() en su lugar.
+     */
+    public function getEffectiveStatusAttribute(): string
+    {
+        if ($this->status === 'vigente' && $this->closes_at && $this->closes_at->isPast()) {
+            return 'cerrada';
+        }
+        return (string) $this->status;
+    }
+
+    /**
+     * Convierte YouTube / Vimeo URL a URL de embed.
+     */
+    public function getEmbedUrlAttribute(): ?string
+    {
+        if (! $this->video_url) {
+            return null;
+        }
+
+        // YouTube: watch?v=ID  o  youtu.be/ID
+        if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/', $this->video_url, $m)) {
+            return 'https://www.youtube.com/embed/' . $m[1] . '?rel=0&modestbranding=1';
+        }
+
+        // Vimeo: vimeo.com/ID
+        if (preg_match('/vimeo\.com\/(\d+)/', $this->video_url, $m)) {
+            return 'https://player.vimeo.com/video/' . $m[1] . '?title=0&byline=0';
+        }
+
+        return null;
+    }
+
+    /** Filtra solo convocatorias realmente vigentes (campo + fecha futura o sin cierre). */
+    public function scopeVigentes(Builder $q): Builder
+    {
+        return $q->where('status', 'vigente')
+            ->where(function ($q2) {
+                $q2->whereNull('closes_at')->orWhere('closes_at', '>', now());
+            });
+    }
+
+    /** Scope para avisos simples vigentes. */
+    public function scopeAvisosVigentes(Builder $q): Builder
+    {
+        return $q->where('tipo', 'aviso')->where('status', 'vigente');
+    }
+
+    public static function featured(): ?self
+    {
+        return Cache::rememberForever('home_convocatoria', function () {
+            return static::vigentes()
+                ->where('featured_on_home', true)
+                ->orderBy('closes_at')
+                ->first();
+        });
+    }
+
+    public function isAlertActive(): bool
+    {
+        return $this->alert_mode !== 'none' && $this->effective_status === 'vigente';
+    }
+
+    /**
+     * Devuelve información visual (color, label) según la extensión del archivo.
+     */
+    public static function fileTypeInfo(string $path): array
+    {
+        $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        return match($ext) {
+            'pdf'               => ['label' => 'PDF',   'text' => 'text-red-700',    'bg' => 'bg-red-50 border-red-200'],
+            'doc', 'docx'       => ['label' => 'Word',  'text' => 'text-blue-700',   'bg' => 'bg-blue-50 border-blue-200'],
+            'xls', 'xlsx'       => ['label' => 'Excel', 'text' => 'text-green-700',  'bg' => 'bg-green-50 border-green-200'],
+            'ppt', 'pptx'       => ['label' => 'PPT',   'text' => 'text-orange-700', 'bg' => 'bg-orange-50 border-orange-200'],
+            'zip', 'rar', '7z'  => ['label' => 'ZIP',   'text' => 'text-yellow-700', 'bg' => 'bg-yellow-50 border-yellow-200'],
+            'jpg', 'jpeg', 'png', 'gif', 'webp' => ['label' => 'IMG', 'text' => 'text-purple-700', 'bg' => 'bg-purple-50 border-purple-200'],
+            default             => ['label' => strtoupper($ext) ?: 'DOC', 'text' => 'text-gray-700', 'bg' => 'bg-gray-50 border-gray-200'],
+        };
+    }
+}

@@ -184,8 +184,13 @@
     {{-- ══ FUENTES ══════════════════════════════════════════════════════════════
          Se deduplican familias repetidas (ej. serif=sans=Inter, tipografia
          "uniforme" tipo Propuesta B) para no pedirle a Google Fonts la misma
-         familia dos veces -- menos peso, menos requests. --}}
+         familia dos veces -- menos peso, menos requests.
+         Las fuentes propias de marca (no estan en Google Fonts) se sirven
+         locales via @font-face en app.css y se excluyen de esta peticion. --}}
     @php
+        // Fuentes de marca AAG auto-hospedadas (ver @font-face en resources/css/app.css).
+        $selfHostedFonts = ['Neulis Black'];
+
         $serifSpec = $fontSerif === 'Fraunces'
             ? 'ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500'
             : 'ital,wght@0,400;0,500;0,600;1,400;1,500';
@@ -203,13 +208,20 @@
         }
         $fontFamilies[$fontMono] = $monoSpec;
 
-        $fontsUrl = 'https://fonts.googleapis.com/css2?' . collect($fontFamilies)
-            ->map(fn ($spec, $family) => 'family=' . $encodeFontUrl($family) . ':' . $spec)
-            ->implode('&') . '&display=swap';
+        // Quitar las que se auto-hospedan -- no existen en Google Fonts.
+        $googleFontFamilies = collect($fontFamilies)->except($selfHostedFonts);
+
+        $fontsUrl = $googleFontFamilies->isNotEmpty()
+            ? 'https://fonts.googleapis.com/css2?' . $googleFontFamilies
+                ->map(fn ($spec, $family) => 'family=' . $encodeFontUrl($family) . ':' . $spec)
+                ->implode('&') . '&display=swap'
+            : null;
     @endphp
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="{{ $fontsUrl }}" rel="stylesheet">
+    @if($fontsUrl)
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="{{ $fontsUrl }}" rel="stylesheet">
+    @endif
 
     {{-- ══ VARIABLES CSS ════════════════════════════════════════════════════════ --}}
     <style>

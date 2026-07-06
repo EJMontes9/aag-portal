@@ -47,7 +47,8 @@ class SiteSettingsPage extends Page implements HasForms
     public function form(Form $form): Form
     {
         $serifFonts = [
-            'Fraunces' => 'Fraunces (recomendada - serif instrumental moderna)',
+            'Neulis Black' => 'Neulis Black (marca AAG - manual de identidad)',
+            'Fraunces' => 'Fraunces (serif instrumental moderna)',
             'Playfair Display' => 'Playfair Display',
             'Lora' => 'Lora',
             'EB Garamond' => 'EB Garamond',
@@ -55,7 +56,8 @@ class SiteSettingsPage extends Page implements HasForms
         ];
 
         $sansFonts = [
-            'Inter' => 'Inter (recomendada - UI optimizada)',
+            'Barlow Semi Condensed' => 'Barlow Semi Condensed (marca AAG - manual de identidad)',
+            'Inter' => 'Inter (UI optimizada)',
             'DM Sans' => 'DM Sans',
             'Manrope' => 'Manrope',
             'Plus Jakarta Sans' => 'Plus Jakarta Sans',
@@ -92,8 +94,8 @@ class SiteSettingsPage extends Page implements HasForms
                                 Section::make('Familias tipograficas')
                                     ->description('Elige la combinacion de 3 familias: titular (serif), cuerpo/UI (sans) y datos (monospace). Todas cargan desde Google Fonts.')
                                     ->schema([
-                                        Select::make('font_serif')->label('Titulares (serif)')->options($serifFonts)->default('Fraunces')->selectablePlaceholder(false)->required(),
-                                        Select::make('font_sans')->label('UI y cuerpo (sans)')->options($sansFonts)->default('Inter')->selectablePlaceholder(false)->required(),
+                                        Select::make('font_serif')->label('Titulares (serif)')->options($serifFonts)->default('Neulis Black')->selectablePlaceholder(false)->required(),
+                                        Select::make('font_sans')->label('UI y cuerpo (sans)')->options($sansFonts)->default('Barlow Semi Condensed')->selectablePlaceholder(false)->required(),
                                         Select::make('font_mono')->label('Datos y cifras (mono)')->options($monoFonts)->default('JetBrains Mono')->selectablePlaceholder(false)->required(),
                                     ])->columns(3),
                             ]),

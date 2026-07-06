@@ -1,9 +1,12 @@
 {{--
-    Tema "Gobierno": header en 4 franjas (utilidades, contacto, marca, navegacion
+    Tema "Corporativo": header en 4 franjas (utilidades, contacto, marca, navegacion
     a lo ancho en mayusculas), inspirado en la Propuesta B. Usa los MISMOS datos
     y los MISMOS tokens de color (brand-navy/primary/accent/soft) que el tema
     institucional -- el color sigue siendo una configuracion global, el tema
     solo cambia como se ordenan y se estilizan esos mismos colores.
+    La AAG es una fundacion municipal (Alcaldia de Guayaquil), NO es una entidad
+    del Gobierno Nacional del Ecuador: este header no debe llevar ninguna marca,
+    escudo, franja ni mencion del Gobierno Nacional.
 --}}
 @php
     $topbarEnabled = (bool) settings('topbar_enabled', true);

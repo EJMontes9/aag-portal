@@ -34,9 +34,9 @@ class Theme
                 'elevation' => 'soft',
             ],
         ],
-        'gobierno' => [
-            'label' => 'Gobierno',
-            'description' => 'Esquema corporativo-institucional: topbar de utilidades, navegación en mayúsculas a lo ancho y tarjetas planas con bordes cuadrados.',
+        'corporativo' => [
+            'label' => 'Corporativo',
+            'description' => 'Esquema corporativo institucional de la AAG: topbar de utilidades, navegación en mayúsculas a lo ancho y tarjetas planas con bordes cuadrados.',
             'defaults' => [
                 'radius' => 'square',
                 'density' => 'compact',
@@ -46,7 +46,7 @@ class Theme
         ],
     ];
 
-    /** Slugs válidos, p. ej. ['institucional', 'gobierno']. */
+    /** Slugs válidos, p. ej. ['institucional', 'corporativo']. */
     public static function slugs(): array
     {
         return array_keys(self::CATALOG);

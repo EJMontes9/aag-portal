@@ -1,10 +1,12 @@
 {{--
-    Tema "Gobierno": footer de hasta 5 columnas fijas (Direccion, Institucion,
+    Tema "Corporativo": footer de hasta 5 columnas fijas (Direccion, Institucion,
     Servicios, Transparencia, Enlaces). Las columnas "Servicios" y "Transparencia"
     son opcionales: se ocultan solas si no existe un Menu con esa location
     (footer_services / footer_transparency) -- no se inventan enlaces externos
-    que no le correspondan a la AAG (ver naturaleza juridica: fundacion municipal,
-    no gobierno nacional).
+    que no le correspondan a la AAG. IMPORTANTE: la AAG es una fundacion de la
+    Municipalidad de Guayaquil (Alcaldia), NO es una entidad del Gobierno
+    Nacional del Ecuador -- este tema es solo un estilo visual "corporativo",
+    no debe llevar ninguna mencion, marca o enlace del Gobierno Nacional.
 --}}
 @php
     $enlacesMenu = \App\Models\Menu::byLocation('footer');

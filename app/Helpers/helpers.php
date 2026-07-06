@@ -12,7 +12,7 @@ if (! function_exists('settings')) {
 }
 
 /**
- * ─── Temas visuales (institucional / gobierno) ──────────────────────────────
+ * ─── Temas visuales (institucional / corporativo) ────────────────────────────
  * El tema controla layout de header/footer y tokens de estilo (radios,
  * densidad, degradados, elevación). Color y tipografía siguen siendo
  * configuración global independiente del tema — ver App\Support\Theme.

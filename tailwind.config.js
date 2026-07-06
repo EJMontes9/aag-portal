@@ -39,7 +39,7 @@ export default {
             },
             borderRadius: {
                 // Tokens de tema: leen del CSS variable que fija cada tema activo
-                // (institucional = redondeado, gobierno = cuadrado). Ver Theme.php.
+                // (institucional = redondeado, corporativo = cuadrado). Ver Theme.php.
                 'pill': 'var(--radius-pill, 999px)',
                 'card': 'var(--radius-card, 12px)',
                 'hero': 'var(--radius-hero, 24px)',

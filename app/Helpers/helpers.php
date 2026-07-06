@@ -1,12 +1,40 @@
 <?php
 
 use App\Models\SiteSetting;
+use App\Support\Theme;
 use Illuminate\Support\Facades\Storage;
 
 if (! function_exists('settings')) {
     function settings(string $key, mixed $default = null): mixed
     {
         return SiteSetting::get($key, $default);
+    }
+}
+
+/**
+ * ─── Temas visuales (institucional / gobierno) ──────────────────────────────
+ * El tema controla layout de header/footer y tokens de estilo (radios,
+ * densidad, degradados, elevación). Color y tipografía siguen siendo
+ * configuración global independiente del tema — ver App\Support\Theme.
+ */
+if (! function_exists('active_theme')) {
+    function active_theme(): string
+    {
+        return Theme::active();
+    }
+}
+
+if (! function_exists('theme_is')) {
+    function theme_is(string $slug): bool
+    {
+        return Theme::is($slug);
+    }
+}
+
+if (! function_exists('theme_setting')) {
+    function theme_setting(string $key, mixed $default = null): mixed
+    {
+        return Theme::token($key, $default);
     }
 }
 

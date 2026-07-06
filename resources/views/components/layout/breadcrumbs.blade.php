@@ -14,7 +14,31 @@
         }
     }
     if (empty($items)) return;
+
+    // JSON-LD BreadcrumbList: ayuda a Google a mostrar la ruta de migas en los
+    // resultados de busqueda en vez de la URL cruda.
+    $breadcrumbList = collect($items)->values()->map(fn ($item, $i) => [
+        '@type' => 'ListItem',
+        'position' => $i + 2, // 1 = Inicio, ya agregado abajo
+        'name' => $item['label'],
+        'item' => $item['url'] ?? null,
+    ])->prepend([
+        '@type' => 'ListItem',
+        'position' => 1,
+        'name' => 'Inicio',
+        'item' => url('/'),
+    ])->map(fn ($li) => array_filter($li, fn ($v) => $v !== null))->all();
 @endphp
+
+@push('json-ld')
+<script type="application/ld+json">
+{!! json_encode([
+    '@context' => 'https://schema.org',
+    '@type' => 'BreadcrumbList',
+    'itemListElement' => $breadcrumbList,
+], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
+</script>
+@endpush
 
 <nav aria-label="Migajas de pan" class="text-xs text-muted">
     <ol class="flex flex-wrap items-center gap-2">

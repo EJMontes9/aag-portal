@@ -40,7 +40,7 @@
             @endif
         </header>
 
-        <div class="grid sm:grid-cols-2 lg:grid-cols-{{ $items->count() >= 3 ? 3 : $items->count() }} gap-8">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-{{ min($items->count(), 4) }} gap-8">
             @foreach($items as $item)
                 @include('pages.news.partials.card', ['item' => $item])
             @endforeach

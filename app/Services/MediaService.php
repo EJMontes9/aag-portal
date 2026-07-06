@@ -6,6 +6,7 @@ use App\Models\Media;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\Encoders\WebpEncoder;
 use Intervention\Image\Laravel\Facades\Image;
 
 class MediaService
@@ -41,7 +42,7 @@ class MediaService
         $type     = self::detectType($mime);
 
         if ($type === 'image') {
-            $img = Image::read($fullPath);
+            $img = Image::decodePath($fullPath);
 
             if ($img->width() > self::MAX_WIDTH) {
                 $img->scaleDown(width: self::MAX_WIDTH);
@@ -51,7 +52,7 @@ class MediaService
             $webpName = $baseName . '-' . substr(uniqid(), -6) . '.webp';
             $webpPath = dirname($storedPath) . '/' . $webpName;
 
-            $encoded = $img->toWebp(quality: self::QUALITY);
+            $encoded = $img->encode(new WebpEncoder(quality: self::QUALITY));
             Storage::disk('public')->put($webpPath, (string) $encoded);
 
             // Eliminar original si el nombre cambió
@@ -92,7 +93,7 @@ class MediaService
 
     protected static function processImage(UploadedFile $file, string $folder): Media
     {
-        $img = Image::read($file->getPathname());
+        $img = Image::decodePath($file->getPathname());
 
         if ($img->width() > self::MAX_WIDTH) {
             $img->scaleDown(width: self::MAX_WIDTH);
@@ -102,7 +103,7 @@ class MediaService
         $fileName = $baseName . '-' . substr(uniqid(), -6) . '.webp';
         $path     = $folder . '/' . $fileName;
 
-        $encoded = $img->toWebp(quality: self::QUALITY);
+        $encoded = $img->encode(new WebpEncoder(quality: self::QUALITY));
         Storage::disk('public')->put($path, (string) $encoded);
 
         return Media::create([

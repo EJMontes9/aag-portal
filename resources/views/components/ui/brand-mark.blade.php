@@ -2,6 +2,7 @@
     'variant' => 'auto',
     'showText' => true,
     'tone' => 'light',
+    'eager' => true, // false para el logo del footer: esta bajo el pliegue, no compite por LCP
 ])
 
 @php
@@ -17,9 +18,13 @@
 
 <a href="/" {{ $attributes->merge(['class' => 'flex items-center gap-3']) }}>
     @if($logoLight)
-        <img src="{{ $logoLight }}" alt="{{ $siteName }}" class="h-11 w-auto @if($logoDark) dark:hidden @endif">
+        <img src="{{ $logoLight }}" alt="{{ $siteName }}"
+             loading="{{ $eager ? 'eager' : 'lazy' }}" decoding="async" @if($eager) fetchpriority="high" @endif
+             class="h-11 w-auto @if($logoDark) dark:hidden @endif">
         @if($logoDark)
-            <img src="{{ $logoDark }}" alt="{{ $siteName }}" class="h-11 w-auto hidden dark:block">
+            <img src="{{ $logoDark }}" alt="{{ $siteName }}"
+                 loading="{{ $eager ? 'eager' : 'lazy' }}" decoding="async"
+                 class="h-11 w-auto hidden dark:block">
         @endif
     @else
         {{-- Logo fallback: triangulo AAG --}}

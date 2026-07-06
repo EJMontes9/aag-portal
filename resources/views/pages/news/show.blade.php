@@ -129,6 +129,7 @@
             <figure class="aspect-[16/9] rounded-hero overflow-hidden bg-brand-soft/30">
                 <img src="{{ $item->cover_url }}"
                      alt="{{ $item->cover_image_alt ?: $item->title }}"
+                     loading="eager" fetchpriority="high" decoding="async"
                      class="w-full h-full object-cover">
             </figure>
         </div>

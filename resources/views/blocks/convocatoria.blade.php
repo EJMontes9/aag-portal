@@ -104,7 +104,7 @@
             @if($imagenUrl)
                 <div class="flex justify-center mb-8" data-aos="zoom-in" data-aos-duration="600">
                     <div class="w-32 h-32 rounded-2xl overflow-hidden shadow-2xl ring-4 ring-white/20">
-                        <img src="{{ $imagenUrl }}" alt="{{ $conv->title }}" class="w-full h-full object-cover">
+                        <img src="{{ $imagenUrl }}" alt="{{ $conv->title }}" loading="lazy" decoding="async" class="w-full h-full object-cover">
                     </div>
                 </div>
             @else
@@ -208,7 +208,7 @@
             <div class="relative min-h-[250px] md:min-h-[auto] overflow-hidden flex items-center justify-center"
                  style="background: rgb(var(--color-navy));">
                 @if($imagenUrl)
-                    <img src="{{ $imagenUrl }}" alt="{{ $conv->title }}"
+                    <img src="{{ $imagenUrl }}" alt="{{ $conv->title }}" loading="lazy" decoding="async"
                          class="absolute inset-0 w-full h-full object-cover opacity-70 mix-blend-luminosity">
                 @endif
                 {{-- Overlay + logo --}}
@@ -336,7 +336,7 @@
                 {{-- Imagen opcional --}}
                 @if($imagenUrl)
                     <div class="mt-6 rounded-xl overflow-hidden max-h-64 shadow-sm">
-                        <img src="{{ $imagenUrl }}" alt="{{ $conv->title }}" class="w-full object-cover">
+                        <img src="{{ $imagenUrl }}" alt="{{ $conv->title }}" loading="lazy" decoding="async" class="w-full object-cover">
                     </div>
                 @endif
 

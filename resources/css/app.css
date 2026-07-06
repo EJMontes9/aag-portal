@@ -192,6 +192,17 @@
         @apply inline-flex items-center justify-center gap-2 rounded-pill border border-border text-fg px-6 py-3 text-sm font-medium transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-primary hover:text-brand-primary hover:shadow-md active:translate-y-0;
     }
 
+    /* Variantes para CTAs sobre fondo oscuro/foto (hero banner, hero centrado
+       con fondo navy/gradiente) -- usadas por blocks/hero.blade.php pero
+       nunca se habian definido: quedaban como texto plano sin estilo. */
+    .btn-white {
+        @apply inline-flex items-center justify-center gap-2 rounded-pill bg-white text-brand-navy px-6 py-3 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-soft hover:shadow-lg active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-white/60;
+    }
+
+    .btn-ghost-white {
+        @apply inline-flex items-center justify-center gap-2 rounded-pill border border-white/70 text-white px-6 py-3 text-sm font-medium transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/10 hover:border-white active:translate-y-0;
+    }
+
     .card-surface {
         @apply rounded-card bg-card border border-border;
         box-shadow: var(--shadow-card);

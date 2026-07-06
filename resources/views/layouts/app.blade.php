@@ -6,6 +6,11 @@
     $animSpeed = settings('animations_speed', 'normal');
     $animOnMobile = (bool) settings('animations_on_mobile', true);
 
+    // ── Tema visual activo (layout header/footer + tokens de estilo) ──────────
+    // Color y tipografia NO dependen del tema: siguen siendo globales (abajo).
+    $siteTheme = \App\Support\Theme::active();
+    $themeTokens = \App\Support\Theme::activeTokens();
+
     $fontSerif = settings('font_serif', 'Fraunces');
     $fontSans = settings('font_sans', 'Inter');
     $fontMono = settings('font_mono', 'JetBrains Mono');
@@ -103,6 +108,11 @@
       data-anim-enabled="{{ $animEnabled ? 'true' : 'false' }}"
       data-anim-speed="{{ $animSpeed }}"
       data-anim-mobile="{{ $animOnMobile ? 'true' : 'false' }}"
+      data-site-theme="{{ $siteTheme }}"
+      data-radius="{{ $themeTokens['radius'] }}"
+      data-density="{{ $themeTokens['density'] }}"
+      data-gradients="{{ $themeTokens['gradients'] ? 'on' : 'off' }}"
+      data-elevation="{{ $themeTokens['elevation'] }}"
       class="{{ $defaultTheme === 'dark' && $darkAllowed ? 'dark' : '' }}">
 <head>
     <meta charset="UTF-8">

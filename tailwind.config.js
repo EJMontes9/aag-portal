@@ -38,9 +38,11 @@ export default {
                 },
             },
             borderRadius: {
-                'pill': '999px',
-                'card': '12px',
-                'hero': '24px',
+                // Tokens de tema: leen del CSS variable que fija cada tema activo
+                // (institucional = redondeado, gobierno = cuadrado). Ver Theme.php.
+                'pill': 'var(--radius-pill, 999px)',
+                'card': 'var(--radius-card, 12px)',
+                'hero': 'var(--radius-hero, 24px)',
             },
             fontSize: {
                 'kicker': ['0.6875rem', { lineHeight: '1.2', letterSpacing: '0.14em', fontWeight: '600' }],

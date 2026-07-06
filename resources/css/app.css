@@ -20,6 +20,60 @@
         --color-muted: 100 116 139;
         --color-card: 255 255 255;
         --color-border: 226 232 240;
+
+        /* ── Tokens de TEMA (layout/estilo, no color) ────────────────────────
+           Se sobrescriben segun [data-radius]/[data-density]/[data-elevation]
+           en <html>, inyectados por Theme::activeTokens(). Estos son el
+           fallback "institucional" para que nada se rompa si faltan. */
+        --radius-pill: 999px;
+        --radius-card: 12px;
+        --radius-hero: 24px;
+        --shadow-card: none;
+    }
+
+    /* Radio de esquinas por tema */
+    [data-radius="square"] {
+        --radius-pill: 4px;
+        --radius-card: 4px;
+        --radius-hero: 6px;
+    }
+    [data-radius="soft"] {
+        --radius-pill: 999px;
+        --radius-card: 12px;
+        --radius-hero: 24px;
+    }
+    [data-radius="round"] {
+        --radius-pill: 999px;
+        --radius-card: 20px;
+        --radius-hero: 40px;
+    }
+
+    /* Densidad de espaciado por tema: afecta el "aire" entre secciones */
+    [data-density="compact"] .section-wrap {
+        @apply py-12 md:py-16;
+    }
+    [data-density="comfortable"] .section-wrap {
+        @apply py-20 md:py-28;
+    }
+    [data-density="spacious"] .section-wrap {
+        @apply py-24 md:py-36;
+    }
+
+    /* Elevacion/sombra de tarjetas por tema */
+    [data-elevation="flat"] {
+        --shadow-card: none;
+    }
+    [data-elevation="soft"] {
+        --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
+    }
+    [data-elevation="elevated"] {
+        --shadow-card: 0 8px 24px rgba(15, 23, 42, 0.10), 0 2px 8px rgba(15, 23, 42, 0.06);
+    }
+
+    /* Degradados: cuando el tema los desactiva, las superficies con
+       "gradiente decorativo" caen a un color solido equivalente. */
+    [data-gradients="off"] .bg-cloud-gradient {
+        background: rgb(var(--color-accent));
     }
 
     .dark {
@@ -128,6 +182,7 @@
 
     .card-surface {
         @apply rounded-card bg-card border border-border;
+        box-shadow: var(--shadow-card);
     }
 
     .status-dot {

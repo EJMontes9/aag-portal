@@ -25,6 +25,22 @@ class FlightsBlock extends BlockType
                 Forms\Components\TextInput::make('cta_label')->label('Etiqueta boton')->default('Ir al portal de vuelos'),
                 Forms\Components\TextInput::make('cta_url')->label('URL externa')->default('https://tagsa.aero/vuelos'),
                 Forms\Components\TextInput::make('cta_note')->label('Nota junto al boton'),
+                Forms\Components\FileUpload::make('image')
+                    ->label('Imagen del bloque')
+                    ->helperText('Si no se define, se usa la imagen del aeropuerto por defecto.')
+                    ->image()
+                    // Lista explicita: la regla "image" a secas admite SVG, que
+                    // puede llevar <script> dentro y se sirve en nuestro dominio.
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                    ->maxSize(4096)
+                    ->disk('public')
+                    ->directory('bloques')
+                    ->imageEditor()
+                    ->columnSpanFull(),
+                Forms\Components\TextInput::make('image_alt')
+                    ->label('Texto alternativo de la imagen')
+                    ->helperText('Describe la imagen para quien no puede verla.')
+                    ->columnSpanFull(),
             ])->columns(2);
     }
 }

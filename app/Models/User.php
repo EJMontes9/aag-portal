@@ -48,8 +48,21 @@ class User extends Authenticatable implements FilamentUser
         ];
     }
 
+    /**
+     * Roles que pueden entrar al panel.
+     *
+     * Esto solo abre la puerta; QUE puede hacer cada uno dentro lo deciden los
+     * permisos (ver RolePermissionSeeder). Un usuario sin ninguno de estos
+     * roles no llega ni a la pantalla de inicio del panel.
+     */
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->hasAnyRole(['super_admin', 'admin', 'editor', 'publisher']);
+        return $this->hasAnyRole([
+            'super_admin',
+            'admin',
+            'editor',
+            'publisher',
+            'transparencia',
+        ]);
     }
 }

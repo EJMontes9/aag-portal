@@ -45,7 +45,23 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function configurarAutorizacion(): void
     {
-        Gate::before(function ($user, string $ability) {
+        Gate::before(function ($user, string $ability, array $arguments = []) {
+            $objetivo = $arguments[0] ?? null;
+
+            // EXCEPCION antes que nada: nadie borra su propia cuenta, ni
+            // siquiera un super_admin.
+            //
+            // Esta comprobacion tiene que ir AQUI y no solo en UserPolicy:
+            // el "return true" de abajo cortocircuita las policies, de modo
+            // que para un super_admin la de usuarios no llegaba a evaluarse
+            // y podia eliminarse a si mismo, dejando el portal potencialmente
+            // sin ninguna cuenta con acceso total.
+            if ($objetivo instanceof \App\Models\User
+                && $objetivo->id === $user->id
+                && in_array($ability, ['delete', 'forceDelete'], true)) {
+                return false;
+            }
+
             // El super_admin conserva acceso total. Es lo que hace Shield
             // cuando esta bien configurado, y evita quedarse fuera del panel.
             if (method_exists($user, 'hasRole') && $user->hasRole('super_admin')) {

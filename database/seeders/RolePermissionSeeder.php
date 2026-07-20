@@ -39,10 +39,24 @@ class RolePermissionSeeder extends Seeder
 
     /**
      * Recursos de configuracion y seguridad. Solo super_admin.
+     * Incluye la gestion de usuarios: quien puede crear cuentas y asignar
+     * roles puede, en la practica, concederse cualquier permiso.
      */
     protected array $recursosCriticos = [
         'role',
         'shield::role',
+        'user',
+    ];
+
+    /**
+     * Recursos de la seccion de Transparencia (LOTAIP y Rendicion de Cuentas).
+     * Definen el alcance del rol "transparencia".
+     */
+    protected array $recursosTransparencia = [
+        'lotaip::year',
+        'lotaip::month',
+        'lotaip::document',
+        'media',
     ];
 
     public function run(): void
@@ -89,12 +103,19 @@ class RolePermissionSeeder extends Seeder
         });
         $this->asignar('editor', $editor);
 
+        // ── transparencia: SOLO la seccion LOTAIP / Rendicion ────────────────
+        // Pensado para quien se encarga unicamente de subir y ordenar la
+        // documentacion de transparencia, sin tocar noticias, paginas,
+        // convocatorias ni la configuracion del sitio.
+        $transparencia = array_filter($todos, fn ($p) => $this->perteneceA($p, $this->recursosTransparencia));
+        $this->asignar('transparencia', $transparencia);
+
         app()['cache']->forget('spatie.permission.cache');
 
         $this->command?->newLine();
-        foreach (['super_admin', 'admin', 'publisher', 'editor'] as $rol) {
+        foreach (['super_admin', 'admin', 'publisher', 'editor', 'transparencia'] as $rol) {
             $n = Role::where('name', $rol)->first()?->permissions()->count() ?? 0;
-            $this->command?->info(sprintf('  %-12s %3d permisos', $rol, $n));
+            $this->command?->info(sprintf('  %-14s %3d permisos', $rol, $n));
         }
     }
 

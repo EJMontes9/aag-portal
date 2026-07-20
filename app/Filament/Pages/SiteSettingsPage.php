@@ -79,12 +79,14 @@ class SiteSettingsPage extends Page implements HasForms
                             ->schema([
                                 Section::make('Informacion Institucional')
                                     ->schema([
+                                        // Se retiraron 'site_slogan', 'site_description' y
+                                        // 'site_logo_footer': ninguna vista del portal los
+                                        // consumia. El pie usa el mismo logo que la cabecera
+                                        // (x-ui.brand-mark) y la descripcion para buscadores
+                                        // es 'seo_meta_description', en la pestaña de SEO.
                                         TextInput::make('site_name')->label('Nombre del sitio')->required()->default('Autoridad Aeroportuaria de Guayaquil'),
-                                        TextInput::make('site_slogan')->label('Slogan / Tagline'),
-                                        Textarea::make('site_description')->label('Descripcion corta')->rows(2),
                                         FileUpload::make('site_logo')->label('Logo principal')->image()->directory('branding')->disk('public')->imageEditor(),
                                         FileUpload::make('site_logo_dark')->label('Logo para modo oscuro (opcional)')->image()->directory('branding')->disk('public')->imageEditor(),
-                                        FileUpload::make('site_logo_footer')->label('Logo footer (opcional)')->image()->directory('branding')->disk('public'),
                                         FileUpload::make('site_favicon')->label('Favicon (.ico, .png)')->directory('branding')->disk('public'),
                                     ])->columns(2),
                             ]),
@@ -148,7 +150,9 @@ class SiteSettingsPage extends Page implements HasForms
                                         Textarea::make('contact_address')->label('Direccion')->rows(2),
                                         TextInput::make('contact_phone')->label('Telefono'),
                                         TextInput::make('contact_email')->label('Email')->email(),
-                                        Textarea::make('contact_map_embed')->label('HTML embed del mapa (Google Maps iframe)')->rows(3),
+                                        // 'contact_map_embed' retirado: ninguna vista lo usaba.
+                                        // El mapa de la pagina de contacto se pone con el bloque
+                                        // "Mapa interactivo" desde el editor de paginas.
                                     ])->columns(2),
                             ]),
                         Tab::make('Documentos')
@@ -204,7 +208,8 @@ class SiteSettingsPage extends Page implements HasForms
                                         TextInput::make('social_instagram')->label('Instagram')->url(),
                                         TextInput::make('social_youtube')->label('YouTube')->url(),
                                         TextInput::make('social_linkedin')->label('LinkedIn')->url(),
-                                        TextInput::make('social_tiktok')->label('TikTok')->url(),
+                                        // 'social_tiktok' retirado: la cabecera y el pie solo
+                                        // pintan Facebook, X, Instagram, YouTube y LinkedIn.
                                     ])->columns(2),
                             ]),
                         Tab::make('Header / CTA')
@@ -219,11 +224,13 @@ class SiteSettingsPage extends Page implements HasForms
                                         Toggle::make('header_show_clock')->label('Mostrar reloj Guayaquil (GYE)')->default(true),
                                     ])->columns(2),
                                 Section::make('Franja superior (topbar)')
+                                    ->description('La franja amarilla sobre la cabecera. Su contenido son los enlaces del menu "topbar", que se editan en Menus.')
                                     ->schema([
+                                        // 'topbar_text' y 'topbar_faq_label' retirados: los usaba
+                                        // la cabecera anterior. La actual (Propuesta B) llena esa
+                                        // franja con los enlaces del menu "topbar".
                                         Toggle::make('topbar_enabled')->label('Mostrar franja superior')->default(true),
-                                        TextInput::make('topbar_text')->label('Texto institucional')->default('Aeropuerto Internacional Jose Joaquin de Olmedo · Guayaquil, Ecuador'),
-                                        TextInput::make('topbar_faq_label')->label('Etiqueta FAQ')->default('PREGUNTAS FRECUENTES'),
-                                    ])->columns(2),
+                                    ]),
                             ]),
                         Tab::make('Animaciones')
                             ->icon('heroicon-o-sparkles')

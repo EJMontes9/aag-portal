@@ -285,12 +285,32 @@ Sólo cuando la Fase 2 esté conforme.
 **Este paso se prepara antes, no después.** Las direcciones del WordPress
 actual están indexadas en Google y enlazadas desde otros sitios. Si al cambiar
 dejan de existir, esas visitas acaban en un 404 y se pierde el posicionamiento
-ganado.
+ganado. En una entidad pública además se rompen enlaces que la ciudadanía tiene
+guardados.
 
-Necesito de ti la lista de las direcciones actuales que más se visitan (en
-Google Analytics o Search Console, si los tenéis) para preparar las
-redirecciones a sus equivalentes nuevas. Con las 20 o 30 principales suele
-bastar para cubrir casi todo el tráfico.
+El portal ya trae el sistema montado: **Configuración › Redirecciones** en el
+panel. Se añade la dirección antigua y a dónde debe llevar, y queda resuelto al
+momento, sin desplegar nada.
+
+**Cómo sacar la lista de direcciones antiguas:**
+
+1. Si tenéis Google Search Console del sitio actual: *Rendimiento › Páginas*,
+   ordenar por clics y exportar. Es la mejor fuente, porque da exactamente las
+   que reciben visitas.
+2. Si no, en Google: `site:aag.org.ec` muestra lo que tiene indexado.
+3. Del propio WordPress: la lista de páginas y entradas publicadas.
+
+Con las 20 o 30 más visitadas se cubre casi todo el tráfico real. El resto se
+van añadiendo cuando aparezcan: la tabla del panel muestra **cuántas veces se
+ha usado cada redirección**, así se ve cuáles importan y cuáles sobran.
+
+**Comprobación después del cambio:** entra a una dirección antigua y confirma
+que lleva a la nueva. En la columna "Visitas" del panel debe subir el contador.
+
+> Por seguridad, solo se admiten destinos internos (`/nosotros`) o direcciones
+> `https://`. No se puede redirigir a `//otro-sitio.com`: si una cuenta del
+> panel se viera comprometida, esa capacidad convertiría el dominio
+> institucional en un trampolín de phishing.
 
 ### 3.2 El cambio
 

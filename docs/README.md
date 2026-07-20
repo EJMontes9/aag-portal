@@ -12,7 +12,8 @@ Portal institucional de la **Autoridad Aeroportuaria de Guayaquil**.
 → [`MANUAL_USUARIOS_ROLES.md`](MANUAL_USUARIOS_ROLES.md) — dar acceso al panel
 
 **Si vas a desplegar**
-→ [`DESPLIEGUE_CPANEL.md`](DESPLIEGUE_CPANEL.md) — lista de comprobación
+→ [`DESPLIEGUE_PASO_A_PASO.md`](DESPLIEGUE_PASO_A_PASO.md) — **empieza por aquí**: publicar en pruebas, revisar y pasar al dominio real, con Cloudflare
+→ [`DESPLIEGUE_CPANEL.md`](DESPLIEGUE_CPANEL.md) — lista de comprobación técnica
 → [`SEGURIDAD.md`](SEGURIDAD.md) — puntos que verificar en el servidor
 
 **Si vas a tocar el código**
@@ -28,6 +29,7 @@ Portal institucional de la **Autoridad Aeroportuaria de Guayaquil**.
 |---|---|---|
 | [ARQUITECTURA.md](ARQUITECTURA.md) | Pila tecnológica, modelo de contenido, sistema de bloques, caché, comandos | Desarrollo |
 | [SEGURIDAD.md](SEGURIDAD.md) | Medidas implementadas, por qué existen y qué no romper | Desarrollo / Sistemas |
+| [DESPLIEGUE_PASO_A_PASO.md](DESPLIEGUE_PASO_A_PASO.md) | Publicación en subdominio de pruebas, cambio al dominio real, Cloudflare, Analytics | Sistemas |
 | [DESPLIEGUE_CPANEL.md](DESPLIEGUE_CPANEL.md) | Lista de comprobación de puesta en producción | Sistemas |
 | [LINEA_GRAFICA.md](LINEA_GRAFICA.md) | Paleta, tipografía, formas y reglas de diseño | Desarrollo / Diseño |
 | [MANUAL_CONTENIDO.md](MANUAL_CONTENIDO.md) | Uso diario del panel | Redacción / Comunicación |
@@ -43,6 +45,9 @@ Portal en **Laravel 11 + Filament 3**, con las páginas compuestas por
 configurables, no de valores fijos. Los documentos de transparencia **viven en
 un subdominio aparte** y el portal los recoge cada noche. El acceso al panel
 se reparte con **cinco roles** de permisos distintos.
+
+Las direcciones del sitio anterior se mantienen vivas desde
+**Configuración › Redirecciones**, sin desplegar nada.
 
 ---
 
@@ -68,10 +73,17 @@ Cosas que conviene tener presentes, documentadas con detalle en
 
 - Los documentos de transparencia son **públicos desde que se suben**; no hay
   estado de borrador. Es el comportamiento buscado.
+- **Laravel 11 ya no recibe parches de seguridad.** Quedan tres avisos
+  mitigados en la aplicación pero sin parche oficial: sólo existe en Laravel
+  12.60+. No bloquea publicar; conviene planificar el salto de versión como
+  trabajo aparte. Detalle en [`SEGURIDAD.md`](SEGURIDAD.md) §12.
 - El **responsive no se ha verificado en dispositivos reales**, solo sobre el
   marcado.
 - El explorador del subdominio de documentos (código ajeno a este repositorio)
   tiene una comprobación de ruta que conviene endurecer.
+- **Laravel Sanctum** aparece en el pliego pero no está instalado: el portal no
+  expone ninguna API que lo justifique. Conviene aclararlo con la contraparte
+  antes de instalarlo sólo por cumplir la letra.
 
 ---
 

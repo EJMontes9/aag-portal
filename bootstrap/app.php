@@ -15,8 +15,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectGuestsTo(fn () => route('filament.admin.auth.login'));
 
         // Cabeceras de seguridad en todas las respuestas web.
+        //
+        // RedirigirRutasAntiguas va DESPUES de SecurityHeaders a proposito: solo
+        // actua cuando la respuesta ya es un 404, asi que cuanto mas tarde se
+        // ejecute, menos trabajo hace en las visitas normales.
         $middleware->web(append: [
             \App\Http\Middleware\SecurityHeaders::class,
+            \App\Http\Middleware\RedirigirRutasAntiguas::class,
         ]);
 
         // Los proxies de confianza NO se configuran aqui: este closure corre

@@ -79,6 +79,7 @@ class NewsResource extends Resource
                     Forms\Components\FileUpload::make('cover_image')
                         ->label('Imagen de portada')
                         ->image()
+                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
                         ->imageEditor()
                         ->directory('news/covers')
                         ->disk('public')

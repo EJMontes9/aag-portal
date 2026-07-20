@@ -225,7 +225,9 @@ Honestidad sobre los límites de lo hecho:
 2. **Los documentos de transparencia son públicos desde que se suben.** Es
    deliberado, a petición del cliente: en transparencia es el comportamiento
    buscado. No hay estado de borrador para ellos.
-3. **`/livewire/update` no tiene límite de peticiones propio.**
+3. **Laravel 11 ya no recibe parches de seguridad.** Ver la sección 12: hay
+   tres avisos abiertos cuyo parche oficial solo existe en Laravel 12.60+.
+   Están mitigados en la aplicación, pero la mitigación no es el parche.
 4. **El explorador del subdominio de documentos** tiene una comprobación de
    ruta que compara solo el prefijo del texto:
    ```php
@@ -249,3 +251,97 @@ npm audit --omit=dev
 ```
 
 Conviene revisarlo de vez en cuando y antes de cada despliegue grande.
+
+---
+
+## 12. Avisos de dependencias: estado y mitigación
+
+Situación tras la última revisión. Se pasó de **29 avisos en 14 paquetes** a
+**7 en 5**, actualizando todo lo que se podía sin cambiar de versión mayor:
+
+| Paquete | Antes | Ahora |
+|---|---|---|
+| `symfony/html-sanitizer` | v7.4.8 | v7.4.14 |
+| `symfony/http-kernel` | v7.4.8 | v7.4.14 |
+| `symfony/mime` | v7.4.8 | v7.4.13 |
+| `symfony/routing` | v7.4.8 | v7.4.13 |
+| `symfony/yaml` | v7.4.8 | v7.4.14 |
+| `guzzlehttp/guzzle` | 7.10.0 | 7.15.1 |
+
+### Los 7 avisos que quedan
+
+Ninguno se dejó sin analizar. Cuatro **no son explotables en este portal**, y se
+comprobó uno por uno en el código, no por suposición:
+
+| Aviso | Por qué no aplica aquí |
+|---|---|
+| Filament: XSS en `RichEditor` deshabilitado | El portal no usa ningún `RichEditor` deshabilitado |
+| Laravel: confusión de ruta en URL firmada temporal | No se usan URLs firmadas en ninguna parte |
+| `symfony/mailer`: inyección de argumentos en `SendmailTransport` | El correo sale por SMTP, no por sendmail |
+| Filament: `AttachAction`/`AssociateAction` | Esas acciones no se usan |
+
+Los tres restantes **sí tocan código real** y están mitigados en la aplicación:
+
+**1. Laravel — inyección CRLF en la regla `email`** (severidad alta)
+La regla `email` de Laravel 11 acepta direcciones con salto de línea. Como esas
+direcciones acaban siendo destinatario de un envío, el salto permite cerrar la
+cabecera `To:` y añadir otras (`Bcc:`, `Reply-To:`): el formulario del portal
+quedaría convertido en un reenviador de spam a nombre de la AAG, quemando el
+dominio institucional.
+
+Mitigación: `app/Rules/CorreoSeguro.php`, aplicada **además** de `email:rfc`
+(nunca en su lugar) en los dos puntos por donde entra un correo — el boletín
+(`SubscriberController`) y los formularios (`FormRenderer`). Rechaza caracteres
+de control, espacios, guion inicial, doble arroba y puntos consecutivos.
+Verificado con 10 casos: los 3 correos legítimos pasan y los 7 ataques fallan.
+
+**2. Filament — subida temporal sin autenticar** (severidad media)
+`/livewire/upload-file` responde **sin sesión iniciada** en las pantallas de
+login. Con los valores por defecto de Livewire eso significa que cualquiera,
+desde internet, puede escribir archivos arbitrarios de hasta 12 MB en `storage`.
+
+Mitigación: `config/livewire.php`, publicado a propósito para esto.
+
+```php
+'rules'      => ['required', 'file', 'max:10240', 'mimes:jpg,jpeg,png,...'],
+'middleware' => 'throttle:10,1',   // por defecto eran 60/min
+```
+
+Esto **no sustituye** a `MediaService`, que sigue siendo la barrera real porque
+valida el contenido con `finfo`. Es el filtro de entrada: recorta lo que llega a
+tocar el disco. `'mimes'` debe mantenerse alineado con
+`MediaService::TIPOS_PERMITIDOS`; si se añade un tipo allí, hay que añadirlo
+aquí o la subida se rechazará antes de llegar al servicio.
+
+De paso cierra el punto que antes figuraba como pendiente: `/livewire/update` ya
+no queda sin límite de peticiones.
+
+**3. `symfony/mailer` — guion inicial**
+Cubierto también por `CorreoSeguro`, que rechaza direcciones que empiezan por
+`-`. El portal usa SMTP, pero la comprobación cuesta una línea y sobrevive a que
+alguien cambie el transporte desde el cPanel.
+
+### SVG: coherencia entre las dos barreras
+
+`MediaResource` declaraba `image/svg+xml` entre los tipos aceptados. Un SVG es
+XML y admite `<script>`, así que servido desde nuestro dominio es XSS con la
+sesión del administrador abierta. `MediaService` ya lo rechazaba por contenido,
+de modo que no era una brecha, pero el navegador dejaba subirlo para que el
+servidor lo borrara después. Se quitó de ahí y de `preview_mimes`.
+
+Además, todos los campos `FileUpload` del panel llevan ya `acceptedFileTypes()`
+y `maxSize()` explícitos. Importa porque `->image()` de Filament **acepta SVG**.
+
+### Lo que exige una decisión del cliente
+
+**Laravel 11 no tiene ninguna versión sin avisos.** No es que falte actualizar:
+todas las 11.x están marcadas, y el parche existe solo en 12.60+ / 13.x. Esto no
+se puede resolver desde el código.
+
+Las mitigaciones de arriba cubren los vectores concretos, y son razonables para
+publicar. Pero conviene tenerlo claro: mitigar no es parchear. La rama seguirá
+acumulando avisos y ninguno traerá arreglo oficial.
+
+Recomendación: planificar la subida a Laravel 12 LTS como trabajo aparte, con su
+propio periodo de pruebas — **no** metida con prisa antes de publicar, que es
+cuando se rompen las cosas.

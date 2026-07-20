@@ -186,9 +186,15 @@ class MediaResource extends Resource
                             ->multiple()
                             ->disk('public')
                             ->directory('media/' . now()->format('Y/m'))
+                            // Sin 'image/svg+xml': un SVG es XML y admite <script>,
+                            // asi que servido desde nuestro dominio seria XSS con la
+                            // sesion del administrador. MediaService ya lo rechaza al
+                            // mirar el contenido; dejarlo aqui solo conseguia que el
+                            // navegador aceptara la subida para que el servidor la
+                            // borrara despues.
                             ->acceptedFileTypes([
                                 'image/jpeg', 'image/png', 'image/gif',
-                                'image/webp', 'image/svg+xml',
+                                'image/webp',
                                 'application/pdf',
                                 'video/mp4', 'video/webm',
                             ])

@@ -96,6 +96,7 @@ class BannerSliderBlock extends BlockType
                                 Forms\Components\FileUpload::make('image')
                                     ->label('Imagen de fondo')
                                     ->image()
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
                                     ->imageEditor()
                                     ->directory('banners')
                                     ->disk('public')

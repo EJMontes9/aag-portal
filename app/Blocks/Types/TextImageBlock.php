@@ -25,6 +25,8 @@ class TextImageBlock extends BlockType
                 Forms\Components\FileUpload::make('image')
                     ->label('Imagen')
                     ->image()
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
+                    ->maxSize(4096)
                     ->directory('blocks')
                     ->disk('public')
                     ->imageEditor()

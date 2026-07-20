@@ -85,9 +85,9 @@ class SiteSettingsPage extends Page implements HasForms
                                         // (x-ui.brand-mark) y la descripcion para buscadores
                                         // es 'seo_meta_description', en la pestaña de SEO.
                                         TextInput::make('site_name')->label('Nombre del sitio')->required()->default('Autoridad Aeroportuaria de Guayaquil'),
-                                        FileUpload::make('site_logo')->label('Logo principal')->image()->directory('branding')->disk('public')->imageEditor(),
-                                        FileUpload::make('site_logo_dark')->label('Logo para modo oscuro (opcional)')->image()->directory('branding')->disk('public')->imageEditor(),
-                                        FileUpload::make('site_favicon')->label('Favicon (.ico, .png)')->directory('branding')->disk('public'),
+                                        FileUpload::make('site_logo')->label('Logo principal')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])->maxSize(4096)->directory('branding')->disk('public')->imageEditor(),
+                                        FileUpload::make('site_logo_dark')->label('Logo para modo oscuro (opcional)')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])->maxSize(4096)->directory('branding')->disk('public')->imageEditor(),
+                                        FileUpload::make('site_favicon')->label('Favicon (.ico, .png)')->acceptedFileTypes(['image/png', 'image/x-icon', 'image/vnd.microsoft.icon'])->maxSize(512)->directory('branding')->disk('public'),
                                     ])->columns(2),
                             ]),
                         Tab::make('Tipografias')
@@ -437,6 +437,8 @@ class SiteSettingsPage extends Page implements HasForms
                                             ->label('Imagen OG por defecto (1200×630 px)')
                                             ->helperText('Se muestra al compartir el sitio en redes sociales. Usa proporción 1.91:1.')
                                             ->image()
+                                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
+                                            ->maxSize(4096)
                                             ->directory('seo')
                                             ->disk('public')
                                             ->imageEditor(),

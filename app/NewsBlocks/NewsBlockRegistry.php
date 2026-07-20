@@ -39,6 +39,7 @@ class NewsBlockRegistry
                     Forms\Components\FileUpload::make('image')
                         ->label('Imagen')
                         ->image()
+                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
                         ->imageEditor()
                         ->directory('news/blocks')
                         ->disk('public')
@@ -72,6 +73,7 @@ class NewsBlockRegistry
                             Forms\Components\FileUpload::make('image')
                                 ->label('Imagen')
                                 ->image()
+                                ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
                                 ->imageEditor()
                                 ->directory('news/gallery')
                                 ->disk('public')
@@ -130,6 +132,8 @@ class NewsBlockRegistry
                     Forms\Components\FileUpload::make('poster')
                         ->label('Imagen de portada (opcional)')
                         ->image()
+                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
+                        ->maxSize(4096)
                         ->directory('news/videos/posters')
                         ->disk('public'),
                     Forms\Components\TextInput::make('caption')
@@ -188,6 +192,15 @@ class NewsBlockRegistry
                 'schema' => fn () => [
                     Forms\Components\FileUpload::make('file')
                         ->label('Archivo')
+                        // Bloque "Descarga (PDF / documento)": admite tambien
+                        // ofimatica, no solo PDF puro.
+                        ->acceptedFileTypes([
+                            'application/pdf',
+                            'application/msword',
+                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                            'application/vnd.ms-excel',
+                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        ])
                         ->directory('news/downloads')
                         ->disk('public')
                         ->maxSize(20480) // 20 MB

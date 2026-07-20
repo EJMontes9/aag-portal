@@ -6,6 +6,7 @@ use App\Mail\FormSubmissionMail;
 use App\Models\Form;
 use App\Models\FormField;
 use App\Models\FormSubmission;
+use App\Rules\CorreoSeguro;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
@@ -150,7 +151,9 @@ class FormRenderer extends Component
 
             // Tipo
             match ($field->type) {
-                'email'    => $fieldRules[] = 'email:rfc,dns',
+                // Igual que en el boletin: 'email:rfc,dns' valida el formato y
+                // que el dominio exista; CorreoSeguro cierra el CRLF. Los dos.
+                'email'    => array_push($fieldRules, 'email:rfc,dns', new CorreoSeguro),
                 'tel'      => $fieldRules[] = 'regex:/^[+\d\s\-().]{6,25}$/',
                 'number'   => $fieldRules[] = 'numeric',
                 'date'     => $fieldRules[] = 'date',

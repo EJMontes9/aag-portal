@@ -133,6 +133,8 @@ class HeroBlock extends BlockType
                                 Forms\Components\FileUpload::make('image')
                                     ->label('Imagen')
                                     ->image()
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
+                                    ->maxSize(4096)
                                     ->directory('hero-cards')
                                     ->disk('public')
                                     ->visible(fn (Forms\Get $get) => $get('variant') === 'image'),
@@ -154,6 +156,8 @@ class HeroBlock extends BlockType
                         Forms\Components\FileUpload::make('side_image')
                             ->label('Imagen derecha')
                             ->image()
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
+                            ->maxSize(4096)
                             ->directory('hero')
                             ->disk('public')
                             ->imageEditor()
@@ -167,6 +171,8 @@ class HeroBlock extends BlockType
                         Forms\Components\FileUpload::make('background_image')
                             ->label('Imagen de fondo')
                             ->image()
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
+                            ->maxSize(4096)
                             ->directory('hero')
                             ->disk('public')
                             ->columnSpanFull(),

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Subscriber;
+use App\Rules\CorreoSeguro;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -30,7 +31,9 @@ class SubscriberController extends Controller
 
         try {
             $data = $request->validate([
-                'email' => 'required|email:rfc|max:255',
+                // CorreoSeguro se suma a 'email:rfc', no la sustituye: cierra la
+                // inyeccion de cabeceras (CRLF) que la regla de Laravel 11 deja pasar.
+                'email' => ['required', 'email:rfc', 'max:255', new CorreoSeguro],
                 'name' => 'nullable|string|max:255',
                 'source' => 'nullable|string|max:100',
             ], [

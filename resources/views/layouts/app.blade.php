@@ -6,23 +6,18 @@
     $animSpeed = settings('animations_speed', 'normal');
     $animOnMobile = (bool) settings('animations_on_mobile', true);
 
-    // ── Tema visual activo (layout header/footer + tokens de estilo) ──────────
-    // Color y tipografia NO dependen del tema: siguen siendo globales (abajo).
-    $siteTheme = \App\Support\Theme::active();
-    $themeTokens = \App\Support\Theme::activeTokens();
-
     $fontSerif = settings('font_serif', 'Fraunces');
     $fontSans = settings('font_sans', 'Inter');
     $fontMono = settings('font_mono', 'JetBrains Mono');
 
     $encodeFontUrl = fn (string $family) => str_replace(' ', '+', $family);
 
-    $navy = hex_to_rgb_tuple(settings('color_navy'), '11 30 74');
-    $primary = hex_to_rgb_tuple(settings('color_primary'), '30 58 138');
-    $accent = hex_to_rgb_tuple(settings('color_accent'), '91 143 217');
-    $soft = hex_to_rgb_tuple(settings('color_soft'), '207 224 243');
-    $bgLight = hex_to_rgb_tuple(settings('color_bg_light'), '250 250 251');
-    $fgLight = hex_to_rgb_tuple(settings('color_fg_light'), '15 23 42');
+    $navy = hex_to_rgb_tuple(settings('color_navy'), '46 47 99');
+    $primary = hex_to_rgb_tuple(settings('color_primary'), '0 156 223');
+    $accent = hex_to_rgb_tuple(settings('color_accent'), '239 198 0');
+    $soft = hex_to_rgb_tuple(settings('color_soft'), '229 244 251');
+    $bgLight = hex_to_rgb_tuple(settings('color_bg_light'), '245 245 245');
+    $fgLight = hex_to_rgb_tuple(settings('color_fg_light'), '34 34 34');
     $bgDark = hex_to_rgb_tuple(settings('color_bg_dark'), '11 15 30');
     $fgDark = hex_to_rgb_tuple(settings('color_fg_dark'), '226 232 240');
 
@@ -108,11 +103,6 @@
       data-anim-enabled="{{ $animEnabled ? 'true' : 'false' }}"
       data-anim-speed="{{ $animSpeed }}"
       data-anim-mobile="{{ $animOnMobile ? 'true' : 'false' }}"
-      data-site-theme="{{ $siteTheme }}"
-      data-radius="{{ $themeTokens['radius'] }}"
-      data-density="{{ $themeTokens['density'] }}"
-      data-gradients="{{ $themeTokens['gradients'] ? 'on' : 'off' }}"
-      data-elevation="{{ $themeTokens['elevation'] }}"
       class="{{ $defaultTheme === 'dark' && $darkAllowed ? 'dark' : '' }}">
 <head>
     <meta charset="UTF-8">
@@ -189,7 +179,10 @@
          locales via @font-face en app.css y se excluyen de esta peticion. --}}
     @php
         // Fuentes de marca AAG auto-hospedadas (ver @font-face en resources/css/app.css).
-        $selfHostedFonts = ['Neulis Black'];
+        // Barlow Condensed SI existe en Google Fonts, pero se sirve local para que
+        // el diseno no dependa de una peticion externa: si no carga, el fallback
+        // no es condensado y descuadra todo el ritmo horizontal de la Propuesta B.
+        $selfHostedFonts = ['Neulis Black', 'Barlow Condensed'];
 
         $serifSpec = $fontSerif === 'Fraunces'
             ? 'ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500'
@@ -245,9 +238,9 @@
 
             --color-bg: {{ $bgLight }};
             --color-fg: {{ $fgLight }};
-            --color-muted: 100 116 139;
+            --color-muted: 102 102 102;  /* #666 */
             --color-card: 255 255 255;
-            --color-border: 226 232 240;
+            --color-border: 204 204 204; /* #CCC -- borde marcado de la Propuesta B */
         }
 
         .dark {

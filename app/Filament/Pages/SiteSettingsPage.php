@@ -3,7 +3,6 @@
 namespace App\Filament\Pages;
 
 use App\Models\SiteSetting;
-use App\Support\Theme;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
@@ -139,81 +138,6 @@ class SiteSettingsPage extends Page implements HasForms
                                             ->default('light')
                                             ->required(),
                                     ])->columns(2),
-                            ]),
-                        Tab::make('Plantilla visual')
-                            ->icon('heroicon-o-window')
-                            ->schema([
-                                Section::make('Plantilla activa')
-                                    ->description('Controla el layout de header/footer y el "look" (esquinas, densidad, degradados, sombras). El color y la tipografia de las pestañas anteriores aplican por igual sobre cualquier plantilla que elijas aqui.')
-                                    ->schema([
-                                        Radio::make('theme_active')
-                                            ->label('Plantilla en uso')
-                                            ->options(collect(Theme::CATALOG)->mapWithKeys(fn ($t, $slug) => [$slug => $t['label']])->toArray())
-                                            ->descriptions(collect(Theme::CATALOG)->mapWithKeys(fn ($t, $slug) => [$slug => $t['description']])->toArray())
-                                            ->default(Theme::DEFAULT)
-                                            ->required()
-                                            ->helperText('Si desactivas (desinstalas) la plantilla que esta en uso, el sitio vuelve automaticamente a la Institucional.'),
-                                    ]),
-
-                                ...collect(Theme::CATALOG)->map(function ($theme, $slug) {
-                                    return Section::make($theme['label'])
-                                        ->description($theme['description'])
-                                        ->collapsed($slug !== Theme::DEFAULT)
-                                        ->schema([
-                                            Toggle::make("theme_{$slug}_enabled")
-                                                ->label('Plantilla instalada (aparece como opcion arriba)')
-                                                ->default(true)
-                                                ->columnSpanFull(),
-                                            Select::make("theme_{$slug}_radius")
-                                                ->label('Esquinas')
-                                                ->options([
-                                                    'square' => 'Cuadradas',
-                                                    'soft' => 'Suaves (recomendado)',
-                                                    'round' => 'Muy redondeadas',
-                                                ])
-                                                ->default($theme['defaults']['radius'])
-                                                ->required(),
-                                            Select::make("theme_{$slug}_density")
-                                                ->label('Densidad de espaciado')
-                                                ->options([
-                                                    'compact' => 'Compacta (mas junto)',
-                                                    'comfortable' => 'Comoda (recomendada)',
-                                                    'spacious' => 'Amplia (mas aire)',
-                                                ])
-                                                ->default($theme['defaults']['density'])
-                                                ->required(),
-                                            Select::make("theme_{$slug}_elevation")
-                                                ->label('Sombra de tarjetas')
-                                                ->options([
-                                                    'flat' => 'Plana (sin sombra)',
-                                                    'soft' => 'Suave (recomendada)',
-                                                    'elevated' => 'Elevada',
-                                                ])
-                                                ->default($theme['defaults']['elevation'])
-                                                ->required(),
-                                            Toggle::make("theme_{$slug}_gradients")
-                                                ->label('Degradados decorativos')
-                                                ->helperText('Afecta fondos ilustrativos (ej. tarjeta de portada del hero).')
-                                                ->default($theme['defaults']['gradients']),
-                                        ])->columns(4);
-                                })->values()->all(),
-
-                                Section::make('Bloques de contenido')
-                                    ->description('Controla el estilo visual de los bloques reutilizables del Home.')
-                                    ->schema([
-                                        Radio::make('quick_links_layout')
-                                            ->label('Accesos Rápidos — estilo de tarjeta')
-                                            ->options([
-                                                'b' => 'Layout B — Compacto centrado (Propuesta B aprobada)',
-                                                'a' => 'Layout A — Tarjetas con descripción (Propuesta A)',
-                                            ])
-                                            ->descriptions([
-                                                'b' => '6 columnas, íconos centrados, solo etiqueta. Fondo gris. (por defecto)',
-                                                'a' => '4 columnas, íconos a la izquierda, con descripción. Fondo blanco.',
-                                            ])
-                                            ->default('b')
-                                            ->required(),
-                                    ]),
                             ]),
                         Tab::make('Contacto')
                             ->icon('heroicon-o-envelope')
@@ -500,8 +424,6 @@ class SiteSettingsPage extends Page implements HasForms
             str_starts_with($key, 'font_')        => 'Tipografías',
             str_starts_with($key, 'color_')       => 'Colores',
             in_array($key, ['dark_mode_enabled', 'default_theme']) => 'Tema',
-            str_starts_with($key, 'theme_')       => 'Plantilla visual',
-            str_starts_with($key, 'quick_links_') => 'Plantilla visual',
             str_starts_with($key, 'contact_')     => 'Contacto',
             str_starts_with($key, 'social_')      => 'Redes Sociales',
             str_starts_with($key, 'header_') || str_starts_with($key, 'topbar_') => 'Header / CTA',
@@ -523,29 +445,8 @@ class SiteSettingsPage extends Page implements HasForms
 
         $assetKeys   = ['site_logo', 'site_logo_dark', 'site_logo_footer', 'site_favicon', 'seo_og_image'];
         $booleanKeys = ['dark_mode_enabled', 'header_cta_enabled', 'header_show_clock', 'topbar_enabled', 'animations_enabled', 'animations_on_mobile'];
-        foreach (array_keys(Theme::CATALOG) as $slug) {
-            $booleanKeys[] = "theme_{$slug}_enabled";
-            $booleanKeys[] = "theme_{$slug}_gradients";
-        }
         // Campos que NO se guardan directamente en settings
         $skipKeys    = ['mail_preset', 'mail_test_to'];
-
-        // ── Guardarraíl de plantillas: nunca dejar el sitio sin plantilla activa ──
-        // Si el usuario desinstala (desactiva) todas, forzamos la institucional.
-        // Si la plantilla elegida como activa quedó desinstalada, caemos a la primera habilitada.
-        $enabledThemes = array_filter(
-            array_keys(Theme::CATALOG),
-            fn ($slug) => (bool) ($state["theme_{$slug}_enabled"] ?? true)
-        );
-        if (empty($enabledThemes)) {
-            $state['theme_' . Theme::DEFAULT . '_enabled'] = true;
-            $enabledThemes = [Theme::DEFAULT];
-            Notification::make()->title('Debe quedar al menos una plantilla instalada — se reactivó "Institucional".')->warning()->send();
-        }
-        if (! in_array($state['theme_active'] ?? Theme::DEFAULT, $enabledThemes, true)) {
-            $state['theme_active'] = $enabledThemes[0];
-            Notification::make()->title('La plantilla activa estaba desinstalada — se cambió a "' . (Theme::CATALOG[$enabledThemes[0]]['label'] ?? $enabledThemes[0]) . '".')->warning()->send();
-        }
 
         foreach ($state as $key => $value) {
             // Ignorar campos auxiliares

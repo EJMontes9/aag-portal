@@ -1,19 +1,16 @@
 @php
-    $fontSerif = settings('font_serif', 'Fraunces');
-    $fontSans = settings('font_sans', 'Inter');
+    $fontSerif = settings('font_serif', 'Neulis Black');
+    $fontSans = settings('font_sans', 'Barlow Condensed');
     $fontMono = settings('font_mono', 'JetBrains Mono');
 
     $encodeFontUrl = fn (string $family) => str_replace(' ', '+', $family);
 
-    $navy = hex_to_rgb_tuple(settings('color_navy'), '11 30 74');
-    $primary = hex_to_rgb_tuple(settings('color_primary'), '30 58 138');
-    $accent = hex_to_rgb_tuple(settings('color_accent'), '91 143 217');
-    $soft = hex_to_rgb_tuple(settings('color_soft'), '207 224 243');
-    $bgLight = hex_to_rgb_tuple(settings('color_bg_light'), '250 250 251');
-    $fgLight = hex_to_rgb_tuple(settings('color_fg_light'), '15 23 42');
-
-    // Mismos tokens del tema activo que usa el layout público
-    $themeTokens = \App\Support\Theme::activeTokens();
+    $navy = hex_to_rgb_tuple(settings('color_navy'), '46 47 99');
+    $primary = hex_to_rgb_tuple(settings('color_primary'), '0 156 223');
+    $accent = hex_to_rgb_tuple(settings('color_accent'), '239 198 0');
+    $soft = hex_to_rgb_tuple(settings('color_soft'), '229 244 251');
+    $bgLight = hex_to_rgb_tuple(settings('color_bg_light'), '245 245 245');
+    $fgLight = hex_to_rgb_tuple(settings('color_fg_light'), '34 34 34');
 @endphp
 <!DOCTYPE html>
 <html lang="es"
@@ -21,20 +18,22 @@
       data-theme-default="light"
       data-anim-enabled="false"
       data-anim-speed="normal"
-      data-anim-mobile="true"
-      data-radius="{{ $themeTokens['radius'] }}"
-      data-density="{{ $themeTokens['density'] }}"
-      data-gradients="{{ $themeTokens['gradients'] ? 'on' : 'off' }}"
-      data-elevation="{{ $themeTokens['elevation'] }}">
+      data-anim-mobile="true">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'Editor visual' }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family={{ $encodeFontUrl($fontSerif) }}:ital,wght@0,400;0,500;0,600;1,400;1,500&family={{ $encodeFontUrl($fontSans) }}:wght@400;500;600;700&family={{ $encodeFontUrl($fontMono) }}:wght@400;500;600&display=swap" rel="stylesheet">
+    {{-- Neulis Black y Barlow Condensed se auto-hospedan via @font-face en
+         app.css, asi que aqui NO se pide nada a Google Fonts: Neulis ni
+         siquiera existe en su catalogo y la peticion fallaba. Solo la mono
+         (opcional, de uso marginal en el editor) sigue viniendo de Google. --}}
+    @if($fontMono && $fontMono !== 'JetBrains Mono')
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family={{ $encodeFontUrl($fontMono) }}:wght@400;500;600&display=swap" rel="stylesheet">
+    @endif
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -51,12 +50,13 @@
             --color-soft: {{ $soft }};
             --color-on-navy: 255 255 255;
             --color-on-primary: 255 255 255;
+            --color-on-accent: {{ contrast_text_tuple(settings('color_accent')) }};
 
             --color-bg: {{ $bgLight }};
             --color-fg: {{ $fgLight }};
-            --color-muted: 100 116 139;
+            --color-muted: 102 102 102;
             --color-card: 255 255 255;
-            --color-border: 226 232 240;
+            --color-border: 204 204 204;
         }
     </style>
     @livewireStyles

@@ -39,18 +39,21 @@ class DatabaseSeeder extends Seeder
             ['key' => 'site_slogan', 'group' => 'general', 'value' => 'Conectar Guayaquil con el mundo, con claridad', 'type' => 'string'],
             ['key' => 'site_description', 'group' => 'general', 'value' => 'Portal oficial de la Autoridad Aeroportuaria de Guayaquil', 'type' => 'string'],
 
-            // Tipografias
-            ['key' => 'font_serif', 'group' => 'typography', 'value' => 'Fraunces', 'type' => 'string'],
-            ['key' => 'font_sans', 'group' => 'typography', 'value' => 'Inter', 'type' => 'string'],
+            // Tipografias -- ambas auto-hospedadas en /public/fonts (ver @font-face
+            // en resources/css/app.css). Barlow Condensed es CONDENSADA: si se
+            // cambia por una que no lo sea, se rompe el ritmo horizontal de la
+            // Propuesta B.
+            ['key' => 'font_serif', 'group' => 'typography', 'value' => 'Neulis Black', 'type' => 'string'],
+            ['key' => 'font_sans', 'group' => 'typography', 'value' => 'Barlow Condensed', 'type' => 'string'],
             ['key' => 'font_mono', 'group' => 'typography', 'value' => 'JetBrains Mono', 'type' => 'string'],
 
-            // Paleta AAG
-            ['key' => 'color_navy', 'group' => 'colors', 'value' => '#0B1E4A', 'type' => 'string'],
-            ['key' => 'color_primary', 'group' => 'colors', 'value' => '#1E3A8A', 'type' => 'string'],
-            ['key' => 'color_accent', 'group' => 'colors', 'value' => '#5B8FD9', 'type' => 'string'],
-            ['key' => 'color_soft', 'group' => 'colors', 'value' => '#CFE0F3', 'type' => 'string'],
-            ['key' => 'color_bg_light', 'group' => 'colors', 'value' => '#FAFAFB', 'type' => 'string'],
-            ['key' => 'color_fg_light', 'group' => 'colors', 'value' => '#0F172A', 'type' => 'string'],
+            // Paleta AAG -- Propuesta B (manual de identidad institucional)
+            ['key' => 'color_navy', 'group' => 'colors', 'value' => '#2E2F63', 'type' => 'string'],
+            ['key' => 'color_primary', 'group' => 'colors', 'value' => '#009CDF', 'type' => 'string'],
+            ['key' => 'color_accent', 'group' => 'colors', 'value' => '#EFC600', 'type' => 'string'],
+            ['key' => 'color_soft', 'group' => 'colors', 'value' => '#E5F4FB', 'type' => 'string'],
+            ['key' => 'color_bg_light', 'group' => 'colors', 'value' => '#F5F5F5', 'type' => 'string'],
+            ['key' => 'color_fg_light', 'group' => 'colors', 'value' => '#222222', 'type' => 'string'],
             ['key' => 'color_bg_dark', 'group' => 'colors', 'value' => '#0B0F1E', 'type' => 'string'],
             ['key' => 'color_fg_dark', 'group' => 'colors', 'value' => '#E2E8F0', 'type' => 'string'],
 

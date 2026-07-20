@@ -15,8 +15,8 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['var(--font-sans)', 'Inter', ...defaultTheme.fontFamily.sans],
-                serif: ['var(--font-serif)', 'Fraunces', ...defaultTheme.fontFamily.serif],
+                sans: ['var(--font-sans)', 'Barlow Condensed', ...defaultTheme.fontFamily.sans],
+                serif: ['var(--font-serif)', 'Neulis Black', ...defaultTheme.fontFamily.serif],
                 mono: ['var(--font-mono)', 'JetBrains Mono', ...defaultTheme.fontFamily.mono],
             },
             colors: {
@@ -39,11 +39,13 @@ export default {
                 },
             },
             borderRadius: {
-                // Tokens de tema: leen del CSS variable que fija cada tema activo
-                // (institucional = redondeado, corporativo = cuadrado). Ver Theme.php.
-                'pill': 'var(--radius-pill, 999px)',
-                'card': 'var(--radius-card, 12px)',
-                'hero': 'var(--radius-hero, 24px)',
+                // Formas de la Propuesta B: esquinas casi rectas. El nombre
+                // "pill" es historico (venia de la Propuesta A, donde era una
+                // pildora de 999px); aqui vale 2px y se conserva el nombre para
+                // no tener que reescribir las ~40 plantillas que lo usan.
+                'pill': 'var(--radius-pill, 2px)',
+                'card': 'var(--radius-card, 4px)',
+                'hero': 'var(--radius-hero, 4px)',
             },
             fontSize: {
                 'kicker': ['0.6875rem', { lineHeight: '1.2', letterSpacing: '0.14em', fontWeight: '600' }],

@@ -2,9 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Fuente propia de marca (manual de identidad AAG) -- no esta en Google Fonts,
-   se sirve local desde /public/fonts/. Un solo peso ("Black"): es de uso
-   exclusivo para titulares grandes, tal como especifica el manual. */
+/* Fuentes propias de marca (manual de identidad AAG) -- no estan en Google Fonts,
+   se sirven locales desde /public/fonts/.
+
+   Neulis Black: un solo peso ("Black"), uso exclusivo para titulares grandes.
+   Barlow Condensed: familia de texto de la Propuesta B. Es CONDENSADA -- si no
+   carga, el fallback no condensado rompe el ritmo horizontal de todo el diseno,
+   por eso se auto-hospeda en vez de depender de Google Fonts. */
 @font-face {
     font-family: 'Neulis Black';
     src: url('/fonts/neulis-black.otf') format('opentype');
@@ -13,79 +17,72 @@
     font-display: swap;
 }
 
+@font-face {
+    font-family: 'Barlow Condensed';
+    src: url('/fonts/BarlowCondensed-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Barlow Condensed';
+    src: url('/fonts/BarlowCondensed-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Barlow Condensed';
+    src: url('/fonts/BarlowCondensed-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
 @layer base {
+    /* ══ LINEA GRAFICA: PROPUESTA B ═══════════════════════════════════════════
+       Portal de gobierno de alta densidad. Los rasgos que DEFINEN a B y que no
+       deben violarse al agregar componentes nuevos:
+
+         · Fondo gris #f5f5f5, superficies blancas
+         · Separacion por BORDE 1px #ccc marcado -- NUNCA por sombra (B no
+           tiene ni una sola box-shadow)
+         · Esquinas casi rectas: 4px en cajas, 2px en chips/botones. No hay
+           pills ni circulos.
+         · Amarillo #efc600 = color de ACCION y separadores de 3px
+         · Celeste #009cdf = acentos, enlaces, iconos
+         · Navy #2e2f63 = bandas de color y titulares
+         · Tipografia CONDENSADA (Barlow Condensed) + Neulis Black en titulares
+
+       Los valores de color se sobrescriben en runtime desde site_settings
+       (ver layouts/app.blade.php); estos son el fallback. */
     :root {
-        --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
-        --font-serif: 'Fraunces', ui-serif, Georgia, serif;
+        --font-sans: 'Barlow Condensed', ui-sans-serif, system-ui, sans-serif;
+        --font-serif: 'Neulis Black', ui-serif, Georgia, serif;
         --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-        --color-navy: 11 30 74;
-        --color-primary: 30 58 138;
-        --color-accent: 91 143 217;
-        --color-soft: 207 224 243;
+        --color-navy: 46 47 99;      /* #2E2F63 */
+        --color-primary: 0 156 223;  /* #009CDF celeste */
+        --color-accent: 239 198 0;   /* #EFC600 amarillo */
+        --color-soft: 229 244 251;   /* tinte celeste para chips */
         --color-on-navy: 255 255 255;
         --color-on-primary: 255 255 255;
-        --color-on-accent: 11 30 74; /* texto oscuro sobre acento: acentos institucionales suelen ser claros (amarillo, celeste) */
+        --color-on-accent: 34 34 34; /* texto oscuro sobre el amarillo */
 
-        --color-bg: 250 250 251;
-        --color-fg: 15 23 42;
-        --color-muted: 100 116 139;
+        --color-bg: 245 245 245;     /* #F5F5F5 */
+        --color-fg: 34 34 34;        /* #222 */
+        --color-muted: 102 102 102;  /* #666 */
         --color-card: 255 255 255;
-        --color-border: 226 232 240;
+        --color-border: 204 204 204; /* #CCC -- borde marcado, es el mecanismo
+                                        de separacion visual de B */
 
-        /* ── Tokens de TEMA (layout/estilo, no color) ────────────────────────
-           Se sobrescriben segun [data-radius]/[data-density]/[data-elevation]
-           en <html>, inyectados por Theme::activeTokens(). Estos son el
-           fallback "institucional" para que nada se rompa si faltan. */
-        --radius-pill: 999px;
-        --radius-card: 12px;
-        --radius-hero: 24px;
-        --shadow-card: none;
-    }
-
-    /* Radio de esquinas por tema */
-    [data-radius="square"] {
-        --radius-pill: 2px;   /* Propuesta B: border-radius:2px en botones */
-        --radius-card: 4px;   /* Propuesta B: border-radius:4px en cards */
+        /* Formas de B. Sin sombra: la elevacion se expresa con borde. */
+        --radius-pill: 2px;
+        --radius-card: 4px;
         --radius-hero: 4px;
-    }
-    [data-radius="soft"] {
-        --radius-pill: 999px;
-        --radius-card: 12px;
-        --radius-hero: 24px;
-    }
-    [data-radius="round"] {
-        --radius-pill: 999px;
-        --radius-card: 20px;
-        --radius-hero: 40px;
-    }
-
-    /* Densidad de espaciado por tema: afecta el "aire" entre secciones */
-    [data-density="compact"] .section-wrap {
-        @apply py-12 md:py-16;
-    }
-    [data-density="comfortable"] .section-wrap {
-        @apply py-20 md:py-28;
-    }
-    [data-density="spacious"] .section-wrap {
-        @apply py-24 md:py-36;
-    }
-
-    /* Elevacion/sombra de tarjetas por tema */
-    [data-elevation="flat"] {
         --shadow-card: none;
-    }
-    [data-elevation="soft"] {
-        --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
-    }
-    [data-elevation="elevated"] {
-        --shadow-card: 0 8px 24px rgba(15, 23, 42, 0.10), 0 2px 8px rgba(15, 23, 42, 0.06);
-    }
-
-    /* Degradados: cuando el tema los desactiva, las superficies con
-       "gradiente decorativo" caen a un color solido equivalente. */
-    [data-gradients="off"] .bg-cloud-gradient {
-        background: rgb(var(--color-accent));
     }
 
     .dark {
@@ -132,16 +129,18 @@
         transform: none !important;
     }
 
+    /* Titulares en Neulis Black (peso unico 900). A diferencia de Fraunces no
+       tiene ejes variables ni cursiva, y en la Propuesta B el tracking de
+       titulos es LEVEMENTE POSITIVO (.5px en .page-title h1), no negativo. */
     h1, h2, h3, h4 {
-        @apply font-serif text-fg;
-        font-optical-sizing: auto;
-        font-variation-settings: 'opsz' 144;
-        letter-spacing: -0.02em;
+        @apply font-serif text-brand-navy;
+        letter-spacing: 0.01em;
     }
 
+    /* Neulis no tiene cursiva real: se deja al navegador sintetizarla solo en
+       texto corrido (que va en Barlow, que si la sintetiza de forma aceptable). */
     em, .italic {
         font-style: italic;
-        font-variation-settings: 'opsz' 144;
     }
 
     .num-tabular {
@@ -150,14 +149,20 @@
 }
 
 @layer components {
+    /* Eyebrow celeste sobre los titulos de seccion. En B es 11px/700 con
+       letter-spacing 1.5px y va en CELESTE, no en gris. */
     .kicker {
         font-family: var(--font-sans);
-        @apply text-[11px] uppercase text-muted font-semibold;
+        @apply text-[11px] uppercase text-brand-primary font-bold;
         letter-spacing: 0.14em;
     }
 
+    /* Contenedor maestro. B usa gutter de 56px y ancho fijo de 1440px; aqui se
+       traduce a max-width + padding fluido para que funcione por debajo de esa
+       medida (las maquetas no tienen responsive, ver LINEA_GRAFICA.md).
+       Padding vertical 40px como en B -- notablemente mas compacto que A (64px). */
     .section-wrap {
-        @apply max-w-[1280px] mx-auto px-6 md:px-10 py-20 md:py-28;
+        @apply max-w-[1440px] mx-auto px-5 md:px-10 lg:px-14 py-10 md:py-14;
     }
 
     /* Layout del detalle de noticia: cuerpo + sidebar derecha (sticky). */
@@ -179,39 +184,76 @@
         }
     }
 
+    /* Chip rectangular sobre tinte celeste. En B mide 9px/700 con tracking .8px
+       y radio 2px -- nunca es una pildora redondeada. */
     .pill {
-        @apply inline-flex items-center gap-2 rounded-pill px-3 py-1.5 text-[11px] font-medium;
-        letter-spacing: 0.02em;
+        @apply inline-flex items-center gap-1.5 rounded-pill bg-brand-soft text-brand-navy px-2 py-1 text-[10px] font-bold uppercase;
+        letter-spacing: 0.08em;
     }
 
+    /* ── Botones ──────────────────────────────────────────────────────────────
+       Todos comparten la firma de B: MAYUSCULAS, 11-12px, weight 700,
+       letter-spacing .8px, radio 2px, sin sombra y sin desplazamiento en hover
+       (B es un diseno estatico; el unico hover de la maqueta es el de la nav). */
+    .btn-base {
+        @apply inline-flex items-center justify-center gap-2 rounded-pill px-6 py-3 text-xs font-bold uppercase transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-brand-primary;
+        letter-spacing: 0.07em;
+    }
+
+    /* Accion principal sobre fondo CLARO: navy solido (el "LEER MAS" de B). */
     .btn-primary {
-        @apply inline-flex items-center justify-center gap-2 rounded-pill bg-brand-primary text-on-primary px-6 py-3 text-sm font-medium transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-navy hover:shadow-lg hover:shadow-brand-primary/25 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-brand-accent;
+        @apply btn-base bg-brand-navy text-on-navy hover:bg-brand-primary;
     }
 
     .btn-ghost {
-        @apply inline-flex items-center justify-center gap-2 rounded-pill border border-border text-fg px-6 py-3 text-sm font-medium transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-primary hover:text-brand-primary hover:shadow-md active:translate-y-0;
+        @apply btn-base border border-border bg-card text-brand-navy hover:border-brand-primary hover:text-brand-primary;
     }
 
-    /* Variantes para CTAs sobre fondo oscuro/foto (hero banner, hero centrado
-       con fondo navy/gradiente) -- usadas por blocks/hero.blade.php pero
-       nunca se habian definido: quedaban como texto plano sin estilo. */
+    /* Accion principal sobre fondo OSCURO/foto (hero): amarillo institucional.
+       En B el amarillo es el color de accion, invirtiendo el criterio de A
+       (donde el boton primario era celeste). */
     .btn-white {
-        /* CTA primario sobre fondo oscuro/foto — usa el acento de marca (amarillo #EFC600 en corporativo)
-           tal como aparece en la Propuesta B aprobada. El color de texto lo calcula contrast_text_tuple(). */
-        @apply inline-flex items-center justify-center gap-2 rounded-pill bg-brand-accent text-on-accent px-6 py-3 text-sm font-bold tracking-wide transition-all duration-200 hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-brand-accent/50;
+        @apply btn-base bg-brand-accent text-on-accent hover:opacity-90;
     }
 
     .btn-ghost-white {
-        @apply inline-flex items-center justify-center gap-2 rounded-pill border border-white/70 text-white px-6 py-3 text-sm font-medium transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/10 hover:border-white active:translate-y-0;
+        @apply btn-base border border-white/80 text-white hover:bg-white/10 hover:border-white;
     }
 
+    /* Superficie de tarjeta: borde marcado, sin sombra. Es EL mecanismo de
+       separacion visual de B -- anadir box-shadow aqui contamina la identidad. */
     .card-surface {
         @apply rounded-card bg-card border border-border;
-        box-shadow: var(--shadow-card);
+    }
+
+    /* ── Chips de estado ──────────────────────────────────────────────────────
+       La maqueta B usa el mismo chip celeste para todos los estados, de modo
+       que "VIGENTE" y "CERRADO" son indistinguibles de un vistazo. Se conserva
+       la FORMA de B (rectangulo 2px, 10px, mayusculas, tracking) pero se
+       diferencia el color en tonos apagados acordes a la paleta institucional,
+       para que el ciudadano distinga el estado sin tener que leer. */
+    .chip-estado {
+        @apply inline-flex items-center gap-1.5 rounded-pill px-2 py-1 text-[10px] font-bold uppercase;
+        letter-spacing: 0.08em;
+    }
+    .chip-abierto {
+        @apply chip-estado;
+        background-color: #E6F4EA;
+        color: #1B5E32;
+    }
+    .chip-proceso {
+        @apply chip-estado;
+        background-color: #FDF3D3;
+        color: #7A5B00;
+    }
+    .chip-cerrado {
+        @apply chip-estado;
+        background-color: #EDEDED;
+        color: #5A5A5A;
     }
 
     .status-dot {
-        @apply inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse-soft;
+        @apply inline-block w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse-soft;
     }
 
     .status-dot-amber {
@@ -222,31 +264,69 @@
         @apply inline-block w-1.5 h-1.5 rounded-full bg-rose-500 animate-blink;
     }
 
+    /* Enlace de la nav principal: en B va sobre la banda NAVY, en blanco,
+       12px/700, y el activo se marca con navy mas oscuro + filete amarillo. */
     .nav-link {
-        @apply px-3.5 py-2 text-[11px] font-semibold text-fg hover:text-brand-primary transition;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
+        @apply flex-1 flex items-center justify-center px-3 py-3.5 text-xs font-bold text-white/90 uppercase transition-colors;
+        letter-spacing: 0.04em;
+        border-bottom: 3px solid transparent;
+    }
+    .nav-link:hover {
+        background-color: rgb(var(--color-primary) / 0.25);
+        @apply text-white;
+    }
+    .nav-link-active {
+        background-color: #1E1F47;
+        border-bottom-color: rgb(var(--color-accent));
+        @apply text-white;
+    }
+
+    /* Filete amarillo de 3px: separador estructural de B (bajo la franja de
+       marca, bajo el titulo de pagina y bajo el item de nav activo). */
+    .rule-accent {
+        border-bottom: 3px solid rgb(var(--color-accent));
     }
 
     .divider-hairline {
         @apply border-b border-border;
     }
 
+    /* Gradiente navy->celeste. En B es el relleno de los contenedores de imagen
+       cuando NO hay foto cargada (placeholder de card y de thumb de listado). */
     .bg-cloud-gradient {
-        background: linear-gradient(135deg, #b8d4f1 0%, #8ab4dc 40%, #5e8fc4 70%, #3b5f8f 100%);
+        background: linear-gradient(135deg, #2e2f63 0%, #009cdf 100%);
+    }
+
+    /* Miga de pan de B: banda gris con filete inferior, 11px. */
+    .breadcrumb-bar {
+        @apply bg-bg text-muted text-[11px] border-b border-border;
+    }
+
+    /* Cabecera de pagina interior: caja blanca con filete amarillo de 3px. */
+    .page-header {
+        @apply bg-card rule-accent;
     }
 }
 
 @layer utilities {
+    /* Escala tipografica de B. Es MUCHO mas contenida que la de A: el h1 del
+       hero mide 46px (A: 68px) y el titulo de seccion 26px (A: hasta 56px).
+       El tracking es ligeramente positivo, no negativo. */
     .text-display {
-        font-size: clamp(2.75rem, 5.8vw, 5.25rem);
-        line-height: 1;
-        letter-spacing: -0.025em;
+        font-size: clamp(1.85rem, 3.6vw, 2.875rem); /* -> 46px */
+        line-height: 1.16;
+        letter-spacing: 0.01em;
     }
     .text-section-title {
-        font-size: clamp(2rem, 4.2vw, 3.5rem);
-        line-height: 1.05;
-        letter-spacing: -0.02em;
+        font-size: clamp(1.35rem, 2.2vw, 1.625rem); /* -> 26px */
+        line-height: 1.23;
+        letter-spacing: 0.01em;
+    }
+    /* Titulo de pagina interior (.page-title h1 de B: 28px, tracking .5px) */
+    .text-page-title {
+        font-size: clamp(1.25rem, 2.4vw, 1.75rem); /* -> 28px */
+        line-height: 1.25;
+        letter-spacing: 0.018em;
     }
 }
 

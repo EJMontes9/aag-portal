@@ -23,26 +23,35 @@
      numero de accesos es configurable desde el admin. --}}
 <section class="bg-bg border-t border-border">
     <div class="section-wrap">
-        <h2 class="text-center text-[13px] font-sans font-bold tracking-[0.12em] uppercase text-brand-navy mb-6"
+        {{-- Rotulo de seccion en el mismo registro que el resto de bloques
+             (Neulis 18px en mayusculas); se conserva centrado porque la rejilla
+             de tiles tambien lo esta. --}}
+        <h2 class="text-center font-serif text-[18px] tracking-[0.06em] uppercase text-brand-navy mb-8"
             data-aos="fade-up">
             {{ $block->get('title', 'ACCESOS RÁPIDOS') }}
         </h2>
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        {{-- Escalon intermedio en md: entre 768 y 1024px las 3 columnas dejaban
+             los tiles demasiado anchos y las 6 los apretaban. --}}
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             @foreach($links as $link)
+                {{-- El anillo de foco va en el <a>, que es lo que recibe el foco de
+                     teclado; el resto de estados de la tarjeta cuelgan de :group. --}}
                 <a href="{{ $link['url'] ?? '#' }}"
-                   class="group block no-underline"
+                   class="group block no-underline rounded-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
                    data-stagger="quick-link"
                    style="opacity:0;">
-                    <div class="h-full card-surface px-4 py-6 text-center transition-colors duration-200 group-hover:border-brand-primary">
-                        <div class="w-10 h-10 rounded-card bg-brand-soft flex items-center justify-center mx-auto mb-2.5 transition-colors duration-200 group-hover:bg-brand-primary">
+                    <div class="h-full card-surface px-4 py-7 text-center transition-colors duration-200 group-hover:border-brand-primary group-hover:bg-brand-soft/25">
+                        <div class="w-11 h-11 rounded-card bg-brand-soft flex items-center justify-center mx-auto mb-3 transition-colors duration-200 group-hover:bg-brand-primary">
                             <svg class="w-[22px] h-[22px] text-brand-primary transition-colors duration-200 group-hover:text-white"
                                  fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                       d="{{ $iconPaths[$link['icon'] ?? 'plane'] ?? $iconPaths['plane'] }}"/>
                             </svg>
                         </div>
-                        <div class="text-[11px] font-sans font-bold text-brand-navy tracking-[0.04em] transition-colors duration-200 group-hover:text-brand-primary">
+                        {{-- Es el unico texto del tile: a 11px en condensada y
+                             mayusculas costaba leerlo de un vistazo. --}}
+                        <div class="text-[13px] font-sans font-bold text-brand-navy tracking-[0.04em] leading-snug transition-colors duration-200 group-hover:text-brand-primary">
                             {{ strtoupper($link['label'] ?? '') }}
                         </div>
                     </div>

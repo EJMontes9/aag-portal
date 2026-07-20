@@ -34,7 +34,7 @@
                 <h2 class="font-serif text-section-title text-brand-navy mt-3">
                     No hay convocatorias abiertas en este momento
                 </h2>
-                <p class="mt-3 text-[13px] text-muted leading-[1.6] max-w-xl">
+                <p class="mt-3 text-[15px] text-muted leading-relaxed max-w-xl">
                     Cuando se abra un nuevo proceso o se publique un aviso, aparecerá aquí automáticamente.
                 </p>
                 <div class="mt-5">
@@ -54,8 +54,8 @@
                 <svg class="w-8 h-8 text-brand-primary" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                 </svg>
-                <p class="font-sans text-[11px] font-bold uppercase tracking-[0.14em] text-brand-navy">PRÓXIMAMENTE</p>
-                <p class="text-[12px] text-muted leading-[1.6] max-w-[24ch]">
+                <p class="font-sans text-[12px] font-bold uppercase tracking-[0.14em] text-brand-navy">PRÓXIMAMENTE</p>
+                <p class="text-[13px] text-muted leading-relaxed max-w-[26ch]">
                     Los nuevos procesos se publican en esta sección.
                 </p>
             </div>
@@ -83,7 +83,7 @@
                     <img src="{{ $logo }}" alt="Autoridad Aeroportuaria de Guayaquil"
                          class="h-9 md:h-10 object-contain brightness-0 invert">
                 @endif
-                <span class="font-sans text-[11px] tracking-[0.14em] uppercase font-bold text-brand-accent ml-auto">
+                <span class="font-sans text-[12px] tracking-[0.14em] uppercase font-bold text-brand-accent ml-auto">
                     AVISO OFICIAL
                 </span>
             </div>
@@ -112,7 +112,7 @@
                     {{ $conv->title }}
                 </h2>
                 @if($conv->short_description)
-                    <p class="mt-4 text-on-navy/70 text-sm leading-[1.6] max-w-lg mx-auto">
+                    <p class="mt-4 text-on-navy/80 text-[15px] leading-relaxed max-w-lg mx-auto">
                         {{ $conv->short_description }}
                     </p>
                 @endif
@@ -135,21 +135,21 @@
             {{-- Cronograma de fechas --}}
             @if(count($cronograma))
                 <div class="mt-8 border-t border-white/20 pt-6" data-aos="fade-up">
-                    <p class="font-sans text-[11px] tracking-[0.14em] uppercase text-brand-accent font-bold text-center mb-4">CRONOGRAMA</p>
+                    <p class="font-sans text-[12px] tracking-[0.14em] uppercase text-brand-accent font-bold text-center mb-4">CRONOGRAMA</p>
                     <div>
                         @foreach($cronograma as $item)
                         <div class="flex items-center justify-between gap-4 py-2.5 border-b border-white/10 last:border-0">
                             <div class="flex items-center gap-2.5">
                                 {{-- Cuadrado de 6px, no punto: B no usa circulos. --}}
                                 <span class="w-1.5 h-1.5 bg-brand-accent flex-shrink-0"></span>
-                                <span class="text-on-navy/90 text-[13px] font-semibold">{{ $item['etapa'] ?? '' }}</span>
+                                <span class="text-on-navy text-[14px] font-semibold">{{ $item['etapa'] ?? '' }}</span>
                             </div>
                             <div class="text-right flex-shrink-0">
                                 @if(!empty($item['fecha']))
-                                    <span class="text-on-navy/60 text-[12px] num-tabular">
+                                    <span class="text-on-navy/70 text-[13px] num-tabular">
                                         {{ \Carbon\Carbon::parse($item['fecha'])->translatedFormat('d \\d\\e F') }}
                                         @if(!empty($item['hora']))
-                                            <span class="ml-1 text-on-navy/40">· {{ $item['hora'] }}</span>
+                                            <span class="ml-1 text-on-navy/55">· {{ $item['hora'] }}</span>
                                         @endif
                                     </span>
                                 @endif
@@ -205,14 +205,14 @@
                             </svg>
                         </div>
                     @endif
-                    <span class="font-sans text-[11px] tracking-[0.14em] uppercase font-bold text-brand-accent">AVISO OFICIAL</span>
+                    <span class="font-sans text-[12px] tracking-[0.14em] uppercase font-bold text-brand-accent">AVISO OFICIAL</span>
                 </div>
             </div>
 
             {{-- Panel derecho: contenido --}}
             <div class="bg-card p-6 md:p-8 flex flex-col justify-center">
                 {{-- El filete de 3px amarillo hace de eyebrow estructural de B. --}}
-                <span class="inline-flex items-center gap-2 font-sans text-[11px] tracking-[0.14em] uppercase font-bold text-brand-primary mb-3">
+                <span class="inline-flex items-center gap-2 font-sans text-[12px] tracking-[0.14em] uppercase font-bold text-brand-primary mb-3">
                     <span class="w-5 h-[3px] bg-brand-accent inline-block"></span>
                     Comunicado institucional
                 </span>
@@ -220,7 +220,7 @@
                     {{ $conv->title }}
                 </h2>
                 @if($conv->short_description)
-                    <p class="mt-3 text-[13px] text-muted leading-[1.6]">{{ $conv->short_description }}</p>
+                    <p class="mt-3 text-[15px] text-muted leading-relaxed">{{ $conv->short_description }}</p>
                 @endif
 
                 {{-- Video embed --}}
@@ -235,11 +235,11 @@
                 @if(count($cronograma))
                     <div class="mt-5 border-t border-border">
                         @foreach($cronograma as $item)
-                        <div class="flex items-center gap-3 text-[13px] py-2 border-b border-border last:border-0">
+                        <div class="flex items-center gap-3 text-[14px] py-2.5 border-b border-border last:border-0">
                             <span class="w-1.5 h-1.5 bg-brand-accent flex-shrink-0"></span>
                             <span class="font-semibold text-fg flex-1">{{ $item['etapa'] ?? '' }}</span>
                             @if(!empty($item['fecha']))
-                                <span class="text-muted text-[12px] num-tabular flex-shrink-0">
+                                <span class="text-muted text-[13px] num-tabular flex-shrink-0">
                                     {{ \Carbon\Carbon::parse($item['fecha'])->translatedFormat('d M Y') }}
                                     @if(!empty($item['hora'])) · {{ $item['hora'] }} @endif
                                 </span>
@@ -251,7 +251,7 @@
 
                 @if($conv->enlace_referencia)
                     <a href="{{ $conv->enlace_referencia }}" target="_blank" rel="noopener"
-                       class="mt-5 inline-flex items-center gap-2 self-start font-sans text-[11px] font-bold uppercase tracking-[0.05em] text-brand-primary hover:text-brand-navy transition-colors">
+                       class="mt-5 inline-flex items-center gap-2 self-start rounded-pill font-sans text-[12px] font-bold uppercase tracking-[0.06em] text-brand-primary hover:text-brand-navy transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
                         Más información
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
@@ -282,7 +282,7 @@
                 @if($conv->show_logo && $logo)
                     <div class="flex items-center gap-3 mb-5">
                         <img src="{{ $logo }}" alt="AAG" class="h-8 object-contain">
-                        <span class="text-[12px] text-muted">
+                        <span class="text-[13px] text-muted">
                             Autoridad Aeroportuaria de Guayaquil
                         </span>
                     </div>
@@ -298,7 +298,7 @@
 
                 {{-- Descripción --}}
                 @if($conv->short_description)
-                    <p class="mt-3 text-[13px] text-muted leading-[1.6]">
+                    <p class="mt-3 text-[15px] text-muted leading-relaxed">
                         {{ $conv->short_description }}
                     </p>
                 @endif
@@ -323,7 +323,7 @@
                 @if(count($cronograma))
                     <div class="mt-5 flex flex-wrap gap-2">
                         @foreach($cronograma as $item)
-                        <span class="inline-flex items-center gap-2 text-[12px] px-2.5 py-1 rounded-pill border border-border bg-card text-fg">
+                        <span class="inline-flex items-center gap-2 text-[13px] px-2.5 py-1.5 rounded-pill border border-border bg-card text-fg">
                             <span class="font-semibold">{{ $item['etapa'] ?? '' }}</span>
                             @if(!empty($item['fecha']))
                                 <span class="text-muted num-tabular">
@@ -392,7 +392,7 @@
                     @if($logo)
                     <div class="flex items-center gap-3 mb-4 pb-3 border-b border-border">
                         <img src="{{ $logo }}" alt="{{ settings('site_name','AAG') }}" class="h-8 object-contain">
-                        <span class="text-[12px] text-muted leading-snug">
+                        <span class="text-[13px] text-muted leading-snug">
                             {{ settings('site_name','Autoridad Aeroportuaria de Guayaquil') }}
                         </span>
                     </div>
@@ -407,7 +407,7 @@
                         {{ $conv->title }}
                     </h2>
                     @if($conv->short_description)
-                        <p class="mt-2.5 text-[13px] text-muted leading-[1.6]">
+                        <p class="mt-2.5 text-[15px] text-muted leading-relaxed">
                             {{ $conv->short_description }}
                         </p>
                     @endif
@@ -418,20 +418,20 @@
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-y border-border py-4">
                     @if($conv->area)
                     <div>
-                        <dt class="font-sans text-[10px] tracking-[0.14em] uppercase text-muted font-bold mb-1">ÁREA</dt>
-                        <dd class="text-[13px] font-semibold text-fg">{{ $conv->area }}</dd>
+                        <dt class="font-sans text-[11px] tracking-[0.14em] uppercase text-muted font-bold mb-1">ÁREA</dt>
+                        <dd class="text-[14px] font-semibold text-fg">{{ $conv->area }}</dd>
                     </div>
                     @endif
                     @if($conv->modality)
                     <div>
-                        <dt class="font-sans text-[10px] tracking-[0.14em] uppercase text-muted font-bold mb-1">MODALIDAD</dt>
-                        <dd class="text-[13px] font-semibold text-fg">{{ $conv->modality }}</dd>
+                        <dt class="font-sans text-[11px] tracking-[0.14em] uppercase text-muted font-bold mb-1">MODALIDAD</dt>
+                        <dd class="text-[14px] font-semibold text-fg">{{ $conv->modality }}</dd>
                     </div>
                     @endif
                     @if($closes)
                     <div class="sm:col-span-2">
-                        <dt class="font-sans text-[10px] tracking-[0.14em] uppercase text-muted font-bold mb-1">FECHA DE CIERRE</dt>
-                        <dd class="text-[13px] font-semibold text-fg num-tabular">
+                        <dt class="font-sans text-[11px] tracking-[0.14em] uppercase text-muted font-bold mb-1">FECHA DE CIERRE</dt>
+                        <dd class="text-[14px] font-semibold text-fg num-tabular">
                             {{ $closes->translatedFormat('d \\d\\e F \\d\\e Y · H:i') }}
                         </dd>
                     </div>
@@ -442,17 +442,17 @@
                 {{-- Cronograma (si existe) --}}
                 @if(count($cronograma))
                 <div>
-                    <p class="font-sans text-[10px] tracking-[0.14em] uppercase text-muted font-bold mb-2.5">CRONOGRAMA</p>
+                    <p class="font-sans text-[11px] tracking-[0.14em] uppercase text-muted font-bold mb-2.5">CRONOGRAMA</p>
                     <ol>
                         @foreach($cronograma as $idx => $item)
                         <li class="flex items-center gap-3 py-2 border-b border-border last:border-0">
                             {{-- Indice en cuadrado navy, no en circulo celeste. --}}
-                            <span class="w-5 h-5 rounded-pill flex items-center justify-center font-sans text-[10px] font-bold flex-shrink-0 bg-brand-soft text-brand-navy">
+                            <span class="w-5 h-5 rounded-pill flex items-center justify-center font-sans text-[11px] font-bold flex-shrink-0 bg-brand-soft text-brand-navy">
                                 {{ $idx+1 }}
                             </span>
-                            <span class="text-[13px] font-semibold text-fg flex-1 min-w-0">{{ $item['etapa'] ?? '' }}</span>
+                            <span class="text-[14px] font-semibold text-fg flex-1 min-w-0">{{ $item['etapa'] ?? '' }}</span>
                             @if(!empty($item['fecha']))
-                            <span class="text-[12px] text-muted num-tabular flex-shrink-0">
+                            <span class="text-[13px] text-muted num-tabular flex-shrink-0">
                                 {{ \Carbon\Carbon::parse($item['fecha'])->translatedFormat('d M Y') }}
                                 @if(!empty($item['hora'])) · {{ $item['hora'] }}@endif
                             </span>
@@ -466,10 +466,10 @@
                 {{-- Requisitos mínimos --}}
                 @if(count($requirements))
                 <div>
-                    <p class="font-sans text-[10px] tracking-[0.14em] uppercase text-muted font-bold mb-2.5">REQUISITOS MÍNIMOS</p>
+                    <p class="font-sans text-[11px] tracking-[0.14em] uppercase text-muted font-bold mb-2.5">REQUISITOS MÍNIMOS</p>
                     <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-1.5">
                         @foreach($requirements as $req)
-                        <li class="flex items-start gap-2 text-[13px] text-fg">
+                        <li class="flex items-start gap-2 text-[14px] text-fg leading-snug">
                             <svg class="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-brand-accent" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
                             </svg>
@@ -495,7 +495,7 @@
                 {{-- Countdown sobre banda navy plana --}}
                 <div class="bg-brand-navy rounded-card p-6">
                     @if($isOpen && $closes && $closes->isFuture())
-                        <p class="font-sans text-[10px] tracking-[0.14em] uppercase font-bold mb-3 text-brand-accent">TIEMPO RESTANTE</p>
+                        <p class="font-sans text-[11px] tracking-[0.14em] uppercase font-bold mb-3 text-brand-accent">TIEMPO RESTANTE</p>
                         {{-- Se retiro el :class de escalado al cambiar de segundo:
                              B es un diseno estatico, sin transformaciones. --}}
                         <div class="grid grid-cols-4 gap-2"
@@ -507,11 +507,11 @@
                                     <span class="font-serif text-[26px] leading-none text-on-navy num-tabular block"
                                           x-text="String({{ $k }}).padStart(2,'0')">00</span>
                                 </div>
-                                <span class="block font-sans text-[10px] tracking-[0.12em] uppercase font-bold text-on-navy/60">{{ $l }}</span>
+                                <span class="block font-sans text-[11px] tracking-[0.12em] uppercase font-bold text-on-navy/60">{{ $l }}</span>
                             </div>
                             @endforeach
                         </div>
-                        <p class="mt-3 text-[11px] text-center text-on-navy/50 num-tabular">
+                        <p class="mt-3.5 text-[12px] text-center text-on-navy/65 num-tabular">
                             Cierre: {{ $closes->translatedFormat('d \\d\\e F \\d\\e Y · H:i') }}
                         </p>
                     @else
@@ -519,7 +519,7 @@
                             <svg class="w-7 h-7 mx-auto mb-2.5 text-on-navy/40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"/>
                             </svg>
-                            <p class="font-sans text-[11px] font-bold tracking-[0.14em] uppercase text-on-navy/60">Proceso cerrado</p>
+                            <p class="font-sans text-[12px] font-bold tracking-[0.14em] uppercase text-on-navy/70">Proceso cerrado</p>
                             @if($closes)
                             <p class="font-serif text-[18px] text-on-navy/70 mt-1 num-tabular">
                                 {{ $closes->translatedFormat('d \\d\\e F · H:i') }}
@@ -533,14 +533,14 @@
                 @if($docTotal > 0)
                 <div class="card-surface overflow-hidden" x-data="{ open: false }">
                     <button type="button" @click="open = !open" :aria-expanded="open"
-                            class="w-full flex items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-brand-soft/40"
+                            class="w-full flex items-center justify-between gap-3 px-4 py-3.5 text-left transition-colors hover:bg-brand-soft/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-primary"
                             :class="open ? 'bg-brand-soft/40' : ''">
                         <div>
-                            <p class="text-[13px] font-bold text-brand-navy">Documentos del proceso</p>
-                            <p class="text-[11px] text-muted">{{ $docTotal }} archivo{{ $docTotal !== 1 ? 's' : '' }}</p>
+                            <p class="text-[14px] font-bold text-brand-navy">Documentos del proceso</p>
+                            <p class="text-[12px] text-muted">{{ $docTotal }} archivo{{ $docTotal !== 1 ? 's' : '' }}</p>
                         </div>
                         {{-- aria-hidden: el estado ya lo comunica aria-expanded. --}}
-                        <span class="shrink-0 font-sans text-[15px] font-bold leading-none w-4 text-center transition-colors"
+                        <span class="shrink-0 font-sans text-[18px] font-bold leading-none w-4 text-center transition-colors"
                               :class="open ? 'text-brand-primary' : 'text-muted'"
                               x-text="open ? '−' : '+'" aria-hidden="true">+</span>
                     </button>
@@ -552,10 +552,10 @@
                             @if($conv->bases_pdf)
                             @php $info = \App\Models\Convocatoria::fileTypeInfo($conv->bases_pdf); @endphp
                             <div class="flex items-center gap-3 px-4 py-2.5 border-b border-border last:border-0">
-                                <span class="w-8 h-8 rounded-pill flex items-center justify-center text-[10px] font-bold border border-border flex-shrink-0 bg-brand-soft text-brand-navy">{{ $info['label'] }}</span>
-                                <span class="flex-1 text-[13px] font-semibold text-fg truncate">Bases del proceso</span>
+                                <span class="w-8 h-8 rounded-pill flex items-center justify-center text-[11px] font-bold border border-border flex-shrink-0 bg-brand-soft text-brand-navy">{{ $info['label'] }}</span>
+                                <span class="flex-1 text-[14px] font-semibold text-fg truncate">Bases del proceso</span>
                                 <a href="{{ Storage::disk('public')->url($conv->bases_pdf) }}" target="_blank" download
-                                   class="flex-shrink-0 font-sans text-[11px] font-bold uppercase tracking-[0.05em] text-brand-primary hover:text-brand-navy transition-colors">Descargar</a>
+                                   class="flex-shrink-0 rounded-pill font-sans text-[12px] font-bold uppercase tracking-[0.06em] text-brand-primary hover:text-brand-navy transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card">Descargar</a>
                             </div>
                             @endif
                             @foreach($documentos as $doc)
@@ -567,10 +567,10 @@
                             @endphp
                             @if($archivo)
                             <div class="flex items-center gap-3 px-4 py-2.5 border-b border-border last:border-0">
-                                <span class="w-8 h-8 rounded-pill flex items-center justify-center text-[10px] font-bold border border-border flex-shrink-0 bg-brand-soft text-brand-navy">{{ $info['label'] }}</span>
-                                <span class="flex-1 text-[13px] font-semibold text-fg truncate" title="{{ $nombre }}">{{ $nombre }}</span>
+                                <span class="w-8 h-8 rounded-pill flex items-center justify-center text-[11px] font-bold border border-border flex-shrink-0 bg-brand-soft text-brand-navy">{{ $info['label'] }}</span>
+                                <span class="flex-1 text-[14px] font-semibold text-fg truncate" title="{{ $nombre }}">{{ $nombre }}</span>
                                 <a href="{{ $url }}" target="_blank" download
-                                   class="flex-shrink-0 font-sans text-[11px] font-bold uppercase tracking-[0.05em] text-brand-primary hover:text-brand-navy transition-colors">Descargar</a>
+                                   class="flex-shrink-0 rounded-pill font-sans text-[12px] font-bold uppercase tracking-[0.06em] text-brand-primary hover:text-brand-navy transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card">Descargar</a>
                             </div>
                             @endif
                             @endforeach
@@ -602,12 +602,12 @@
                         </span>
                         <h2 class="font-serif text-section-title text-on-navy">{{ $conv->title }}</h2>
                         @if($conv->short_description)
-                        <p class="mt-2.5 text-[13px] leading-[1.6] text-on-navy/70">{{ $conv->short_description }}</p>
+                        <p class="mt-2.5 text-[15px] leading-relaxed text-on-navy/80">{{ $conv->short_description }}</p>
                         @endif
                     </div>
                     @if($isOpen && $closes && $closes->isFuture())
                     <div class="flex-shrink-0" x-data="countdown('{{ $closes->toIso8601String() }}')" x-init="start()">
-                        <p class="font-sans text-[10px] tracking-[0.12em] uppercase font-bold mb-2 text-brand-accent">TIEMPO RESTANTE</p>
+                        <p class="font-sans text-[11px] tracking-[0.12em] uppercase font-bold mb-2 text-brand-accent">TIEMPO RESTANTE</p>
                         <div class="flex items-start gap-1.5">
                             @foreach(['days' => 'DÍAS', 'hours' => 'HRS', 'minutes' => 'MIN', 'seconds' => 'SEG'] as $k => $l)
                             <div class="text-center">
@@ -615,7 +615,7 @@
                                     <span class="font-serif text-[19px] text-on-navy num-tabular"
                                           x-text="String({{ $k }}).padStart(2,'0')">00</span>
                                 </div>
-                                <span class="block font-sans text-[10px] tracking-[0.1em] uppercase font-bold text-on-navy/60">{{ $l }}</span>
+                                <span class="block font-sans text-[11px] tracking-[0.1em] uppercase font-bold text-on-navy/60">{{ $l }}</span>
                             </div>
                             @endforeach
                         </div>
@@ -631,20 +631,20 @@
                 <dl class="grid sm:grid-cols-3 gap-0 divide-x divide-border">
                     @if($conv->area)
                     <div class="px-6 py-4">
-                        <dt class="font-sans text-[10px] tracking-[0.14em] uppercase text-muted font-bold mb-1">ÁREA</dt>
-                        <dd class="text-[13px] font-semibold text-fg">{{ $conv->area }}</dd>
+                        <dt class="font-sans text-[11px] tracking-[0.14em] uppercase text-muted font-bold mb-1">ÁREA</dt>
+                        <dd class="text-[14px] font-semibold text-fg">{{ $conv->area }}</dd>
                     </div>
                     @endif
                     @if($conv->modality)
                     <div class="px-6 py-4">
-                        <dt class="font-sans text-[10px] tracking-[0.14em] uppercase text-muted font-bold mb-1">MODALIDAD</dt>
-                        <dd class="text-[13px] font-semibold text-fg">{{ $conv->modality }}</dd>
+                        <dt class="font-sans text-[11px] tracking-[0.14em] uppercase text-muted font-bold mb-1">MODALIDAD</dt>
+                        <dd class="text-[14px] font-semibold text-fg">{{ $conv->modality }}</dd>
                     </div>
                     @endif
                     @if($closes)
                     <div class="px-6 py-4">
-                        <dt class="font-sans text-[10px] tracking-[0.14em] uppercase text-muted font-bold mb-1">FECHA DE CIERRE</dt>
-                        <dd class="text-[12px] font-semibold text-fg num-tabular leading-snug">{{ $closes->translatedFormat('d \\d\\e F \\d\\e Y · H:i') }}</dd>
+                        <dt class="font-sans text-[11px] tracking-[0.14em] uppercase text-muted font-bold mb-1">FECHA DE CIERRE</dt>
+                        <dd class="text-[13px] font-semibold text-fg num-tabular leading-snug">{{ $closes->translatedFormat('d \\d\\e F \\d\\e Y · H:i') }}</dd>
                     </div>
                     @endif
                 </dl>
@@ -652,16 +652,16 @@
                 {{-- Cronograma --}}
                 @if(count($cronograma))
                 <div class="px-6 md:px-8 py-5">
-                    <p class="font-sans text-[10px] tracking-[0.14em] uppercase text-muted font-bold mb-3">CRONOGRAMA</p>
+                    <p class="font-sans text-[11px] tracking-[0.14em] uppercase text-muted font-bold mb-3">CRONOGRAMA</p>
                     <ol>
                         @foreach($cronograma as $idx => $item)
                         <li class="flex items-center justify-between gap-3 py-2 border-b border-border last:border-0">
                             <span class="flex items-center gap-2.5 min-w-0">
-                                <span class="w-5 h-5 rounded-pill flex items-center justify-center font-sans text-[10px] font-bold flex-shrink-0 bg-brand-soft text-brand-navy">{{ $idx+1 }}</span>
-                                <span class="text-[13px] font-semibold text-fg truncate">{{ $item['etapa'] ?? '' }}</span>
+                                <span class="w-5 h-5 rounded-pill flex items-center justify-center font-sans text-[11px] font-bold flex-shrink-0 bg-brand-soft text-brand-navy">{{ $idx+1 }}</span>
+                                <span class="text-[14px] font-semibold text-fg truncate">{{ $item['etapa'] ?? '' }}</span>
                             </span>
                             @if(!empty($item['fecha']))
-                            <span class="text-[12px] text-muted num-tabular flex-shrink-0">{{ \Carbon\Carbon::parse($item['fecha'])->translatedFormat('d M Y') }}@if(!empty($item['hora'])) · {{ $item['hora'] }}@endif</span>
+                            <span class="text-[13px] text-muted num-tabular flex-shrink-0">{{ \Carbon\Carbon::parse($item['fecha'])->translatedFormat('d M Y') }}@if(!empty($item['hora'])) · {{ $item['hora'] }}@endif</span>
                             @endif
                         </li>
                         @endforeach
@@ -671,10 +671,10 @@
                 {{-- Requisitos --}}
                 @if(count($requirements))
                 <div class="px-6 md:px-8 py-5">
-                    <p class="font-sans text-[10px] tracking-[0.14em] uppercase text-muted font-bold mb-2.5">REQUISITOS MÍNIMOS</p>
+                    <p class="font-sans text-[11px] tracking-[0.14em] uppercase text-muted font-bold mb-2.5">REQUISITOS MÍNIMOS</p>
                     <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-1.5">
                         @foreach($requirements as $req)
-                        <li class="flex items-start gap-2 text-[13px] text-fg">
+                        <li class="flex items-start gap-2 text-[14px] text-fg leading-snug">
                             <svg class="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-brand-accent" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
                             {{ $req }}
                         </li>
@@ -686,13 +686,13 @@
                 @if($docTotal > 0)
                 <div x-data="{ open: false }">
                     <button type="button" @click="open = !open" :aria-expanded="open"
-                            class="w-full flex items-center justify-between gap-3 px-6 md:px-8 py-4 text-left transition-colors hover:bg-brand-soft/40"
+                            class="w-full flex items-center justify-between gap-3 px-6 md:px-8 py-4 text-left transition-colors hover:bg-brand-soft/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-primary"
                             :class="open ? 'bg-brand-soft/40' : ''">
                         <span>
-                            <span class="block text-[13px] font-bold text-brand-navy">Documentos del proceso</span>
-                            <span class="block text-[11px] text-muted">{{ $docTotal }} archivo{{ $docTotal !== 1 ? 's' : '' }}</span>
+                            <span class="block text-[14px] font-bold text-brand-navy">Documentos del proceso</span>
+                            <span class="block text-[12px] text-muted">{{ $docTotal }} archivo{{ $docTotal !== 1 ? 's' : '' }}</span>
                         </span>
-                        <span class="shrink-0 font-sans text-[15px] font-bold leading-none w-4 text-center transition-colors"
+                        <span class="shrink-0 font-sans text-[18px] font-bold leading-none w-4 text-center transition-colors"
                               :class="open ? 'text-brand-primary' : 'text-muted'"
                               x-text="open ? '−' : '+'" aria-hidden="true">+</span>
                     </button>
@@ -701,20 +701,20 @@
                             @if($conv->bases_pdf)
                             @php $info = \App\Models\Convocatoria::fileTypeInfo($conv->bases_pdf); @endphp
                             <div class="flex items-center gap-3 px-6 md:px-8 py-2.5 border-b border-border last:border-0">
-                                <span class="w-8 h-8 rounded-pill flex items-center justify-center text-[10px] font-bold border border-border flex-shrink-0 bg-brand-soft text-brand-navy">{{ $info['label'] }}</span>
-                                <span class="flex-1 text-[13px] font-semibold text-fg truncate">Bases del proceso</span>
+                                <span class="w-8 h-8 rounded-pill flex items-center justify-center text-[11px] font-bold border border-border flex-shrink-0 bg-brand-soft text-brand-navy">{{ $info['label'] }}</span>
+                                <span class="flex-1 text-[14px] font-semibold text-fg truncate">Bases del proceso</span>
                                 <a href="{{ Storage::disk('public')->url($conv->bases_pdf) }}" target="_blank" download
-                                   class="flex-shrink-0 font-sans text-[11px] font-bold uppercase tracking-[0.05em] text-brand-primary hover:text-brand-navy transition-colors">Descargar</a>
+                                   class="flex-shrink-0 rounded-pill font-sans text-[12px] font-bold uppercase tracking-[0.06em] text-brand-primary hover:text-brand-navy transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card">Descargar</a>
                             </div>
                             @endif
                             @foreach($documentos as $doc)
                             @php $archivo=$doc['archivo']??$doc['path']??''; $nombre=$doc['nombre']??basename($archivo); $info=\App\Models\Convocatoria::fileTypeInfo($archivo); $url=$archivo?Storage::disk('public')->url($archivo):'#'; @endphp
                             @if($archivo)
                             <div class="flex items-center gap-3 px-6 md:px-8 py-2.5 border-b border-border last:border-0">
-                                <span class="w-8 h-8 rounded-pill flex items-center justify-center text-[10px] font-bold border border-border flex-shrink-0 bg-brand-soft text-brand-navy">{{ $info['label'] }}</span>
-                                <span class="flex-1 text-[13px] font-semibold text-fg truncate" title="{{ $nombre }}">{{ $nombre }}</span>
+                                <span class="w-8 h-8 rounded-pill flex items-center justify-center text-[11px] font-bold border border-border flex-shrink-0 bg-brand-soft text-brand-navy">{{ $info['label'] }}</span>
+                                <span class="flex-1 text-[14px] font-semibold text-fg truncate" title="{{ $nombre }}">{{ $nombre }}</span>
                                 <a href="{{ $url }}" target="_blank" download
-                                   class="flex-shrink-0 font-sans text-[11px] font-bold uppercase tracking-[0.05em] text-brand-primary hover:text-brand-navy transition-colors">Descargar</a>
+                                   class="flex-shrink-0 rounded-pill font-sans text-[12px] font-bold uppercase tracking-[0.06em] text-brand-primary hover:text-brand-navy transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card">Descargar</a>
                             </div>
                             @endif
                             @endforeach
@@ -756,19 +756,19 @@
                         </span>
                         <h2 class="font-serif text-section-title text-brand-navy">{{ $conv->title }}</h2>
                         @if($conv->short_description)
-                        <p class="mt-2 text-[13px] text-muted leading-[1.6]">{{ $conv->short_description }}</p>
+                        <p class="mt-2 text-[15px] text-muted leading-relaxed">{{ $conv->short_description }}</p>
                         @endif
                     </div>
                     @if($isOpen && $closes && $closes->isFuture())
                     <div class="flex-shrink-0 rounded-card px-4 py-3 text-center card-surface"
                          x-data="countdown('{{ $closes->toIso8601String() }}')" x-init="start()">
-                        <p class="font-sans text-[10px] tracking-[0.12em] uppercase text-muted font-bold mb-1.5">TIEMPO RESTANTE</p>
+                        <p class="font-sans text-[11px] tracking-[0.12em] uppercase text-muted font-bold mb-1.5">TIEMPO RESTANTE</p>
                         <div class="flex items-start gap-2 justify-center">
                             @foreach(['days' => 'D', 'hours' => 'H', 'minutes' => 'M', 'seconds' => 'S'] as $k => $l)
                             <div class="text-center">
                                 <span class="font-serif text-[19px] text-brand-navy num-tabular block leading-none"
                                       x-text="String({{ $k }}).padStart(2,'0')">00</span>
-                                <span class="font-sans text-[10px] font-bold text-muted">{{ $l }}</span>
+                                <span class="font-sans text-[11px] font-bold text-muted">{{ $l }}</span>
                             </div>
                             @endforeach
                         </div>
@@ -780,17 +780,17 @@
                 @if($conv->area || $conv->modality || $closes)
                 <div class="flex flex-wrap gap-2 mt-4">
                     @if($conv->area)
-                    <span class="inline-flex items-center gap-1.5 text-[12px] px-2.5 py-1 rounded-pill border border-border bg-card text-fg">
+                    <span class="inline-flex items-center gap-1.5 text-[13px] px-2.5 py-1.5 rounded-pill border border-border bg-card text-fg">
                         {{ $conv->area }}
                     </span>
                     @endif
                     @if($conv->modality)
-                    <span class="inline-flex items-center gap-1.5 text-[12px] px-2.5 py-1 rounded-pill border border-border bg-card text-fg">
+                    <span class="inline-flex items-center gap-1.5 text-[13px] px-2.5 py-1.5 rounded-pill border border-border bg-card text-fg">
                         {{ $conv->modality }}
                     </span>
                     @endif
                     @if($closes)
-                    <span class="inline-flex items-center gap-1.5 text-[12px] px-2.5 py-1 rounded-pill border border-border bg-card text-fg num-tabular">
+                    <span class="inline-flex items-center gap-1.5 text-[13px] px-2.5 py-1.5 rounded-pill border border-border bg-card text-fg num-tabular">
                         Cierre: {{ $closes->translatedFormat('d M Y · H:i') }}
                     </span>
                     @endif
@@ -801,9 +801,9 @@
                 @if($docTotal > 0)
                 <div class="mt-4 card-surface overflow-hidden" x-data="{ open: false }">
                     <button type="button" @click="open = !open" :aria-expanded="open"
-                            class="w-full flex items-center justify-between gap-3 px-4 py-3 text-left text-[13px] font-bold text-brand-navy hover:bg-brand-soft/40 transition-colors">
+                            class="w-full flex items-center justify-between gap-3 px-4 py-3.5 text-left text-[14px] font-bold text-brand-navy hover:bg-brand-soft/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-primary">
                         <span>Documentos ({{ $docTotal }})</span>
-                        <span class="shrink-0 font-sans text-[15px] font-bold leading-none w-4 text-center transition-colors"
+                        <span class="shrink-0 font-sans text-[18px] font-bold leading-none w-4 text-center transition-colors"
                               :class="open ? 'text-brand-primary' : 'text-muted'"
                               x-text="open ? '−' : '+'" aria-hidden="true">+</span>
                     </button>
@@ -812,20 +812,20 @@
                             @if($conv->bases_pdf)
                             @php $info = \App\Models\Convocatoria::fileTypeInfo($conv->bases_pdf); @endphp
                             <div class="flex items-center gap-3 px-4 py-2.5 border-b border-border last:border-0">
-                                <span class="w-8 h-8 rounded-pill flex items-center justify-center text-[10px] font-bold border border-border flex-shrink-0 bg-brand-soft text-brand-navy">{{ $info['label'] }}</span>
-                                <span class="flex-1 text-[13px] text-fg truncate">Bases del proceso</span>
+                                <span class="w-8 h-8 rounded-pill flex items-center justify-center text-[11px] font-bold border border-border flex-shrink-0 bg-brand-soft text-brand-navy">{{ $info['label'] }}</span>
+                                <span class="flex-1 text-[14px] text-fg truncate">Bases del proceso</span>
                                 <a href="{{ Storage::disk('public')->url($conv->bases_pdf) }}" target="_blank" download
-                                   class="flex-shrink-0 font-sans text-[11px] font-bold uppercase tracking-[0.05em] text-brand-primary hover:text-brand-navy transition-colors">Descargar</a>
+                                   class="flex-shrink-0 rounded-pill font-sans text-[12px] font-bold uppercase tracking-[0.06em] text-brand-primary hover:text-brand-navy transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card">Descargar</a>
                             </div>
                             @endif
                             @foreach($documentos as $doc)
                             @php $archivo=$doc['archivo']??$doc['path']??''; $nombre=$doc['nombre']??basename($archivo); $info=\App\Models\Convocatoria::fileTypeInfo($archivo); $url=$archivo?Storage::disk('public')->url($archivo):'#'; @endphp
                             @if($archivo)
                             <div class="flex items-center gap-3 px-4 py-2.5 border-b border-border last:border-0">
-                                <span class="w-8 h-8 rounded-pill flex items-center justify-center text-[10px] font-bold border border-border flex-shrink-0 bg-brand-soft text-brand-navy">{{ $info['label'] }}</span>
-                                <span class="flex-1 text-[13px] text-fg truncate" title="{{ $nombre }}">{{ $nombre }}</span>
+                                <span class="w-8 h-8 rounded-pill flex items-center justify-center text-[11px] font-bold border border-border flex-shrink-0 bg-brand-soft text-brand-navy">{{ $info['label'] }}</span>
+                                <span class="flex-1 text-[14px] text-fg truncate" title="{{ $nombre }}">{{ $nombre }}</span>
                                 <a href="{{ $url }}" target="_blank" download
-                                   class="flex-shrink-0 font-sans text-[11px] font-bold uppercase tracking-[0.05em] text-brand-primary hover:text-brand-navy transition-colors">Descargar</a>
+                                   class="flex-shrink-0 rounded-pill font-sans text-[12px] font-bold uppercase tracking-[0.06em] text-brand-primary hover:text-brand-navy transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card">Descargar</a>
                             </div>
                             @endif
                             @endforeach
@@ -839,7 +839,7 @@
                     <img src="{{ $logo }}" alt="{{ settings('site_name','AAG') }}" class="h-6 object-contain">
                     @endif
                     <a href="{{ $convLink }}"
-                       class="inline-flex items-center gap-2 font-sans text-[11px] font-bold uppercase tracking-[0.05em] text-brand-primary hover:text-brand-navy transition-colors">
+                       class="inline-flex items-center gap-2 rounded-pill font-sans text-[12px] font-bold uppercase tracking-[0.06em] text-brand-primary hover:text-brand-navy transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
                         Ver convocatoria completa y documentos
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
                     </a>

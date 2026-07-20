@@ -34,13 +34,17 @@
 @endphp
 <section class="bg-card">
     <div class="section-wrap">
-        <header class="flex items-center justify-between gap-4 mb-6" data-aos="fade-up">
+        {{-- flex-wrap: por debajo de ~380px el titulo y el "ver todas" no caben
+             en la misma linea y se apilan en vez de comprimirse. --}}
+        <header class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 mb-8" data-aos="fade-up">
             <h2 class="font-serif text-[18px] text-brand-navy tracking-[0.06em] uppercase">
                 {{ $block->get('title', 'NOTICIAS Y BOLETINES') }}
             </h2>
             @if($block->get('show_view_all'))
+                {{-- Mismo tratamiento de "ver todas" en todos los bloques: 12px,
+                     celeste -> navy en hover y anillo de foco para teclado. --}}
                 <a href="{{ route('news.index') }}"
-                   class="shrink-0 text-[11px] font-bold text-brand-primary hover:text-brand-navy tracking-[0.05em] transition-colors uppercase">
+                   class="shrink-0 inline-flex items-center rounded-pill text-[12px] font-bold text-brand-primary hover:text-brand-navy tracking-[0.06em] transition-colors uppercase focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card">
                     {{ $block->get('view_all_label', 'VER TODAS →') }}
                 </a>
             @endif

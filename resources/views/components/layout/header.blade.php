@@ -58,7 +58,7 @@
             @foreach($topbarItems as $item)
                 <a href="{{ $item->url ?? '#' }}"
                    @if($item->target) target="{{ $item->target }}" @endif
-                   class="text-[10px] font-bold uppercase tracking-[0.05em] text-on-accent/80 hover:text-on-accent transition-colors">
+                   class="text-[12px] font-bold uppercase tracking-[0.05em] text-on-accent/85 hover:text-on-accent transition-colors rounded-pill focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy">
                     {{ $item->label }}
                 </a>
             @endforeach
@@ -68,7 +68,7 @@
 @endif
 
 {{-- ── Franja 2: contacto, reloj y redes, sobre navy ─────────────────────── --}}
-<div class="hidden md:block bg-brand-navy text-on-navy/85 text-[11px]">
+<div class="hidden md:block bg-brand-navy text-on-navy/85 text-[12px]">
     <div class="max-w-[1440px] mx-auto px-5 md:px-10 lg:px-14 h-9 flex items-center justify-between gap-4">
         <div class="flex items-center gap-5 min-w-0">
             @if(settings('contact_phone'))
@@ -120,11 +120,11 @@
                 @if($ctaEnabled)
                     <a href="{{ settings('header_cta_url', '#') }}"
                        class="hidden md:block rounded-card bg-brand-primary text-on-primary px-6 py-2.5 text-center hover:opacity-90 transition-opacity">
-                        <span class="block text-[11px] font-bold uppercase tracking-[0.07em]">
+                        <span class="block text-[12px] font-bold uppercase tracking-[0.07em]">
                             {{ settings('header_cta_label', 'Estado de vuelos') }}
                         </span>
                         @if(settings('header_cta_sublabel'))
-                            <span class="block text-[10px] text-on-primary/85 mt-0.5">{{ settings('header_cta_sublabel') }}</span>
+                            <span class="block text-[11px] text-on-primary/90 mt-0.5">{{ settings('header_cta_sublabel') }}</span>
                         @endif
                     </a>
                 @endif
@@ -161,7 +161,7 @@
                             <div class="bg-card border border-border overflow-hidden py-1">
                                 @foreach($children as $child)
                                     <a href="{{ $child->url ?? '#' }}"
-                                       class="block px-4 py-2.5 text-xs font-semibold text-fg hover:bg-brand-soft hover:text-brand-primary transition-colors">
+                                       class="block px-4 py-2.5 text-[14px] font-semibold text-fg hover:bg-brand-soft hover:text-brand-primary transition-colors">
                                         {{ $child->label }}
                                     </a>
                                 @endforeach
@@ -204,7 +204,7 @@
             @if($topbarEnabled && $topbarItems->isNotEmpty())
                 <div class="mt-3 pt-3 border-t border-border flex flex-wrap gap-x-4 gap-y-2">
                     @foreach($topbarItems as $item)
-                        <a href="{{ $item->url ?? '#' }}" class="text-[11px] font-bold uppercase tracking-[0.05em] text-muted hover:text-brand-primary">
+                        <a href="{{ $item->url ?? '#' }}" class="text-[12px] font-bold uppercase tracking-[0.05em] text-muted hover:text-brand-primary">
                             {{ $item->label }}
                         </a>
                     @endforeach

@@ -52,7 +52,7 @@
                 <h1 class="font-serif text-display text-brand-navy" data-hero-title>{!! italic_markdown_words($h1) !!}</h1>
             @endif
             @if($subtitle)
-                <p class="mt-4 text-sm text-muted max-w-[520px] leading-relaxed" data-aos="fade-up" data-aos-delay="300">{{ $subtitle }}</p>
+                <p class="mt-4 text-[15px] text-muted max-w-[560px] leading-relaxed" data-aos="fade-up" data-aos-delay="300">{{ $subtitle }}</p>
             @endif
             @if($block->get('cta1_label') || $block->get('cta2_label'))
                 <div class="mt-6 flex flex-wrap gap-3" data-aos="fade-up" data-aos-delay="450">
@@ -67,18 +67,21 @@
                         <div class="flex flex-col gap-1">
                             <span class="font-serif text-[30px] md:text-[36px] text-brand-navy leading-none num-tabular"
                                   @if($cc) data-count-to="{{ $cc['target'] }}" data-count-format="{{ $cc['format'] }}" @if(!empty($cc['suffix'])) data-count-suffix="{{ $cc['suffix'] }}" @endif @endif>{{ $s['value'] ?? '' }}</span>
-                            <span class="font-sans text-[10px] tracking-[0.1em] uppercase text-muted font-bold leading-tight">{{ $s['label'] ?? '' }}</span>
+                            <span class="font-sans text-[12px] tracking-[0.1em] uppercase text-muted font-bold leading-tight">{{ $s['label'] ?? '' }}</span>
                         </div>
                     @endforeach
                 </div>
             @endif
         </div>
 
-        {{-- Columna tarjetas --}}
+        {{-- Columna tarjetas.
+             Por debajo de sm la rejilla de 2 columnas dejaba tarjetas de ~160px
+             de ancho con titulos de 17px: se apila en una sola columna y solo a
+             partir de sm recupera el mosaico de la maqueta. --}}
         @if($cards->isNotEmpty())
-        <div class="grid grid-cols-2 grid-rows-[170px_170px] gap-4 w-full">
+        <div class="grid grid-cols-1 sm:grid-cols-2 sm:grid-rows-[170px_170px] gap-4 w-full">
             @if($imageCard)
-                <div class="row-span-2 rounded-card overflow-hidden relative bg-cloud-gradient min-h-[356px] flex flex-col justify-end"
+                <div class="sm:row-span-2 rounded-card overflow-hidden relative bg-cloud-gradient min-h-[220px] sm:min-h-[356px] flex flex-col justify-end"
                      data-aos="fade-left" data-aos-delay="200" data-aos-duration="700">
                     @if(!empty($imageCard['image']))
                         <img src="{{ Storage::disk('public')->url($imageCard['image']) }}" alt="{{ $imageCard['title'] ?? '' }}" class="absolute inset-0 w-full h-full object-cover">
@@ -89,7 +92,7 @@
                         @if(!empty($imageCard['kicker']))<span class="pill bg-brand-accent text-on-accent mb-2">{{ $imageCard['kicker'] }}</span>@endif
                         @if(!empty($imageCard['title']))<h3 class="font-serif text-xl text-white leading-tight">{{ $imageCard['title'] }}</h3>@endif
                         @if(!empty($imageCard['cta_label']) && !empty($imageCard['cta_url']))
-                            <a href="{{ $imageCard['cta_url'] }}" class="mt-2 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.05em] text-white hover:text-brand-accent transition-colors">{{ $imageCard['cta_label'] }} →</a>
+                            <a href="{{ $imageCard['cta_url'] }}" class="mt-2.5 inline-flex items-center gap-2 rounded-pill text-[12px] font-bold uppercase tracking-[0.06em] text-white hover:text-brand-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent">{{ $imageCard['cta_label'] }} →</a>
                         @endif
                     </div>
                 </div>
@@ -104,17 +107,17 @@
                     $metaColor   = $isPrimary ? 'text-on-navy/70' : 'text-muted';
                     $linkColor   = $isPrimary ? 'text-brand-accent' : 'text-brand-primary';
                 @endphp
-                <div class="{{ $cardClasses }} p-4 flex flex-col justify-between transition-colors duration-200 @if($imageCard) col-start-2 @endif"
+                <div class="{{ $cardClasses }} p-4 flex flex-col justify-between transition-colors duration-200 @if($imageCard) sm:col-start-2 @endif"
                      data-aos="fade-left" data-aos-delay="{{ 350 + $idx * 130 }}" data-aos-duration="600">
                     <div>
-                        @if(!empty($card['kicker']))<span class="font-sans text-[10px] tracking-[0.1em] uppercase {{ $kickerCls }} font-bold">{{ $card['kicker'] }}</span>@endif
+                        @if(!empty($card['kicker']))<span class="font-sans text-[12px] tracking-[0.1em] uppercase {{ $kickerCls }} font-bold">{{ $card['kicker'] }}</span>@endif
                         @if(!empty($card['title']))<h3 class="font-serif text-[17px] leading-tight mt-1.5 {{ $titleColor }}">{{ $card['title'] }}</h3>@endif
                     </div>
                     @if(!empty($card['meta']) || (!empty($card['cta_label']) && !empty($card['cta_url'])))
                         <div class="flex items-center justify-between gap-2 mt-3 @if(!empty($card['meta'])) pt-2.5 border-t {{ $borderColor }} @endif">
-                            @if(!empty($card['meta']))<span class="text-[11px] {{ $metaColor }}">{{ $card['meta'] }}</span>@endif
+                            @if(!empty($card['meta']))<span class="text-[12px] {{ $metaColor }}">{{ $card['meta'] }}</span>@endif
                             @if(!empty($card['cta_label']) && !empty($card['cta_url']))
-                                <a href="{{ $card['cta_url'] }}" class="text-[11px] font-bold uppercase tracking-[0.05em] hover:underline {{ $linkColor }}">{{ $card['cta_label'] }} →</a>
+                                <a href="{{ $card['cta_url'] }}" class="shrink-0 rounded-pill text-[12px] font-bold uppercase tracking-[0.06em] hover:underline transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary {{ $linkColor }}">{{ $card['cta_label'] }} →</a>
                             @endif
                         </div>
                     @endif
@@ -169,7 +172,7 @@
                     <div class="flex flex-col gap-1 {{ $centered ? 'items-center' : '' }}">
                         <span class="font-serif text-[34px] {{ $isDark ? 'text-white' : 'text-brand-navy' }} leading-none num-tabular"
                               @if($cc) data-count-to="{{ $cc['target'] }}" data-count-format="{{ $cc['format'] }}" @endif>{{ $s['value'] ?? '' }}</span>
-                        <span class="font-sans text-[10px] tracking-[0.1em] uppercase {{ $isDark ? 'text-white/70' : 'text-muted' }} font-bold">{{ $s['label'] ?? '' }}</span>
+                        <span class="font-sans text-[12px] tracking-[0.1em] uppercase {{ $isDark ? 'text-white/70' : 'text-muted' }} font-bold">{{ $s['label'] ?? '' }}</span>
                     </div>
                 @endforeach
             </div>
@@ -192,7 +195,7 @@
                 </span>
             @endif
             @if($h1)<h1 class="font-serif text-display text-brand-navy" data-hero-title>{!! italic_markdown_words($h1) !!}</h1>@endif
-            @if($subtitle)<p class="mt-4 text-sm text-muted max-w-[520px] leading-relaxed" data-aos="fade-up" data-aos-delay="300">{{ $subtitle }}</p>@endif
+            @if($subtitle)<p class="mt-4 text-[15px] text-muted max-w-[560px] leading-relaxed" data-aos="fade-up" data-aos-delay="300">{{ $subtitle }}</p>@endif
             @if($block->get('cta1_label') || $block->get('cta2_label'))
                 <div class="mt-6 flex flex-wrap gap-3" data-aos="fade-up" data-aos-delay="450">
                     @if($block->get('cta1_label'))<a href="{{ $block->get('cta1_url','#') }}" class="btn-primary">{{ $block->get('cta1_label') }}</a>@endif
@@ -206,7 +209,7 @@
                         <div class="flex flex-col gap-1">
                             <span class="font-serif text-[30px] md:text-[36px] text-brand-navy leading-none num-tabular"
                                   @if($cc) data-count-to="{{ $cc['target'] }}" data-count-format="{{ $cc['format'] }}" @endif>{{ $s['value'] ?? '' }}</span>
-                            <span class="font-sans text-[10px] tracking-[0.1em] uppercase text-muted font-bold leading-tight">{{ $s['label'] ?? '' }}</span>
+                            <span class="font-sans text-[12px] tracking-[0.1em] uppercase text-muted font-bold leading-tight">{{ $s['label'] ?? '' }}</span>
                         </div>
                     @endforeach
                 </div>
@@ -269,7 +272,7 @@
                     <div class="flex flex-col gap-1 {{ $centered ? 'items-center' : '' }}">
                         <span class="font-serif text-[34px] text-white leading-none num-tabular"
                               @if($cc) data-count-to="{{ $cc['target'] }}" data-count-format="{{ $cc['format'] }}" @endif>{{ $s['value'] ?? '' }}</span>
-                        <span class="font-sans text-[10px] tracking-[0.1em] uppercase text-white/70 font-bold">{{ $s['label'] ?? '' }}</span>
+                        <span class="font-sans text-[12px] tracking-[0.1em] uppercase text-white/70 font-bold">{{ $s['label'] ?? '' }}</span>
                     </div>
                 @endforeach
             </div>

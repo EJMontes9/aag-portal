@@ -45,15 +45,21 @@
             </div>
         @endif
 
+        {{-- Cada cifra va rematada por el filete amarillo superior, el mismo
+             recurso que marca las bandas del header. Da jerarquia sin recurrir
+             a sombras ni a fondos de color, que no pertenecen a B. --}}
         <div class="grid {{ $gridClass }} gap-4">
             @foreach($items as $item)
-                <div class="{{ $onNavy ? 'border border-white/15 bg-white/[0.04]' : 'card-surface' }} rounded-card px-5 py-6 text-center"
+                @php $cc = parse_stat_value_for_animation($item['value'] ?? ''); @endphp
+                <div class="relative overflow-hidden {{ $onNavy ? 'border border-white/15 bg-white/[0.04]' : 'card-surface' }} rounded-card px-5 py-7 text-center"
                      data-stagger="stat" style="opacity:0;">
-                    <div class="font-serif text-[32px] md:text-[38px] leading-none {{ $onNavy ? 'text-on-navy' : 'text-brand-navy' }} num-tabular"
-                         @if(!empty($item['value'])) data-count-to="{{ $item['value'] }}" @endif>
+                    <span class="absolute top-0 left-0 h-[3px] w-full bg-brand-accent" aria-hidden="true"></span>
+
+                    <div class="font-serif text-[38px] md:text-[44px] leading-none {{ $onNavy ? 'text-on-navy' : 'text-brand-navy' }} num-tabular"
+                         @if($cc) data-count-to="{{ $cc['target'] }}" data-count-format="{{ $cc['format'] }}" @if(!empty($cc['suffix'])) data-count-suffix="{{ $cc['suffix'] }}" @endif @endif>
                         {{ $item['value'] ?? '' }}
                     </div>
-                    <div class="mt-2 font-sans text-[11px] font-bold uppercase tracking-[0.08em] {{ $onNavy ? 'text-on-navy/70' : 'text-muted' }} leading-tight">
+                    <div class="mt-2.5 font-sans text-xs font-bold uppercase tracking-[0.08em] {{ $onNavy ? 'text-on-navy/75' : 'text-muted' }} leading-tight">
                         {{ $item['label'] ?? '' }}
                     </div>
                 </div>

@@ -20,9 +20,12 @@
 ])
 
 <header {{ $attributes->merge(['class' => 'page-header']) }}>
-    <div class="section-wrap !py-6 md:!py-8">
+    {{-- Se sube el padding vertical un escalon (24->28px y 32->40px): la cabecera
+         es el primer bloque de la pagina y necesita mas aire para separar el
+         titular del filete amarillo y de la miga de pan que la precede. --}}
+    <div class="section-wrap !py-7 md:!py-10">
         @isset($meta)
-            <div class="mb-3 flex flex-wrap items-center gap-2">
+            <div class="mb-3.5 flex flex-wrap items-center gap-2">
                 {{ $meta }}
             </div>
         @endisset
@@ -36,7 +39,11 @@
         </h1>
 
         @if($description)
-            <p class="mt-2.5 max-w-3xl text-[13px] leading-[1.6] text-muted">
+            {{-- La bajada es texto de lectura, no un metadato: sube a 15px y la
+                 medida se limita en "ch" (no en max-w-3xl) para que la linea
+                 quede en 65-75 caracteres pese a lo estrecha que es la
+                 condensada, que con un ancho fijo en px se pasa de largo. --}}
+            <p class="mt-3 max-w-[70ch] text-[15px] leading-[1.65] text-muted">
                 {{ $description }}
             </p>
         @endif

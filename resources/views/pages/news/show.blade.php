@@ -94,7 +94,10 @@
         </x-slot:meta>
         @endif
 
-        <div class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted">
+        {{-- Firma del articulo: sube a 13px porque es informacion que el lector
+             consulta de verdad (quien firma, cuando y cuanto dura), no un
+             adorno; sigue por debajo de la bajada para no competir con ella. --}}
+        <div class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-muted">
             @if($item->author)
                 <span>Por <strong class="font-semibold text-fg">{{ $item->author->name }}</strong></span>
                 <span aria-hidden="true">·</span>
@@ -103,7 +106,7 @@
                 {{ $item->published_at?->translatedFormat('d \\d\\e F \\d\\e Y') }}
             </time>
             <span aria-hidden="true">·</span>
-            <span>{{ $item->reading_time }} min de lectura</span>
+            <span class="num-tabular">{{ $item->reading_time }} min de lectura</span>
         </div>
     </x-ui.page-header>
 
@@ -138,6 +141,11 @@
         $hasSidebar = ! empty($sidebarBlocks);
     @endphp
 
+    {{-- Medida de linea: se acota el TEXTO (max-w-[72ch] en cada bloque prose),
+         no la columna. Capar la columna entera encogia tambien fotos y galerias
+         y, con sidebar, dejaba un hueco muerto de ~400px entre el cuerpo y la
+         barra lateral. Asi queda el patron editorial habitual: los medios al
+         ancho de la columna y el texto centrado en su medida de lectura. --}}
     <div class="section-wrap">
         <div class="@if($hasSidebar) news-with-sidebar @else max-w-3xl mx-auto @endif">
 
@@ -155,32 +163,41 @@
                 @endforeach
 
                 @if(! empty($item->content))
-                    {{-- Contenido legacy (RichEditor) --}}
-                    <div class="prose max-w-none
+                    {{-- Contenido legacy (RichEditor).
+                         Mismos valores que news-blocks/text.blade.php: una noticia
+                         debe leerse igual venga del editor por bloques o del
+                         campo antiguo. Cuerpo 16px / 1.75 y parrafos separados. --}}
+                    <div class="prose max-w-[72ch] mx-auto
                                 prose-headings:font-serif prose-headings:uppercase prose-headings:text-brand-navy
-                                prose-p:text-sm prose-p:text-fg prose-p:leading-[1.7]
-                                prose-li:text-sm
+                                prose-h2:text-[20px] prose-h2:mt-9 prose-h2:mb-3
+                                prose-h3:text-[17px] prose-h3:mt-7 prose-h3:mb-2
+                                prose-p:text-[16px] prose-p:text-fg prose-p:leading-[1.75] prose-p:my-[1.15em]
+                                prose-li:text-[16px] prose-li:leading-[1.7] prose-li:my-1
                                 prose-a:text-brand-primary prose-a:no-underline hover:prose-a:underline
-                                prose-strong:text-fg
+                                prose-strong:text-fg prose-strong:font-semibold
+                                prose-blockquote:border-brand-accent prose-blockquote:text-fg
                                 prose-img:rounded-card">
                         {!! $item->content !!}
                     </div>
                 @endif
 
                 {{-- Compartir --}}
-                <div class="mt-10 pt-6 border-t border-border flex items-center gap-3 text-[11px] uppercase tracking-[0.07em] font-bold text-muted">
+                {{-- Barra de compartir: flex-wrap para que a 360px no desborde,
+                     12px para que las etiquetas en mayusculas se lean, y anillo
+                     de foco en cada enlace. --}}
+                <div class="mt-10 pt-6 border-t border-border flex flex-wrap items-center gap-x-3 gap-y-2 text-[12px] uppercase tracking-[0.07em] font-bold text-muted">
                     <span>Compartir:</span>
                     <a href="https://twitter.com/intent/tweet?url={{ urlencode(url()->current()) }}&text={{ urlencode($item->title) }}"
                        target="_blank" rel="noopener"
-                       class="hover:text-brand-primary transition-colors" aria-label="Compartir en Twitter">Twitter</a>
+                       class="rounded-pill hover:text-brand-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg" aria-label="Compartir en Twitter">Twitter</a>
                     <span aria-hidden="true">·</span>
                     <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}"
                        target="_blank" rel="noopener"
-                       class="hover:text-brand-primary transition-colors" aria-label="Compartir en Facebook">Facebook</a>
+                       class="rounded-pill hover:text-brand-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg" aria-label="Compartir en Facebook">Facebook</a>
                     <span aria-hidden="true">·</span>
                     <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode(url()->current()) }}"
                        target="_blank" rel="noopener"
-                       class="hover:text-brand-primary transition-colors" aria-label="Compartir en LinkedIn">LinkedIn</a>
+                       class="rounded-pill hover:text-brand-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg" aria-label="Compartir en LinkedIn">LinkedIn</a>
                 </div>
             </div>
 
@@ -206,9 +223,11 @@
     @if($related->isNotEmpty())
         <section class="bg-card border-t border-border">
             <div class="section-wrap">
-                <header class="mb-6">
+                {{-- Mismo patron de cabecera de bloque que el resto del portal:
+                     kicker celeste + titulo Neulis + filete amarillo separador. --}}
+                <header class="mb-7 rule-accent pb-3">
                     <span class="kicker">Seguir leyendo</span>
-                    <h2 class="font-serif text-section-title uppercase text-brand-navy mt-1.5">Tambien te puede interesar</h2>
+                    <h2 class="font-serif text-section-title uppercase text-brand-navy mt-2">Tambien te puede interesar</h2>
                 </header>
                 <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-[18px]">
                     @foreach($related as $item)

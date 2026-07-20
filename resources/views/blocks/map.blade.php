@@ -32,7 +32,8 @@
 <section class="{{ $bgClass }}">
     <div class="section-wrap">
         @if($title)
-            <h2 class="font-serif text-section-title text-brand-navy mb-5">{{ $title }}</h2>
+            {{-- mb-8: mismo aire entre encabezado y contenido que el resto de bloques. --}}
+            <h2 class="font-serif text-section-title text-brand-navy mb-8">{{ $title }}</h2>
         @endif
 
         @if($cleanEmbed)
@@ -54,7 +55,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                           d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
-                <p class="font-sans text-[11px] font-bold uppercase tracking-[0.08em] text-muted">Sin codigo embed configurado</p>
+                <p class="font-sans text-[12px] font-bold uppercase tracking-[0.08em] text-muted">Sin código embed configurado</p>
             </div>
         @endif
     </div>

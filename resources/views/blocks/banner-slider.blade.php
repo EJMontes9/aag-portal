@@ -122,7 +122,7 @@
                         {{ $slide['title'] }}
                     </h2>
                     @if(!empty($slide['subtitle']))
-                        <p class="mt-4 text-sm md:text-base text-white/85 leading-[1.6] max-w-xl"
+                        <p class="mt-4 text-[15px] md:text-[17px] text-white/90 leading-[1.55] max-w-xl"
                            style="text-shadow: 0 1px 10px rgba(0,0,0,0.45);">
                             {{ $slide['subtitle'] }}
                         </p>
@@ -144,7 +144,7 @@
         <button type="button"
                 @click="prev()"
                 aria-label="Slide anterior"
-                class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-11 md:h-11 rounded-pill bg-brand-navy/75 hover:bg-brand-primary border border-white/40 flex items-center justify-center transition-colors">
+                class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-11 md:h-11 rounded-pill bg-brand-navy/75 hover:bg-brand-primary border border-white/40 flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy">
             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/>
             </svg>
@@ -152,7 +152,7 @@
         <button type="button"
                 @click="next()"
                 aria-label="Slide siguiente"
-                class="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-11 md:h-11 rounded-pill bg-brand-navy/75 hover:bg-brand-primary border border-white/40 flex items-center justify-center transition-colors">
+                class="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-11 md:h-11 rounded-pill bg-brand-navy/75 hover:bg-brand-primary border border-white/40 flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy">
             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
             </svg>
@@ -161,17 +161,22 @@
 
     {{-- Indicadores: barras rectangulares. El activo va en amarillo de accion. --}}
     @if($showIndicators && $slides->count() > 1)
-        <div class="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-1.5"
+        <div class="absolute bottom-5 md:bottom-7 left-1/2 -translate-x-1/2 z-20 flex gap-1.5"
              role="tablist"
              aria-label="Selector de slide">
             @foreach($slides as $i => $_)
+                {{-- El indicador visible sigue siendo la barra de 3px de B, pero el
+                     area clicable se amplia con padding vertical: 3px de alto es un
+                     objetivo tactil inaceptable en movil. --}}
                 <button type="button"
                         @click="go({{ $i }})"
                         :aria-selected="current === {{ $i }}"
-                        :class="current === {{ $i }} ? 'w-10 bg-brand-accent' : 'w-5 bg-white/50 hover:bg-white/80'"
-                        class="h-[3px] transition-all duration-300"
+                        class="group py-2.5 px-0.5 rounded-pill focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent"
                         aria-label="Ir al slide {{ $i + 1 }}"
-                        role="tab"></button>
+                        role="tab">
+                    <span class="block h-[3px] transition-all duration-300"
+                          :class="current === {{ $i }} ? 'w-10 bg-brand-accent' : 'w-5 bg-white/50 group-hover:bg-white/90'"></span>
+                </button>
             @endforeach
         </div>
     @endif

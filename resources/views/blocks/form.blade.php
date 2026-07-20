@@ -15,7 +15,9 @@
     // Clases de campo compartidas por input/textarea/select del preview. Formas de
     // B: borde marcado de 1px, radio 2px y CERO sombra -- el foco se marca con el
     // borde celeste, no con un halo.
-    $fieldClass = 'w-full rounded-pill border border-border bg-card px-3 py-2 text-[13px] text-fg placeholder-muted/70';
+    // El valor que el ciudadano teclea tiene que leerse mas que su etiqueta: 14px
+    // y algo mas de alto de campo (py-2.5) para no dejarlo pegado al borde.
+    $fieldClass = 'w-full rounded-pill border border-border bg-card px-3 py-2.5 text-[14px] text-fg placeholder-muted/70';
 @endphp
 
 {{-- ══ PREVIEW EN EDITOR VISUAL ════════════════════════════════════════════ --}}
@@ -35,12 +37,14 @@
         <div class="{{ $wrapClass }}">
 
             @if($title || $desc)
-                <header class="mb-6">
+                <header class="mb-8">
                     @if($title)
                         <h2 class="font-serif text-section-title text-brand-navy">{{ $title }}</h2>
                     @endif
                     @if($desc)
-                        <p class="mt-3 text-[13px] text-muted leading-[1.6]">{{ $desc }}</p>
+                        {{-- La descripcion suele explicar QUE se envia y a quien:
+                             es texto de lectura, no un pie de campo. --}}
+                        <p class="mt-3 text-[15px] text-muted leading-relaxed">{{ $desc }}</p>
                     @endif
                 </header>
             @endif
@@ -52,17 +56,17 @@
                     <svg class="w-8 h-8 text-brand-primary mx-auto mb-3" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
                     </svg>
-                    <p class="font-sans text-[11px] font-bold uppercase tracking-[0.14em] text-brand-navy mb-1">Formulario sin configurar</p>
-                    <p class="text-[12px] text-muted">Haz clic en <strong class="text-brand-navy">Editar</strong> para seleccionar un formulario.</p>
+                    <p class="font-sans text-[12px] font-bold uppercase tracking-[0.14em] text-brand-navy mb-1.5">Formulario sin configurar</p>
+                    <p class="text-[13px] text-muted">Haz clic en <strong class="text-brand-navy">Editar</strong> para seleccionar un formulario.</p>
                 </div>
             @else
                 {{-- Preview fiel al form-renderer --}}
                 <div class="card-surface overflow-hidden" style="pointer-events:none;">
-                    <div class="p-5 md:p-7 space-y-4">
+                    <div class="p-5 md:p-7 space-y-5">
                         @foreach($fields as $field)
                             @php $key = $field->field_key; @endphp
                             <div>
-                                <label class="block font-sans text-[11px] font-bold uppercase tracking-[0.08em] text-brand-navy mb-1.5">
+                                <label class="block font-sans text-[12px] font-bold uppercase tracking-[0.08em] text-brand-navy mb-2">
                                     {{ $field->label }}
                                     @if($field->required)
                                         <span class="text-[#B3261E] ml-0.5">*</span>
@@ -90,7 +94,7 @@
                                         @foreach($field->options ?? [] as $opt)
                                             <label class="flex items-center gap-2.5">
                                                 <input type="radio" disabled class="w-4 h-4 text-brand-primary border-border">
-                                                <span class="text-[13px] text-fg">{{ $opt['label'] }}</span>
+                                                <span class="text-[14px] text-fg">{{ $opt['label'] }}</span>
                                             </label>
                                         @endforeach
                                     </div>
@@ -100,7 +104,7 @@
                                         {{-- rounded-none: el plugin @tailwindcss/forms redondea la casilla
                                              por defecto y B no admite esquinas redondeadas. --}}
                                         <input type="checkbox" disabled class="mt-0.5 w-4 h-4 rounded-none text-brand-primary border-border flex-shrink-0">
-                                        <span class="text-[13px] text-fg leading-[1.6]">{{ $field->placeholder ?: $field->label }}</span>
+                                        <span class="text-[14px] text-fg leading-relaxed">{{ $field->placeholder ?: $field->label }}</span>
                                     </label>
 
                                 @else
@@ -113,15 +117,16 @@
                                 @endif
 
                                 @if($field->help_text)
-                                    <p class="mt-1.5 text-[11px] text-muted">{{ $field->help_text }}</p>
+                                    <p class="mt-1.5 text-[12px] text-muted leading-snug">{{ $field->help_text }}</p>
                                 @endif
                             </div>
                         @endforeach
                     </div>
 
                     {{-- Footer igual al form-renderer, separado por filete gris --}}
-                    <div class="px-5 md:px-7 py-4 border-t border-border flex items-center justify-between gap-4">
-                        <p class="text-[11px] text-muted">
+                    {{-- flex-wrap: a 360px la nota y el boton no caben en linea. --}}
+                    <div class="px-5 md:px-7 py-4 border-t border-border flex flex-wrap items-center justify-between gap-3">
+                        <p class="text-[12px] text-muted">
                             <span class="text-[#B3261E]">*</span> Campos obligatorios
                         </p>
                         <button type="button" disabled class="btn-primary opacity-90">
@@ -141,12 +146,14 @@
     <div class="section-wrap">
         <div class="{{ $wrapClass }}">
             @if($title || $desc)
-                <header class="mb-6">
+                <header class="mb-8">
                     @if($title)
                         <h2 class="font-serif text-section-title text-brand-navy">{{ $title }}</h2>
                     @endif
                     @if($desc)
-                        <p class="mt-3 text-[13px] text-muted leading-[1.6]">{{ $desc }}</p>
+                        {{-- La descripcion suele explicar QUE se envia y a quien:
+                             es texto de lectura, no un pie de campo. --}}
+                        <p class="mt-3 text-[15px] text-muted leading-relaxed">{{ $desc }}</p>
                     @endif
                 </header>
             @endif

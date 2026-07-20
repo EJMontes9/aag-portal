@@ -18,7 +18,7 @@
                 <h2 class="font-serif text-section-title text-on-navy mt-2">{{ $block->get('title') }}</h2>
             @endif
             @if($block->get('subtitle'))
-                <p class="mt-4 text-sm text-on-navy/75 max-w-[460px] leading-[1.6]">{{ $block->get('subtitle') }}</p>
+                <p class="mt-4 text-[15px] text-on-navy/80 max-w-[460px] leading-[1.6]">{{ $block->get('subtitle') }}</p>
             @endif
             @if($block->get('cta_label'))
                 <div class="mt-6 flex flex-wrap items-center gap-4">
@@ -26,7 +26,7 @@
                          (.btn-white), no el navy de .btn-primary, que se perderia. --}}
                     <a href="{{ $block->get('cta_url', '#') }}" target="_blank" rel="noopener" class="btn-white">{{ $block->get('cta_label') }}</a>
                     @if($block->get('cta_note'))
-                        <span class="text-xs text-on-navy/60">{{ $block->get('cta_note') }}</span>
+                        <span class="text-[13px] text-on-navy/70">{{ $block->get('cta_note') }}</span>
                     @endif
                 </div>
             @endif
@@ -36,9 +36,11 @@
              data-aos="fade-left" data-aos-duration="700" data-aos-delay="150">
             {{-- Cabecera del tablero: banda navy rematada por el filete amarillo
                  de 3px, el mismo recurso que separa la marca de la nav. --}}
-            <div class="flex items-center justify-between gap-3 bg-brand-navy rule-accent px-4 py-2.5">
-                <span class="font-sans text-[11px] font-bold uppercase tracking-[0.14em] text-on-navy">Proximas salidas</span>
-                <span class="font-mono text-[11px] text-on-navy/60">tagsa.aero/vuelos</span>
+            <div class="flex items-center justify-between gap-3 bg-brand-navy rule-accent px-4 py-3">
+                <span class="font-sans text-[12px] font-bold uppercase tracking-[0.14em] text-on-navy">Próximas salidas</span>
+                {{-- URL de referencia: es metadato, se queda un escalon por debajo
+                     del rotulo y en gris claro para no competir con el. --}}
+                <span class="font-mono text-[11px] text-on-navy/60 truncate">tagsa.aero/vuelos</span>
             </div>
             <div class="divide-y divide-border">
                 @php
@@ -56,13 +58,15 @@
                     ['15:10', 'Panama', 'A tiempo', 'emerald'],
                     ['15:35', 'Madrid', 'Retrasado', 'rose'],
                 ] as [$hora, $destino, $estado, $tono])
-                    <div class="flex items-center justify-between gap-4 py-3 px-4 transition-colors duration-200 hover:bg-brand-soft/40"
+                    {{-- gap-4 minimo y flex-wrap desactivado: la fila debe leerse
+                         como tabla incluso a 360px, de ahi el truncado del destino. --}}
+                    <div class="flex items-center justify-between gap-4 py-3.5 px-4 transition-colors duration-200 hover:bg-brand-soft/40"
                          data-stagger="flight-row" style="opacity:0;">
-                        <div class="flex items-center gap-6">
-                            <span class="font-mono num-tabular text-[13px] font-bold text-brand-navy">{{ $hora }}</span>
-                            <span class="font-sans text-[13px] text-fg">{{ $destino }}</span>
+                        <div class="flex items-center gap-4 sm:gap-6 min-w-0">
+                            <span class="font-mono num-tabular text-[14px] font-bold text-brand-navy shrink-0">{{ $hora }}</span>
+                            <span class="font-sans text-[14px] text-fg truncate">{{ $destino }}</span>
                         </div>
-                        <span class="flex items-center gap-2 font-sans text-[11px] font-bold uppercase tracking-[0.06em] text-muted">
+                        <span class="flex items-center gap-2 shrink-0 font-sans text-[12px] font-bold uppercase tracking-[0.06em] text-muted">
                             <span class="{{ $dotStyles[$tono] }}"></span>
                             {{ $estado }}
                         </span>

@@ -53,19 +53,19 @@
                     @if($conv->area)
                     <div>
                         <dt class="kicker">Área</dt>
-                        <dd class="mt-1 text-[13px] font-semibold text-fg">{{ $conv->area }}</dd>
+                        <dd class="mt-1.5 text-[15px] font-semibold text-fg">{{ $conv->area }}</dd>
                     </div>
                     @endif
                     @if($conv->modality)
                     <div>
                         <dt class="kicker">Modalidad</dt>
-                        <dd class="mt-1 text-[13px] font-semibold text-fg">{{ $conv->modality }}</dd>
+                        <dd class="mt-1.5 text-[15px] font-semibold text-fg">{{ $conv->modality }}</dd>
                     </div>
                     @endif
                     @if($closes)
                     <div class="{{ !$conv->area && !$conv->modality ? '' : 'col-span-2 md:col-span-1' }}">
                         <dt class="kicker">Fecha de cierre</dt>
-                        <dd class="mt-1 text-[13px] font-semibold text-fg num-tabular">
+                        <dd class="mt-1.5 text-[15px] font-semibold text-fg num-tabular">
                             <time datetime="{{ $closes->toIso8601String() }}">
                                 {{ $closes->translatedFormat('d \\d\\e F \\d\\e Y') }}
                                 <span class="block font-normal text-muted">{{ $closes->format('H:i') }}</span>
@@ -79,17 +79,19 @@
                 {{-- Cronograma --}}
                 @if(count($cronograma))
                 <div class="mt-8" data-aos="fade-up">
-                    <h2 class="font-serif text-lg uppercase text-brand-navy rule-accent pb-2 mb-4">Cronograma del proceso</h2>
+                    <h2 class="font-serif text-lg uppercase text-brand-navy rule-accent pb-2.5 mb-5">Cronograma del proceso</h2>
                     <ol class="relative border-l border-border ml-2 space-y-0">
                         @foreach($cronograma as $idx => $item)
                         @php $isLast = $idx === count($cronograma) - 1; @endphp
-                        <li class="relative pl-6 {{ $isLast ? 'pb-0' : 'pb-5' }}">
-                            {{-- Marcador cuadrado (2px): en B no hay circulos --}}
-                            <span class="absolute -left-[9px] top-0 w-[18px] h-[18px] rounded-pill flex items-center justify-center bg-brand-navy text-[9px] font-bold text-white">
+                        <li class="relative pl-7 {{ $isLast ? 'pb-0' : 'pb-6' }}">
+                            {{-- Marcador cuadrado (2px): en B no hay circulos.
+                                 Sube de 18 a 22px con el numero a 12px: a 9px la
+                                 cifra dentro del cuadrado no se leia. --}}
+                            <span class="absolute -left-[11px] top-0 w-[22px] h-[22px] rounded-pill flex items-center justify-center bg-brand-navy text-[12px] font-bold text-white num-tabular">
                                 {{ $idx + 1 }}
                             </span>
-                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
-                                <p class="text-[13px] font-semibold text-fg">{{ $item['etapa'] ?? '' }}</p>
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5">
+                                <p class="text-[15px] font-semibold text-fg leading-snug">{{ $item['etapa'] ?? '' }}</p>
                                 @if(!empty($item['fecha']))
                                 <span class="pill num-tabular w-fit">
                                     {{ \Carbon\Carbon::parse($item['fecha'])->translatedFormat('d \\d\\e F \\d\\e Y') }}
@@ -106,11 +108,11 @@
                 {{-- Requisitos mínimos --}}
                 @if(count($requirements))
                 <div class="mt-8" data-aos="fade-up">
-                    <h2 class="font-serif text-lg uppercase text-brand-navy rule-accent pb-2 mb-4">Requisitos mínimos</h2>
+                    <h2 class="font-serif text-lg uppercase text-brand-navy rule-accent pb-2.5 mb-5">Requisitos mínimos</h2>
                     <ul class="grid sm:grid-cols-2 gap-3">
                         @foreach($requirements as $req)
-                        <li class="flex items-start gap-3 rounded-card border border-border bg-card p-3.5 text-[13px] text-fg">
-                            <svg class="w-4 h-4 flex-shrink-0 mt-0.5 text-brand-accent" fill="none" stroke="currentColor"
+                        <li class="flex items-start gap-3 rounded-card border border-border bg-card p-4 text-[15px] leading-[1.45] text-fg">
+                            <svg class="w-4 h-4 flex-shrink-0 mt-1 text-brand-accent" fill="none" stroke="currentColor" aria-hidden="true"
                                  stroke-width="2.5" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
                             </svg>
@@ -144,7 +146,7 @@
                     </div>
                     @endif
 
-                    <p class="kicker text-white/50 mb-3">Tiempo restante</p>
+                    <p class="kicker text-white/70 mb-3">Tiempo restante</p>
                     <div class="grid grid-cols-4 gap-2"
                          x-data="countdown('{{ $closes->toIso8601String() }}')"
                          x-init="start()">
@@ -154,11 +156,14 @@
                                 <span class="block font-serif text-[1.6rem] leading-none text-white num-tabular"
                                       x-text="String({{ $k }}).padStart(2,'0')">00</span>
                             </div>
-                            <span class="block text-[10px] tracking-[0.08em] uppercase font-bold text-white/60">{{ $l }}</span>
+                            {{-- 12px y opacidad mas alta: DIAS/HRS/MIN/SEG son la
+                                 clave de lectura del contador y a 10px sobre
+                                 navy con un 60% de blanco casi desaparecian. --}}
+                            <span class="block text-[12px] tracking-[0.08em] uppercase font-bold text-white/75">{{ $l }}</span>
                         </div>
                         @endforeach
                     </div>
-                    <p class="mt-3 text-[11px] text-center text-white/40 num-tabular">
+                    <p class="mt-4 text-[12px] text-center text-white/60 num-tabular">
                         Cierre: {{ $closes->translatedFormat('d \\d\\e F \\d\\e Y · H:i') }}
                     </p>
                 </div>
@@ -169,6 +174,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"/>
                     </svg>
                     <p class="kicker text-muted">Proceso cerrado</p>
+                    <p class="mt-2 text-[12px] uppercase tracking-[0.07em] font-bold text-muted">Cerro el</p>
                     <p class="mt-1 font-serif text-lg uppercase text-brand-navy num-tabular">
                         {{ $closes->translatedFormat('d \\d\\e F \\d\\e Y') }}
                     </p>

@@ -33,49 +33,72 @@
 <section class="bg-bg">
     <div class="section-wrap">
         {{-- Filtros + busqueda --}}
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        {{-- Los chips de filtro llevan aria-current: el color por si solo no le
+             dice al lector de pantalla cual esta activo. Y anillo de foco, que
+             es la primera parada del teclado tras la miga de pan. --}}
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
             <nav class="flex flex-wrap gap-2" aria-label="Filtrar por categoria">
                 <a href="{{ route('news.index') }}"
-                   class="pill {{ ! $activeCategory ? 'bg-brand-navy text-on-navy' : 'hover:bg-brand-soft/70' }} transition-colors">
+                   @if(! $activeCategory) aria-current="page" @endif
+                   class="pill {{ ! $activeCategory ? 'bg-brand-navy text-on-navy' : 'hover:bg-brand-soft/70 hover:text-brand-primary' }} transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
                     Todas
                 </a>
                 @foreach($categories as $cat)
                     <a href="{{ route('news.index', ['categoria' => $cat->slug]) }}"
-                       class="pill {{ $activeCategory === $cat->slug ? 'bg-brand-navy text-on-navy' : 'hover:bg-brand-soft/70' }} transition-colors">
+                       @if($activeCategory === $cat->slug) aria-current="page" @endif
+                       class="pill {{ $activeCategory === $cat->slug ? 'bg-brand-navy text-on-navy' : 'hover:bg-brand-soft/70 hover:text-brand-primary' }} transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
                         {{ $cat->name }}
                     </a>
                 @endforeach
             </nav>
 
-            <form method="GET" action="{{ route('news.index') }}" class="flex items-center gap-3">
+            {{-- El buscador se estira a todo el ancho por debajo de sm para que a
+                 360px no comparta linea con "Limpiar" y quede en 2 caracteres. --}}
+            <form method="GET" action="{{ route('news.index') }}" class="flex items-center gap-3 w-full lg:w-auto">
                 @if($activeCategory)
                     <input type="hidden" name="categoria" value="{{ $activeCategory }}">
                 @endif
-                <div class="relative">
-                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <label for="news-q" class="sr-only">Buscar noticias</label>
+                <div class="relative flex-1 lg:flex-none">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
                     </svg>
                     <input type="search"
+                           id="news-q"
                            name="q"
                            value="{{ $q ?? '' }}"
                            placeholder="Buscar noticias..."
-                           class="pl-9 pr-4 py-2 rounded-pill border border-border bg-card text-[13px] focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary w-full sm:w-72">
+                           class="pl-10 pr-4 py-2.5 rounded-pill border border-border bg-card text-[15px] focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary w-full lg:w-72">
                 </div>
                 @if($q)
                     <a href="{{ route('news.index', ['categoria' => $activeCategory]) }}"
-                       class="text-[11px] uppercase font-bold tracking-[0.07em] text-muted hover:text-brand-primary transition-colors">Limpiar</a>
+                       class="shrink-0 rounded-pill text-[12px] uppercase font-bold tracking-[0.07em] text-muted hover:text-brand-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg">Limpiar</a>
                 @endif
             </form>
         </div>
 
         {{-- Listado --}}
         @if($news->isEmpty())
-            <div class="mt-10 text-center py-16 rounded-card border border-dashed border-border bg-card">
-                <svg class="w-10 h-10 mx-auto text-muted/60" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            {{-- Estado vacio con salida: en vez de dejar al usuario en un callejon
+                 sin salida se le ofrece la accion que lo desbloquea (quitar el
+                 filtro activo) o, si no habia filtro, ir a otra seccion. --}}
+            <div class="mt-10 px-5 text-center py-16 rounded-card border border-dashed border-border bg-card">
+                <svg class="w-10 h-10 mx-auto text-muted/60" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5"/>
                 </svg>
                 <p class="mt-4 font-serif text-page-title uppercase text-brand-navy">No hay noticias que mostrar</p>
-                <p class="mt-2 text-[13px] text-muted">@if($q) No encontramos resultados para "{{ $q }}". @else Aun no se han publicado noticias en esta categoria. @endif</p>
+                <p class="mt-3 mx-auto max-w-[60ch] text-[15px] leading-[1.6] text-muted">
+                    @if($q)
+                        No encontramos resultados para <strong class="font-semibold text-fg">&ldquo;{{ $q }}&rdquo;</strong>. Prueba con otra palabra o revisa el listado completo.
+                    @elseif($activeCategory)
+                        Aun no se han publicado noticias en esta categoria. Puedes consultar el resto de la sala de prensa.
+                    @else
+                        Aun no se han publicado noticias. Vuelve pronto: aqui se publican los comunicados oficiales de la institucion.
+                    @endif
+                </p>
+                @if($q || $activeCategory)
+                    <a href="{{ route('news.index') }}" class="btn-ghost mt-6">Ver todas las noticias</a>
+                @endif
             </div>
         @else
             {{-- En B el listado de noticias es una PILA de filas horizontales
@@ -108,13 +131,17 @@
                                 </span>
                             @endif
 
-                            <h2 class="font-serif text-base leading-snug text-brand-navy">
-                                <a href="{{ route('news.show', $item->slug) }}" class="transition-colors group-hover:text-brand-primary">
+                            {{-- Jerarquia de la fila: titulo 18px > entradilla 14px
+                                 > metadato 12px. Antes titulo y entradilla se
+                                 separaban poco y el bloque se leia plano. --}}
+                            <h2 class="font-serif text-[18px] leading-[1.25] text-brand-navy">
+                                <a href="{{ route('news.show', $item->slug) }}"
+                                   class="rounded-pill transition-colors group-hover:text-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card">
                                     {{ $item->title }}
                                 </a>
                             </h2>
 
-                            <div class="mt-1.5 text-[11px] text-muted">
+                            <div class="mt-2 text-[12px] text-muted num-tabular">
                                 <time datetime="{{ $item->published_at?->toIso8601String() }}">
                                     {{ $item->published_at?->format('d.m.Y') }}
                                 </time>
@@ -123,7 +150,7 @@
                             </div>
 
                             @if($item->excerpt)
-                                <p class="mt-2 text-xs leading-[1.6] text-muted line-clamp-2">{{ $item->excerpt }}</p>
+                                <p class="mt-2.5 text-[14px] leading-[1.6] text-muted line-clamp-2">{{ $item->excerpt }}</p>
                             @endif
                         </div>
                     </article>

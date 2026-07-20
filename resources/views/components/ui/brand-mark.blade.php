@@ -16,7 +16,10 @@
     $triangleColor = $tone === 'on-navy' ? 'rgb(var(--color-navy))' : 'rgb(var(--color-accent))';
 @endphp
 
-<a href="/" {{ $attributes->merge(['class' => 'flex items-center gap-3']) }}>
+{{-- Anillo de foco sin offset: el mismo componente se pinta sobre blanco en la
+     cabecera y sobre navy en el pie, y un offset claro solo funcionaria en uno
+     de los dos. Es el primer elemento tabulable de la pagina. --}}
+<a href="/" {{ $attributes->merge(['class' => 'flex items-center gap-3 rounded-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary']) }}>
     @if($logoLight)
         <img src="{{ $logoLight }}" alt="{{ $siteName }}"
              loading="{{ $eager ? 'eager' : 'lazy' }}" decoding="async" @if($eager) fetchpriority="high" @endif
@@ -38,7 +41,10 @@
     @if($showText)
         <span class="flex flex-col leading-[1.15]">
             <span class="font-sans font-bold {{ $titleColor }} text-[14px]">Autoridad Aeroportuaria</span>
-            <span class="font-sans text-[10px] tracking-[0.22em] uppercase {{ $subtitleColor }} font-semibold">DE GUAYAQUIL</span>
+            {{-- 11px: mayusculas condensadas con tracking de 0.22em, el caso mas
+                 desfavorable de la familia. Cabe de sobra en la franja de 72/90px
+                 de la cabecera, que la marca el alto del logotipo. --}}
+            <span class="font-sans text-[11px] tracking-[0.2em] uppercase {{ $subtitleColor }} font-semibold">DE GUAYAQUIL</span>
         </span>
     @endif
 </a>

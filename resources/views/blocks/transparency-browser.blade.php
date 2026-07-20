@@ -67,7 +67,7 @@
                     <h2 class="font-serif text-section-title text-brand-navy mt-2">{{ $title }}</h2>
                 @endif
                 @if($intro)
-                    <p class="mt-3 text-sm text-muted leading-[1.6] whitespace-pre-line">{{ $intro }}</p>
+                    <p class="mt-3 text-[15px] text-muted leading-relaxed whitespace-pre-line">{{ $intro }}</p>
                 @endif
             </header>
         @endif
@@ -78,7 +78,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z"/>
                 </svg>
                 <p class="mt-4 font-serif text-section-title text-brand-navy">Aun no hay informacion publicada</p>
-                <p class="mt-2 text-sm text-muted">El administrador puede agregar años, meses y documentos desde el panel.</p>
+                <p class="mt-2 text-[15px] text-muted">El administrador puede agregar años, meses y documentos desde el panel.</p>
             </div>
         @else
             <div class="mt-8 grid lg:grid-cols-[220px_1fr] gap-6"
@@ -91,8 +91,11 @@
 
                 {{-- Sidebar: lista de años --}}
                 <aside>
-                    <h3 class="font-sans text-[10px] tracking-[0.18em] uppercase text-muted font-bold mb-2">MENU</h3>
-                    <nav class="flex flex-col gap-1.5" aria-label="Seleccionar año">
+                    <h3 class="font-sans text-[11px] tracking-[0.18em] uppercase text-muted font-bold mb-2.5">MENU</h3>
+                    {{-- En movil los años van en fila envolvente (como un selector de
+                         pestanas); apilados en vertical empujaban el contenido varias
+                         pantallas hacia abajo. A partir de lg vuelve a ser columna. --}}
+                    <nav class="flex flex-wrap lg:flex-col gap-1.5" aria-label="Seleccionar año">
                         @foreach($tree as $year)
                             {{-- El año activo se marca en navy solido (el color de
                                  seleccion de B); los inactivos son caja blanca con
@@ -100,7 +103,7 @@
                             <button type="button"
                                     @click="setYear({{ $year['id'] }})"
                                     :class="yearId === {{ $year['id'] }} ? 'bg-brand-navy text-on-navy border-brand-navy' : 'bg-card text-brand-navy border-border hover:border-brand-primary hover:text-brand-primary'"
-                                    class="w-full text-center font-sans text-xs font-bold uppercase tracking-[0.07em] py-2.5 px-4 rounded-pill border transition-colors num-tabular">
+                                    class="flex-1 min-w-[76px] lg:flex-none lg:w-full text-center font-sans text-[13px] font-bold uppercase tracking-[0.07em] py-2.5 px-4 rounded-pill border transition-colors num-tabular focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
                                 {{ $year['year'] }}
                             </button>
                         @endforeach
@@ -113,7 +116,7 @@
                         <div x-show="yearId === {{ $year['id'] }}" x-cloak class="space-y-1.5">
                             @if(empty($year['months']))
                                 <div class="text-center py-10 card-surface border-dashed">
-                                    <p class="text-sm text-muted">No hay meses publicados para {{ $year['year'] }}.</p>
+                                    <p class="text-[15px] text-muted">No hay meses publicados para {{ $year['year'] }}.</p>
                                 </div>
                             @endif
 
@@ -122,11 +125,11 @@
                                     {{-- Modo redireccion: enlace directo --}}
                                     <a href="{{ $month['redirect_url'] }}"
                                        target="_blank" rel="noopener"
-                                       class="group flex items-center gap-3 px-4 py-3 card-surface hover:border-brand-primary hover:bg-brand-soft/40 transition-colors">
+                                       class="group flex items-center gap-3 px-4 py-3.5 card-surface hover:border-brand-primary hover:bg-brand-soft/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
                                         <svg class="w-4 h-4 text-brand-primary shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244"/>
                                         </svg>
-                                        <span class="flex-1 font-sans text-[13px] font-bold text-brand-navy">
+                                        <span class="flex-1 font-sans text-[14px] font-bold text-brand-navy">
                                             {{ $month['name'] }}
                                             @if($month['redirect_label'])
                                                 <span class="text-muted font-normal">· {{ $month['redirect_label'] }}</span>
@@ -143,8 +146,8 @@
                                         <button type="button"
                                                 @click="setMonth({{ $month['id'] }})"
                                                 :aria-expanded="monthId === {{ $month['id'] }}"
-                                                class="w-full flex items-center justify-between gap-3 text-left px-4 py-3 hover:bg-brand-soft/40 transition-colors">
-                                            <span class="flex items-center gap-2 font-sans text-[13px] font-bold text-brand-navy">
+                                                class="w-full flex items-center justify-between gap-3 text-left px-4 py-3.5 hover:bg-brand-soft/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-primary">
+                                            <span class="flex items-center gap-2.5 font-sans text-[14px] font-bold text-brand-navy">
                                                 <svg class="w-4 h-4 transition-colors"
                                                      :class="monthId === {{ $month['id'] }} ? 'text-brand-primary' : 'text-brand-accent'"
                                                      fill="currentColor" viewBox="0 0 24 24">
@@ -152,7 +155,7 @@
                                                 </svg>
                                                 {{ $month['name'] }}
                                             </span>
-                                            <span class="font-sans text-[11px] text-muted uppercase tracking-[0.05em]">
+                                            <span class="shrink-0 font-sans text-[12px] text-muted uppercase tracking-[0.05em]">
                                                 @if(count($month['documents']) > 0)
                                                     {{ count($month['documents']) }} archivo{{ count($month['documents']) !== 1 ? 's' : '' }}
                                                 @else
@@ -170,7 +173,7 @@
                                                 <div class="border-t border-border">
                                                     <table class="w-full">
                                                         <thead class="bg-bg">
-                                                            <tr class="text-left text-[10px] tracking-[0.14em] uppercase text-muted font-bold">
+                                                            <tr class="text-left text-[11px] tracking-[0.14em] uppercase text-muted font-bold">
                                                                 <th class="px-4 py-2 border-b border-border">Archivo</th>
                                                                 <th class="px-4 py-2 border-b border-border text-right">Acciones</th>
                                                             </tr>
@@ -189,8 +192,10 @@
                                                                                 </svg>
                                                                             </span>
                                                                             <div>
-                                                                                <p class="font-sans text-[13px] font-bold text-brand-navy leading-tight">{{ $doc['title'] }}</p>
-                                                                                <p class="text-[11px] text-muted mt-0.5 num-tabular">
+                                                                                <p class="font-sans text-[14px] font-bold text-brand-navy leading-snug">{{ $doc['title'] }}</p>
+                                                                                {{-- Extension y peso son metadato: se quedan en gris y un
+                                                                                     escalon por debajo del nombre del archivo. --}}
+                                                                                <p class="text-[12px] text-muted mt-0.5 num-tabular">
                                                                                     {{ strtoupper($doc['extension']) }}
                                                                                     @if($doc['size_human']) · {{ $doc['size_human'] }} @endif
                                                                                 </p>
@@ -201,7 +206,7 @@
                                                                         <a href="{{ $doc['url'] }}"
                                                                            target="_blank" rel="noopener"
                                                                            download
-                                                                           class="inline-flex items-center justify-center w-8 h-8 rounded-pill bg-brand-navy text-on-navy hover:bg-brand-primary transition-colors"
+                                                                           class="inline-flex items-center justify-center w-9 h-9 rounded-pill bg-brand-navy text-on-navy hover:bg-brand-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                                                                            aria-label="Descargar {{ $doc['title'] }}">
                                                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/>
@@ -214,7 +219,7 @@
                                                     </table>
                                                 </div>
                                             @else
-                                                <div class="border-t border-border px-4 py-3 text-[13px] text-muted">
+                                                <div class="border-t border-border px-4 py-3.5 text-[14px] text-muted">
                                                     No hay documentos publicados para este mes.
                                                 </div>
                                             @endif

@@ -38,6 +38,9 @@ amarillo institucional reservado para separadores y acciones.
    navegación. Se permiten cambios de color en hover; **no** desplazamientos
    (`-translate-y`), escalados ni sombras que aparecen.
 6. **Tracking positivo en titulares.** B usa `+0.5px`; A usaba negativo.
+7. **Todo lo clicable necesita `focus-visible`.** Anillo de 2px en
+   `brand-primary` (o `brand-accent` sobre navy). Dentro de cajas pegadas usa
+   `ring-inset`, que si no el anillo se solapa con el elemento contiguo.
 
 ---
 
@@ -62,19 +65,35 @@ Los valores viven en `site_settings` y se inyectan como variables CSS en
 
 ## Escala tipográfica
 
+**La raíz está a 106.25% (17px), no a los 16px por defecto.** Barlow Condensed
+es estrecha: al mismo `font-size` se lee bastante más pequeña que una fuente de
+ancho normal. Subir la raíz reescala todo lo que va en `rem` —texto y
+espaciados— de forma proporcional, así que el diseño mantiene sus relaciones y
+gana legibilidad. Ojo al leer el código: `text-sm` son ~15px, no 14px.
+
+Los anchos de contenedor van en `px` a propósito y **no** escalan: el contenido
+crece dentro de la misma caja.
+
 | Uso | Tamaño | Familia |
 |---|---|---|
 | H1 hero | 46px | Neulis Black |
 | Título de página interior | 28px | Neulis Black |
 | Título de sección | 26px | Neulis Black |
 | Rótulo de sección (MAYÚS) | 18px | Neulis Black |
-| Título de tarjeta | 14px / 600 | Barlow Condensed |
-| Cuerpo | 13-14px | Barlow Condensed |
-| Meta, breadcrumb | 11px | Barlow Condensed |
-| Chip de estado | 10px / 700 | Barlow Condensed |
+| Cuerpo de artículo | 16px | Barlow Condensed |
+| Título de tarjeta | 15px / 600 | Barlow Condensed |
+| Cuerpo | 14-15px | Barlow Condensed |
+| Meta, breadcrumb | 12-13px | Barlow Condensed |
+| Chip, rótulo micro | 11-12px / 700 | Barlow Condensed |
 
-La maqueta baja hasta 9px; aquí se subió el suelo a 10-11px por legibilidad y
-accesibilidad, conservando la sensación de densidad.
+**Suelo de 11px.** La maqueta baja hasta 9px; en mayúsculas condensadas con
+tracking eso es prácticamente ilegible, y peor sobre fondo navy. Nada de texto
+por debajo de 11px, y sólo para rótulos de una o dos palabras: cualquier cosa
+que se lea de corrido va a 14px o más.
+
+**Medida de línea.** En texto largo (cuerpo de noticia, respuestas de FAQ) la
+columna se acota a 70-72 caracteres. Se acota el *texto*, no la columna, para
+no encoger también fotos, galerías y mapas.
 
 ## Espaciado
 

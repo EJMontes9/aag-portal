@@ -29,9 +29,13 @@
     {{-- Grid de miniaturas --}}
     <div class="grid grid-cols-1 {{ $gridClass }} gap-3">
         @foreach($images as $i => $img)
+            {{-- aria-label + anillo de foco: la miniatura solo contiene una
+                 imagen, sin etiqueta el boton se anuncia vacio, y sin anillo no
+                 se sabe en que foto esta el foco al tabular por la galeria. --}}
             <button type="button"
                     @click="show({{ $i }})"
-                    class="group block aspect-square overflow-hidden rounded-card bg-brand-soft/30">
+                    aria-label="Ampliar imagen {{ $i + 1 }} de {{ $images->count() }}"
+                    class="group block aspect-square overflow-hidden rounded-card border border-border bg-brand-soft/30 transition-colors hover:border-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
                 <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($img['image']) }}"
                      alt="{{ $img['alt'] ?? '' }}"
                      loading="lazy"
@@ -51,7 +55,7 @@
         <button type="button"
                 @click="close()"
                 aria-label="Cerrar"
-                class="absolute top-5 right-5 w-11 h-11 rounded-pill bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition-colors">
+                class="absolute top-5 right-5 w-11 h-11 rounded-pill bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
 
@@ -59,7 +63,7 @@
                 @click="prev()"
                 aria-label="Imagen anterior"
                 x-show="images.length > 1"
-                class="absolute left-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-pill bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition-colors">
+                class="absolute left-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-pill bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/></svg>
         </button>
 
@@ -67,15 +71,15 @@
                 @click="next()"
                 aria-label="Imagen siguiente"
                 x-show="images.length > 1"
-                class="absolute right-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-pill bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition-colors">
+                class="absolute right-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-pill bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
         </button>
 
         <div class="max-w-[90vw] max-h-[85vh] flex flex-col items-center" @click.stop>
             <img :src="images[idx]?.src" :alt="images[idx]?.alt" class="max-w-full max-h-[80vh] object-contain rounded-card">
             <p x-show="images[idx]?.caption" x-text="images[idx]?.caption"
-               class="mt-3 text-white/85 text-sm text-center max-w-2xl"></p>
-            <p class="mt-2 text-white/60 text-xs">
+               class="mt-3 text-white/85 text-[15px] leading-[1.5] text-center max-w-2xl"></p>
+            <p class="mt-2 text-white/70 text-[12px] num-tabular">
                 <span x-text="idx + 1"></span> / <span x-text="images.length"></span>
             </p>
         </div>

@@ -45,8 +45,8 @@
 
         <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-10">
             <div>
-                <h4 class="text-[11px] font-bold text-brand-accent uppercase tracking-[0.09em] mb-3">DIRECCIÓN</h4>
-                <div class="space-y-2 text-xs text-on-navy/70">
+                <h4 class="text-[12px] font-bold text-brand-accent uppercase tracking-[0.09em] mb-3.5">DIRECCIÓN</h4>
+                <div class="space-y-2.5 text-[14px] text-on-navy/75">
                     @if(settings('contact_address'))<p class="leading-relaxed">{{ settings('contact_address') }}</p>@endif
                     @if(settings('contact_phone'))<p class="num-tabular">{{ settings('contact_phone') }}</p>@endif
                     @if(settings('contact_email'))
@@ -60,8 +60,8 @@
 
             @foreach($columns as $col)
                 <div>
-                    <h4 class="text-[11px] font-bold text-brand-accent uppercase tracking-[0.09em] mb-3">{{ $col['label'] }}</h4>
-                    <ul class="space-y-2 text-xs text-on-navy/70">
+                    <h4 class="text-[12px] font-bold text-brand-accent uppercase tracking-[0.09em] mb-3.5">{{ $col['label'] }}</h4>
+                    <ul class="space-y-2.5 text-[14px] text-on-navy/75">
                         @foreach($col['menu']->items as $item)
                             @if($item->is_active)
                                 <li>
@@ -78,7 +78,7 @@
 
         @if($socialLinks)
             <div class="mt-10 pt-6 border-t border-white/15 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <p class="text-[11px] font-bold text-brand-accent uppercase tracking-[0.09em]">SÍGUENOS</p>
+                <p class="text-[12px] font-bold text-brand-accent uppercase tracking-[0.09em]">SÍGUENOS</p>
                 <div class="flex items-center gap-2.5">
                     @foreach($socialLinks as $net => $url)
                         {{-- Cuadrados, no circulos: en B no existe ninguna forma redondeada --}}
@@ -92,12 +92,14 @@
             </div>
         @endif
 
-        <div class="mt-6 pt-5 border-t border-white/15 flex flex-col md:flex-row justify-between gap-3 text-[10px] text-on-navy/50">
+        {{-- 12px y opacidad 65%: a 10px sobre /50 el aviso legal quedaba casi
+             ilegible, y es justo el texto que la gente busca a proposito. --}}
+        <div class="mt-6 pt-5 border-t border-white/15 flex flex-col md:flex-row justify-between gap-3 text-[12px] text-on-navy/65">
             <p>{{ settings('footer_copyright') }}</p>
             <div class="flex flex-wrap gap-5">
-                <a href="/politica-privacidad" class="hover:text-white transition-colors">Política de privacidad</a>
-                <a href="/terminos" class="hover:text-white transition-colors">Términos de uso</a>
-                <a href="/sitemap" class="hover:text-white transition-colors">Mapa del sitio</a>
+                <a href="/politica-privacidad" class="rounded-pill hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent">Política de privacidad</a>
+                <a href="/terminos" class="rounded-pill hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent">Términos de uso</a>
+                <a href="/sitemap" class="rounded-pill hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent">Mapa del sitio</a>
             </div>
         </div>
     </div>

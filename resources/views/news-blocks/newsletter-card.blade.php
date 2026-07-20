@@ -43,7 +43,9 @@
             }
         }
      }">
-    <p class="text-[10px] tracking-[0.18em] uppercase text-on-navy/60 font-semibold">
+    {{-- 12px: el rotulo va en mayusculas sobre navy, y a 10px el contraste
+         percibido de la condensada lo volvia casi decorativo. --}}
+    <p class="text-[12px] tracking-[0.16em] uppercase text-on-navy/70 font-semibold">
         {{ $kicker }}
     </p>
 
@@ -52,7 +54,7 @@
     </h3>
 
     @if($subtitle)
-        <p class="text-[13px] text-on-navy/70 leading-relaxed">
+        <p class="text-[15px] text-on-navy/75 leading-[1.6]">
             {{ $subtitle }}
         </p>
     @endif
@@ -66,13 +68,13 @@
                x-model="email"
                required
                placeholder="{{ $placeholder }}"
-               class="w-full px-4 py-2.5 rounded-pill bg-card text-fg text-sm placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand-accent"
+               class="w-full px-4 py-3 rounded-pill bg-card text-fg text-[15px] placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 focus:ring-offset-brand-navy"
                :disabled="loading">
 
         <button type="submit"
                 :disabled="loading || !email"
                 {{-- Amarillo institucional = color de accion sobre fondo oscuro, con texto oscuro (token on-accent) --}}
-                class="w-full px-4 py-2.5 rounded-pill bg-brand-accent text-on-accent font-semibold text-sm hover:bg-brand-accent/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+                class="w-full px-4 py-3 rounded-pill bg-brand-accent text-on-accent font-bold text-[13px] uppercase tracking-[0.07em] hover:bg-brand-accent/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy">
             <span x-show="!loading">{{ $buttonLabel }}</span>
             <span x-show="loading" x-cloak>Enviando...</span>
         </button>
@@ -82,7 +84,10 @@
            x-transition.opacity
            {{-- Sobre navy: tinte celeste de marca para el exito, rojo apagado legible para el error --}}
            :class="success ? 'text-brand-soft' : 'text-[#F2B8B5]'"
-           class="text-xs leading-relaxed"
+           {{-- role=status: el mensaje aparece sin recargar, hay que anunciarlo --}}
+           role="status"
+           aria-live="polite"
+           class="text-[13px] leading-[1.5]"
            x-text="message"></p>
     </form>
 </div>

@@ -93,13 +93,26 @@
         --color-border: 39 48 72;
     }
 
+    /* Compensacion de la condensada.
+
+       Barlow Condensed es estrecha: a igual font-size se lee bastante mas
+       pequena que una fuente de ancho normal, y la maqueta ademas baja hasta
+       9-11px. Subir la raiz un escalon reescala TODO lo que va en rem (texto y
+       espaciados) de forma proporcional, asi que el diseno mantiene sus
+       relaciones pero gana legibilidad. Es preferible a retocar cien tamanos
+       sueltos, que descuadraria el ritmo.
+
+       Los anchos de contenedor van en px a proposito y NO escalan: el
+       contenido crece dentro de la misma caja, que es justo lo buscado. */
     html {
         @apply scroll-smooth;
+        font-size: 106.25%; /* 16px -> 17px */
     }
 
     body {
         @apply bg-bg text-fg font-sans antialiased;
         font-feature-settings: 'ss01', 'cv11';
+        line-height: 1.5;
     }
 
     [x-cloak] { display: none !important; }
@@ -153,7 +166,7 @@
        letter-spacing 1.5px y va en CELESTE, no en gris. */
     .kicker {
         font-family: var(--font-sans);
-        @apply text-[11px] uppercase text-brand-primary font-bold;
+        @apply text-xs uppercase text-brand-primary font-bold;
         letter-spacing: 0.14em;
     }
 
@@ -185,9 +198,10 @@
     }
 
     /* Chip rectangular sobre tinte celeste. En B mide 9px/700 con tracking .8px
-       y radio 2px -- nunca es una pildora redondeada. */
+       y radio 2px -- nunca es una pildora redondeada. Se sube a 11px: a 9px
+       las mayusculas condensadas con tracking son practicamente ilegibles. */
     .pill {
-        @apply inline-flex items-center gap-1.5 rounded-pill bg-brand-soft text-brand-navy px-2 py-1 text-[10px] font-bold uppercase;
+        @apply inline-flex items-center gap-1.5 rounded-pill bg-brand-soft text-brand-navy px-2.5 py-1 text-[11px] font-bold uppercase;
         letter-spacing: 0.08em;
     }
 
@@ -196,7 +210,7 @@
        letter-spacing .8px, radio 2px, sin sombra y sin desplazamiento en hover
        (B es un diseno estatico; el unico hover de la maqueta es el de la nav). */
     .btn-base {
-        @apply inline-flex items-center justify-center gap-2 rounded-pill px-6 py-3 text-xs font-bold uppercase transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-brand-primary;
+        @apply inline-flex items-center justify-center gap-2 rounded-pill px-6 py-3 text-[13px] font-bold uppercase transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-brand-primary;
         letter-spacing: 0.07em;
     }
 
@@ -233,7 +247,7 @@
        diferencia el color en tonos apagados acordes a la paleta institucional,
        para que el ciudadano distinga el estado sin tener que leer. */
     .chip-estado {
-        @apply inline-flex items-center gap-1.5 rounded-pill px-2 py-1 text-[10px] font-bold uppercase;
+        @apply inline-flex items-center gap-1.5 rounded-pill px-2.5 py-1 text-[11px] font-bold uppercase;
         letter-spacing: 0.08em;
     }
     .chip-abierto {
@@ -276,7 +290,7 @@
     /* Enlace de la nav principal: en B va sobre la banda NAVY, en blanco,
        12px/700, y el activo se marca con navy mas oscuro + filete amarillo. */
     .nav-link {
-        @apply flex-1 flex items-center justify-center px-3 py-3.5 text-xs font-bold text-white/90 uppercase transition-colors;
+        @apply flex-1 flex items-center justify-center text-center px-3 py-3.5 text-[13px] font-bold text-white/90 uppercase transition-colors;
         letter-spacing: 0.04em;
         border-bottom: 3px solid transparent;
     }
@@ -327,9 +341,9 @@
         background: linear-gradient(135deg, #2e2f63 0%, #009cdf 100%);
     }
 
-    /* Miga de pan de B: banda gris con filete inferior, 11px. */
+    /* Miga de pan de B: banda gris con filete inferior. */
     .breadcrumb-bar {
-        @apply bg-bg text-muted text-[11px] border-b border-border;
+        @apply bg-bg text-muted text-xs border-b border-border;
     }
 
     /* Cabecera de pagina interior: caja blanca con filete amarillo de 3px. */

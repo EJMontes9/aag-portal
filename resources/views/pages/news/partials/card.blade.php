@@ -7,7 +7,11 @@
      El contenedor de imagen lleva el gradiente navy->celeste de fondo, que
      queda a la vista como placeholder cuando la noticia no tiene portada. --}}
 <article class="group flex flex-col card-surface overflow-hidden transition-colors duration-200 hover:border-brand-primary">
-    <a href="{{ route('news.show', $item->slug) }}" class="block aspect-[16/10] overflow-hidden bg-cloud-gradient">
+    {{-- La imagen apunta al mismo destino que el titulo: se saca del recorrido de
+         teclado (tabindex -1 + aria-hidden) para no duplicar la parada, igual
+         que hace .b-list-thumb en el listado de noticias. --}}
+    <a href="{{ route('news.show', $item->slug) }}" class="block aspect-[16/10] overflow-hidden bg-cloud-gradient"
+       tabindex="-1" aria-hidden="true">
         @if($item->cover_url)
             <img src="{{ $item->cover_url }}"
                  alt="{{ $item->cover_image_alt ?: $item->title }}"
@@ -21,7 +25,9 @@
             </div>
         @endif
     </a>
-    <div class="p-4 flex flex-col flex-1">
+    {{-- Padding a 18px: con el cuerpo a 15px el aire interior de 16px dejaba el
+         titulo pegado al borde de la caja. --}}
+    <div class="p-[18px] flex flex-col flex-1">
         @if($item->category)
             {{-- Chip rectangular sobre tinte celeste. Si la categoria trae color
                  propio del admin, se respeta como color de texto. --}}
@@ -30,12 +36,13 @@
                 {{ $item->category->name }}
             </span>
         @endif
-        <h3 class="font-sans font-semibold text-sm text-fg leading-snug flex-1">
-            <a href="{{ route('news.show', $item->slug) }}" class="transition-colors group-hover:text-brand-primary">
+        <h3 class="font-sans font-semibold text-[15px] text-fg leading-[1.3] flex-1">
+            <a href="{{ route('news.show', $item->slug) }}"
+               class="rounded-pill transition-colors group-hover:text-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card">
                 {{ $item->title }}
             </a>
         </h3>
-        <div class="mt-3 text-[11px] text-muted">
+        <div class="mt-3 text-[12px] text-muted num-tabular">
             <time datetime="{{ $item->published_at?->toIso8601String() }}">
                 {{ $item->published_at?->format('d.m.Y') }}
             </time>

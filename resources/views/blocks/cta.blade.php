@@ -44,12 +44,14 @@
                         <h2 class="font-serif text-section-title {{ $titleClass }}">{{ $block->get('title') }}</h2>
                     @endif
                     @if($block->get('subtitle'))
-                        <p class="mt-3 text-sm {{ $subtitleClass }} leading-relaxed">{{ $block->get('subtitle') }}</p>
+                        {{-- Cuerpo a 15px: es el texto que sostiene la llamada a la
+                             accion, no un metadato. --}}
+                        <p class="mt-3.5 text-[15px] {{ $subtitleClass }} leading-relaxed">{{ $block->get('subtitle') }}</p>
                     @endif
                 </div>
 
                 @if($block->get('cta_label'))
-                    <div class="{{ $centered ? 'mt-6' : 'mt-6 lg:mt-0 lg:shrink-0' }}">
+                    <div class="{{ $centered ? 'mt-7' : 'mt-6 lg:mt-0 lg:shrink-0' }}">
                         <a href="{{ $block->get('cta_url', '#') }}" class="{{ $buttonClass }}">{{ $block->get('cta_label') }}</a>
                     </div>
                 @endif

@@ -40,16 +40,21 @@
 @endpush
 
 <nav aria-label="Miga de pan" {{ $attributes->merge(['class' => 'breadcrumb-bar']) }}>
-    <div class="section-wrap !py-2.5">
+    {{-- El anillo de foco se declara aqui (y no solo :hover) porque la miga es
+         el primer grupo de enlaces que recorre quien navega con teclado: sin
+         indicador visible se pierde la posicion nada mas entrar a la pagina. --}}
+    <div class="section-wrap !py-3">
         <ol class="flex flex-wrap items-center gap-x-2 gap-y-1">
             <li>
-                <a href="{{ url('/') }}" class="transition-colors hover:text-brand-primary">Inicio</a>
+                <a href="{{ url('/') }}"
+                   class="rounded-pill transition-colors hover:text-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg">Inicio</a>
             </li>
             @foreach($items as $item)
                 <li aria-hidden="true" class="text-border">&rsaquo;</li>
                 <li class="min-w-0">
                     @if(!empty($item['url']))
-                        <a href="{{ $item['url'] }}" class="transition-colors hover:text-brand-primary">
+                        <a href="{{ $item['url'] }}"
+                           class="rounded-pill transition-colors hover:text-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
                             {{ \Illuminate\Support\Str::limit($item['label'], 60) }}
                         </a>
                     @else

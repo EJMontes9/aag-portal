@@ -37,7 +37,9 @@
                     <h2 class="font-serif text-section-title text-brand-navy mt-2">{{ $block->get('title') }}</h2>
                 @endif
                 @if($block->get('body'))
-                    <p class="mt-4 text-sm text-muted leading-relaxed whitespace-pre-line">{{ $block->get('body') }}</p>
+                    {{-- Es el cuerpo de lectura del bloque, no un pie: 15px y
+                         medida maxima para no pasar de ~75 caracteres por linea. --}}
+                    <p class="mt-4 text-[15px] text-muted leading-relaxed whitespace-pre-line max-w-[62ch]">{{ $block->get('body') }}</p>
                 @endif
                 @if($block->get('cta_label'))
                     <a href="{{ $block->get('cta_url', '#') }}" class="btn-primary mt-6">{{ $block->get('cta_label') }}</a>

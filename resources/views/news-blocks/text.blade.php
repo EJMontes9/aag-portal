@@ -1,9 +1,30 @@
 @props(['data'])
-<div class="prose prose-lg max-w-none
-            prose-headings:font-serif prose-headings:text-fg
-            prose-p:text-fg/85 prose-p:leading-[1.75]
+{{-- Cuerpo de texto del articulo: es EL bloque que se lee entero, asi que aqui
+     manda la legibilidad sobre la densidad de la Propuesta B.
+
+     Se sale de "prose-lg" (que a raiz 17px daba parrafos de ~19px, mas grandes
+     que el propio titulo de tarjeta) y se fija el cuerpo en 16px con interlineado
+     1.75 y separacion de 1.15em entre parrafos: es la horquilla de lectura larga
+     y ademas iguala al contenido legacy de pages/news/show, que iba a 14px.
+
+     El parrafo pasa de fg/85 a fg pleno: sobre blanco, el 85% de #222 baja el
+     contraste sin ganar nada, y el gris ya esta reservado a los metadatos.
+
+     Los titulares intermedios se alinean con el resto del portal: Neulis en
+     mayusculas y navy, igual que los rotulos de seccion.
+
+     max-w-[72ch] + mx-auto: acota la medida de linea al entorno de 65-75
+     caracteres. Va aqui, en el TEXTO, y no en la columna del articulo, para no
+     encoger tambien las fotos, galerias y mapas que comparten esa columna. --}}
+<div class="prose max-w-[72ch] mx-auto
+            prose-headings:font-serif prose-headings:uppercase prose-headings:text-brand-navy
+            prose-h2:text-[20px] prose-h2:mt-9 prose-h2:mb-3
+            prose-h3:text-[17px] prose-h3:mt-7 prose-h3:mb-2
+            prose-p:text-[16px] prose-p:text-fg prose-p:leading-[1.75] prose-p:my-[1.15em]
+            prose-li:text-[16px] prose-li:leading-[1.7] prose-li:my-1
             prose-a:text-brand-primary prose-a:no-underline hover:prose-a:underline
-            prose-strong:text-fg
+            prose-strong:text-fg prose-strong:font-semibold
+            prose-blockquote:border-brand-accent prose-blockquote:text-fg
             prose-img:rounded-card">
     {!! $data['content'] ?? '' !!}
 </div>

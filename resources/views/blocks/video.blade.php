@@ -106,7 +106,7 @@
 
         {{-- Encabezado del bloque --}}
         @if($block->get('kicker') || $block->get('title') || $block->get('subtitle'))
-            <div class="max-w-3xl mb-6">
+            <div class="max-w-3xl mb-8">
                 @if($block->get('kicker'))
                     {{-- .kicker centraliza familia, 11px, mayusculas y tracking. --}}
                     <span class="kicker {{ $kickerClass }}">
@@ -119,7 +119,7 @@
                     </h2>
                 @endif
                 @if($block->get('subtitle'))
-                    <p class="mt-3 text-sm {{ $subtitleClass }} leading-relaxed">
+                    <p class="mt-3 text-[15px] {{ $subtitleClass }} leading-relaxed">
                         {{ $block->get('subtitle') }}
                     </p>
                 @endif

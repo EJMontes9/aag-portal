@@ -35,7 +35,8 @@
                 <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($img['image']) }}"
                      alt="{{ $img['alt'] ?? '' }}"
                      loading="lazy"
-                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                     {{-- Sin escalado en hover: B no anima la miniatura --}}
+                     class="w-full h-full object-cover">
             </button>
         @endforeach
     </div>
@@ -50,7 +51,7 @@
         <button type="button"
                 @click="close()"
                 aria-label="Cerrar"
-                class="absolute top-5 right-5 w-11 h-11 rounded-full bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition-colors">
+                class="absolute top-5 right-5 w-11 h-11 rounded-pill bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
 
@@ -58,7 +59,7 @@
                 @click="prev()"
                 aria-label="Imagen anterior"
                 x-show="images.length > 1"
-                class="absolute left-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition-colors">
+                class="absolute left-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-pill bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/></svg>
         </button>
 
@@ -66,7 +67,7 @@
                 @click="next()"
                 aria-label="Imagen siguiente"
                 x-show="images.length > 1"
-                class="absolute right-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition-colors">
+                class="absolute right-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-pill bg-white/15 hover:bg-white/30 text-white flex items-center justify-center transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
         </button>
 

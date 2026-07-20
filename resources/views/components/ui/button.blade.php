@@ -7,8 +7,10 @@
 @php
     $classes = match($variant) {
         'ghost' => 'btn-ghost',
-        'accent' => 'inline-flex items-center justify-center gap-2 rounded-pill bg-brand-accent text-on-navy px-5 py-2.5 text-sm font-medium transition hover:-translate-y-px',
-        'on-navy' => 'inline-flex items-center justify-center gap-2 rounded-pill bg-white text-brand-navy px-5 py-2.5 text-sm font-medium transition hover:-translate-y-px',
+        // Sin desplazamiento en hover (B es estatico) y sobre el amarillo va el
+        // token on-accent, no texto blanco.
+        'accent' => 'btn-white',
+        'on-navy' => 'btn-base bg-card text-brand-navy hover:bg-brand-accent hover:text-on-accent',
         default => 'btn-primary',
     };
 @endphp

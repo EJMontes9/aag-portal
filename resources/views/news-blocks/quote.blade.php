@@ -4,7 +4,7 @@
     if (! $text) return;
 @endphp
 <blockquote class="border-l-4 border-brand-accent pl-6 md:pl-8 py-2">
-    <p class="font-serif text-2xl md:text-3xl text-fg leading-[1.35] italic" style="font-weight:400;">
+    <p class="font-serif text-2xl md:text-3xl text-fg leading-[1.35] italic">
         &ldquo;{{ $text }}&rdquo;
     </p>
     @if(!empty($data['author']) || !empty($data['source']))

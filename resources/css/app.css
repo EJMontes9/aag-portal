@@ -252,16 +252,25 @@
         color: #5A5A5A;
     }
 
+    /* Indicadores de estado en vivo (tablero de vuelos, convocatoria abierta).
+       Cuadrados de 6px, no circulos, y en los mismos tonos apagados de los
+       chips de estado en vez de los emerald/amber/rose por defecto de
+       Tailwind, que no pertenecen a la paleta institucional.
+       Conservan la animacion: aqui el parpadeo comunica "en tiempo real", no
+       es decoracion, asi que no cae bajo la regla de diseño estatico. */
     .status-dot {
-        @apply inline-block w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse-soft;
+        @apply inline-block w-1.5 h-1.5 animate-pulse-soft;
+        background-color: #1B5E32;
     }
 
     .status-dot-amber {
-        @apply inline-block w-1.5 h-1.5 rounded-full bg-amber-500 animate-blink;
+        @apply inline-block w-1.5 h-1.5 animate-blink;
+        background-color: #B98900;
     }
 
     .status-dot-red {
-        @apply inline-block w-1.5 h-1.5 rounded-full bg-rose-500 animate-blink;
+        @apply inline-block w-1.5 h-1.5 animate-blink;
+        background-color: #B3261E;
     }
 
     /* Enlace de la nav principal: en B va sobre la banda NAVY, en blanco,
@@ -294,6 +303,27 @@
     /* Gradiente navy->celeste. En B es el relleno de los contenedores de imagen
        cuando NO hay foto cargada (placeholder de card y de thumb de listado). */
     .bg-cloud-gradient {
+        background: linear-gradient(135deg, #2e2f63 0%, #009cdf 100%);
+    }
+
+    /* Fila de listado horizontal de B (".b-list"): caja blanca con borde, thumb
+       de 160x110 a la izquierda y bloque de texto a la derecha. Es la forma que
+       B usa para NOTICIAS y CONVOCATORIAS; la rejilla de tarjetas (.b-card) se
+       reserva para PROYECTOS y para los destacados de portada.
+       Igual que .card-surface: sin sombra, y el unico hover es el borde. */
+    .b-list {
+        @apply flex gap-5 rounded-card bg-card border border-border p-5 transition-colors duration-200;
+    }
+    .b-list:hover {
+        border-color: rgb(var(--color-primary));
+    }
+    /* El thumb va oculto por debajo de sm: a 160px de ancho fijo se comeria la
+       fila entera en movil y dejaria el titulo en dos caracteres por linea. */
+    .b-list-thumb {
+        @apply hidden sm:block shrink-0 w-40 h-[110px] overflow-hidden;
+        /* Mismo gradiente que .bg-cloud-gradient, escrito a mano en vez de
+           @apply: esa clase se define mas abajo en este mismo @layer y el
+           @apply de una clase declarada despues no siempre resuelve. */
         background: linear-gradient(135deg, #2e2f63 0%, #009cdf 100%);
     }
 

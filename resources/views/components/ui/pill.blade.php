@@ -9,8 +9,9 @@
         'primary' => 'bg-brand-primary text-on-primary',
         'soft' => 'bg-brand-soft/70 text-brand-navy',
         'on-navy' => 'bg-white/10 text-on-navy border border-white/15',
-        'success' => 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-        'warn' => 'bg-amber-50 text-amber-800 border border-amber-200',
+        // Mismos tonos apagados que .chip-abierto / .chip-proceso de app.css
+        'success' => 'bg-[#E6F4EA] text-[#1B5E32] border border-[#C3E3CE]',
+        'warn' => 'bg-[#FDF3D3] text-[#7A5B00] border border-[#EBD79A]',
         default => 'bg-card text-fg border border-border',
     };
 

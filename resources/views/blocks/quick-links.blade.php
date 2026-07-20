@@ -3,9 +3,6 @@
     $links = $block->get('links', []);
     if (empty($links)) return;
 
-    // Layout activo: 'b' (Propuesta B aprobada, por defecto) o 'a' (Propuesta A)
-    $layout = settings('quick_links_layout', 'b');
-
     $iconPaths = [
         'plane'    => 'M10.5 2.25a.75.75 0 0 1 1.5 0v5.69l7.5 4.33v1.8l-7.5-2.25v4.87l2.25 1.5v1.31l-3-.75-3 .75v-1.31l2.25-1.5v-4.87l-7.5 2.25v-1.8l7.5-4.33V2.25Z',
         'doc'      => 'M6 2.25A2.25 2.25 0 0 0 3.75 4.5v15A2.25 2.25 0 0 0 6 21.75h12A2.25 2.25 0 0 0 20.25 19.5V9l-6.75-6.75H6Zm7.5 0v6.75h6.75',
@@ -20,122 +17,37 @@
     ];
 @endphp
 
-{{-- ══════════════════════════════════════════════
-     LAYOUT B — Propuesta B aprobada
-     6 cols · centrado · solo ícono + etiqueta
-     Todos los colores desde variables CSS del admin (sin hardcodear).
-     Solo inline style para la estructura de grid (no es color).
-     ══════════════════════════════════════════════ --}}
-@if($layout === 'b')
-<section class="bg-brand-soft/20 border-t border-border py-10 px-14">
-
-    {{-- Título centrado usando variables de tipografía y color del admin --}}
-    <h2 class="text-center text-[13px] font-bold tracking-[1.5px] uppercase text-brand-navy mb-6"
-        data-aos="fade-up">
-        {{ $block->get('title', 'ACCESOS RÁPIDOS') }}
-    </h2>
-
-    {{-- Grid en una sola línea: inline style solo para grid-template-columns (estructura, no color) --}}
-    <div style="display:grid; grid-template-columns:repeat({{ count($links) }},1fr); gap:16px;">
-        @foreach($links as $link)
-        <a href="{{ $link['url'] ?? '#' }}"
-           class="group block no-underline"
-           data-stagger="quick-link"
-           style="opacity:0;">
-            <div class="bg-card border border-border text-center
-                        transition-all duration-300
-                        group-hover:-translate-y-0.5 group-hover:shadow-md group-hover:border-brand-primary/40"
-                 style="border-radius:var(--radius-card); padding:24px 16px;">
-
-                {{-- Ícono centrado — usa color de marca del admin, sin hardcodear --}}
-                <div class="w-10 h-10 bg-brand-primary/12 flex items-center justify-center mx-auto mb-3
-                            transition-all duration-300 group-hover:bg-brand-primary group-hover:scale-110"
-                     style="border-radius:var(--radius-card);">
-                    <svg class="w-[22px] h-[22px] text-brand-primary transition-colors duration-300 group-hover:text-white"
-                         fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                              d="{{ $iconPaths[$link['icon'] ?? 'plane'] ?? $iconPaths['plane'] }}"/>
-                    </svg>
-                </div>
-
-                {{-- Etiqueta — color navy del admin --}}
-                <div class="text-[11px] font-bold text-brand-navy tracking-[0.5px]
-                            transition-colors duration-300 group-hover:text-brand-primary">
-                    {{ strtoupper($link['label'] ?? '') }}
-                </div>
-            </div>
-        </a>
-        @endforeach
-    </div>
-</section>
-
-{{-- ══════════════════════════════════════════════
-     LAYOUT A — Propuesta A
-     4 cols · izquierda · ícono + título + descripción · fondo blanco
-     ══════════════════════════════════════════════ --}}
-@else
-<section class="bg-card border-t border-border">
+{{-- Accesos rapidos — Propuesta B: tiles cuadrados centrados, solo icono y
+     rotulo (sin descripcion), sobre fondo gris. La maqueta los pone en 6
+     columnas fijas; aqui la rejilla escala de 2 a 6 segun ancho, porque el
+     numero de accesos es configurable desde el admin. --}}
+<section class="bg-bg border-t border-border">
     <div class="section-wrap">
+        <h2 class="text-center text-[13px] font-sans font-bold tracking-[0.12em] uppercase text-brand-navy mb-6"
+            data-aos="fade-up">
+            {{ $block->get('title', 'ACCESOS RÁPIDOS') }}
+        </h2>
 
-        {{-- Encabezado: kicker + título serif --}}
-        <div class="flex items-end justify-between gap-4 mb-6" data-aos="fade-up">
-            <div>
-                @if($block->get('kicker'))
-                    <span class="font-sans text-[10px] tracking-[0.18em] uppercase text-muted font-semibold">
-                        {{ $block->get('kicker') }}
-                    </span>
-                @endif
-                <h2 class="font-serif text-section-title text-fg leading-tight mt-1">
-                    {{ $block->get('title', 'Servicios y trámites destacados') }}
-                </h2>
-            </div>
-            @if($block->get('link_all_label') && $block->get('link_all_url'))
-                <a href="{{ $block->get('link_all_url') }}"
-                   class="text-sm font-medium text-brand-primary hover:underline whitespace-nowrap hidden md:inline">
-                    {{ $block->get('link_all_label') }}
-                </a>
-            @endif
-        </div>
-
-        {{-- Grid 4 cols (responsive: 1 mobile, 2 tablet, 4 desktop) --}}
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[18px]">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             @foreach($links as $link)
-            <a href="{{ $link['url'] ?? '#' }}"
-               class="group block"
-               data-stagger="quick-link"
-               style="opacity:0;">
-                <div class="card-surface p-6 h-full
-                            transition-all duration-300
-                            group-hover:-translate-y-1 group-hover:shadow-lg group-hover:border-brand-primary/30">
-
-                    {{-- Ícono alineado a la izquierda --}}
-                    <div class="w-[38px] h-[38px] rounded-card bg-brand-primary/12 flex items-center justify-center mb-4
-                                transition-all duration-300 group-hover:bg-brand-primary group-hover:scale-110">
-                        <svg class="w-5 h-5 text-brand-navy transition-colors duration-300 group-hover:text-white"
-                             fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                  d="{{ $iconPaths[$link['icon'] ?? 'plane'] ?? $iconPaths['plane'] }}"/>
-                        </svg>
+                <a href="{{ $link['url'] ?? '#' }}"
+                   class="group block no-underline"
+                   data-stagger="quick-link"
+                   style="opacity:0;">
+                    <div class="h-full card-surface px-4 py-6 text-center transition-colors duration-200 group-hover:border-brand-primary">
+                        <div class="w-10 h-10 rounded-card bg-brand-soft flex items-center justify-center mx-auto mb-2.5 transition-colors duration-200 group-hover:bg-brand-primary">
+                            <svg class="w-[22px] h-[22px] text-brand-primary transition-colors duration-200 group-hover:text-white"
+                                 fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      d="{{ $iconPaths[$link['icon'] ?? 'plane'] ?? $iconPaths['plane'] }}"/>
+                            </svg>
+                        </div>
+                        <div class="text-[11px] font-sans font-bold text-brand-navy tracking-[0.04em] transition-colors duration-200 group-hover:text-brand-primary">
+                            {{ strtoupper($link['label'] ?? '') }}
+                        </div>
                     </div>
-
-                    {{-- Título --}}
-                    <p class="font-sans font-bold text-[15px] text-fg leading-snug mb-1
-                               transition-colors duration-300 group-hover:text-brand-primary">
-                        {{ $link['label'] ?? '' }}
-                    </p>
-
-                    {{-- Descripción (opcional) --}}
-                    @if(!empty($link['description']))
-                        <p class="text-[13px] text-muted leading-relaxed">
-                            {{ $link['description'] }}
-                        </p>
-                    @endif
-
-                </div>
-            </a>
+                </a>
             @endforeach
         </div>
-
     </div>
 </section>
-@endif

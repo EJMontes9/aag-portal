@@ -71,15 +71,23 @@
     }
 
     // ── Estilos de fondo ─────────────────────────────────────────────────────
+    // Enum ('bg','soft','navy') guardado en BD: solo cambian las clases.
     $bg      = $block->get('background', 'bg');
     $bgClass = match($bg) {
-        'soft'  => 'bg-brand-soft/30',
+        'soft'  => 'bg-brand-soft',
         'navy'  => 'bg-brand-navy text-on-navy',
         default => 'bg-bg',
     };
-    $kickerClass   = $bg === 'navy' ? 'text-on-navy/60'  : 'text-muted';
-    $titleClass    = $bg === 'navy' ? 'text-on-navy'     : 'text-fg';
-    $subtitleClass = $bg === 'navy' ? 'text-on-navy/75'  : 'text-muted';
+    $onNavy = $bg === 'navy';
+
+    // Sobre navy el celeste del .kicker pierde contraste, asi que se sustituye
+    // por el amarillo institucional (mismo criterio que el bloque stats).
+    $kickerClass   = $onNavy ? 'text-brand-accent'  : '';
+    $titleClass    = $onNavy ? 'text-on-navy'       : 'text-brand-navy';
+    $subtitleClass = $onNavy ? 'text-on-navy/75'    : 'text-muted';
+    // El marco del reproductor sigue siendo una caja de B (borde 1px, radio
+    // 4px, sin sombra); sobre navy el borde gris no se ve, se aclara.
+    $frameClass    = $onNavy ? 'border border-white/20' : 'card-surface';
 
     // ── Permisos del iframe ───────────────────────────────────────────────────
     $allow = implode('; ', array_filter([
@@ -98,28 +106,31 @@
 
         {{-- Encabezado del bloque --}}
         @if($block->get('kicker') || $block->get('title') || $block->get('subtitle'))
-            <div class="max-w-3xl mb-10">
+            <div class="max-w-3xl mb-6">
                 @if($block->get('kicker'))
-                    <span class="font-sans text-[11px] tracking-[0.18em] uppercase {{ $kickerClass }} font-semibold">
+                    {{-- .kicker centraliza familia, 11px, mayusculas y tracking. --}}
+                    <span class="kicker {{ $kickerClass }}">
                         {{ $block->get('kicker') }}
                     </span>
                 @endif
                 @if($block->get('title'))
-                    <h2 class="font-serif text-section-title {{ $titleClass }} mt-3">
+                    <h2 class="font-serif text-section-title {{ $titleClass }} mt-2">
                         {{ $block->get('title') }}
                     </h2>
                 @endif
                 @if($block->get('subtitle'))
-                    <p class="mt-4 {{ $subtitleClass }} leading-[1.65]">
+                    <p class="mt-3 text-sm {{ $subtitleClass }} leading-relaxed">
                         {{ $block->get('subtitle') }}
                     </p>
                 @endif
             </div>
         @endif
 
-        {{-- Reproductor --}}
+        {{-- Reproductor.
+             Sin mx-auto: el video se alinea a la izquierda con el encabezado,
+             que es la columna de lectura del resto de bloques. --}}
         @if($embed)
-            <div class="rounded-hero overflow-hidden border border-border shadow-lg aspect-video max-w-5xl mx-auto">
+            <div class="{{ $frameClass }} overflow-hidden aspect-video max-w-5xl">
                 <iframe
                     src="{{ $embed }}"
                     class="w-full h-full"

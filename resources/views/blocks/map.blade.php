@@ -1,8 +1,9 @@
 @props(['block'])
 @php
+    // Enum de fondo ('bg','soft','card') guardado en BD: no se renombra.
     $bg = $block->get('background', 'bg');
     $bgClass = match($bg) {
-        'soft' => 'bg-brand-soft/30',
+        'soft' => 'bg-brand-soft',
         'card' => 'bg-card',
         default => 'bg-bg',
     };
@@ -23,28 +24,37 @@
     $cleanEmbed = str_replace('<iframe', '<iframe style="width:100%;height:100%;border:0;display:block;"', $cleanEmbed);
 @endphp
 
+{{-- Mapa a ancho completo.
+
+     El titulo pasa de centrado a alineado a la izquierda: B alinea a la
+     izquierda todos los rotulos de seccion, y el centrado rompia la columna
+     comun con el resto de bloques de la pagina. --}}
 <section class="{{ $bgClass }}">
     <div class="section-wrap">
         @if($title)
-            <h2 class="font-serif text-section-title text-fg text-center mb-8">{{ $title }}</h2>
+            <h2 class="font-serif text-section-title text-brand-navy mb-5">{{ $title }}</h2>
         @endif
 
         @if($cleanEmbed)
-            <div class="map-embed-wrap w-full overflow-hidden rounded-hero shadow-md"
+            {{-- .card-surface = caja blanca, borde 1px marcado, radio 4px y cero
+                 sombra; es el unico envoltorio permitido en B. --}}
+            <div class="map-embed-wrap w-full card-surface overflow-hidden"
                  style="{{ $heightStyle }}">
                 {!! $cleanEmbed !!}
             </div>
         @else
-            <div class="w-full rounded-hero bg-gradient-to-br from-brand-soft to-brand-accent/40
-                        flex flex-col items-center justify-center gap-4"
+            {{-- Estado vacio: caja de la misma forma que el mapa real, en gris
+                 de fondo, sin gradiente decorativo (B no decora los vacios). --}}
+            <div class="w-full card-surface bg-bg
+                        flex flex-col items-center justify-center gap-3"
                  style="{{ $heightStyle }}">
-                <svg class="w-16 h-16 text-brand-accent/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg class="w-12 h-12 text-border" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                           d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                           d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
-                <p class="text-muted text-sm">Sin código embed configurado</p>
+                <p class="font-sans text-[11px] font-bold uppercase tracking-[0.08em] text-muted">Sin codigo embed configurado</p>
             </div>
         @endif
     </div>

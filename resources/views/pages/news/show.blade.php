@@ -68,65 +68,49 @@
 <script type="application/ld+json">
 {!! json_encode($articleSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
 </script>
-
-{{-- BreadcrumbList --}}
-<script type="application/ld+json">
-{!! json_encode([
-    '@context'        => 'https://schema.org',
-    '@type'           => 'BreadcrumbList',
-    'itemListElement' => array_values(array_filter([
-        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Inicio',   'item' => url('/')],
-        ['@type' => 'ListItem', 'position' => 2, 'name' => 'Noticias', 'item' => route('news.index')],
-        $item->category ? ['@type' => 'ListItem', 'position' => 3, 'name' => $item->category->name, 'item' => route('news.index', ['categoria' => $item->category->slug])] : null,
-        ['@type' => 'ListItem', 'position' => $item->category ? 4 : 3, 'name' => $item->title],
-    ])),
-], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
-</script>
 @endpush
+
+{{-- El BreadcrumbList lo emite <x-ui.breadcrumb-bar> a partir de la misma lista
+     de items que se pinta en pantalla, asi que no se duplica aqui. --}}
 
 @section('content')
 <article class="bg-bg">
-    {{-- Hero del articulo --}}
-    <header class="border-b border-border">
-        <div class="section-wrap pt-12 pb-10">
-            <x-layout.breadcrumbs :items="array_filter([
-                ['label' => 'Noticias', 'url' => route('news.index')],
-                $item->category ? ['label' => $item->category->name, 'url' => route('news.index', ['categoria' => $item->category->slug])] : null,
-                ['label' => $item->title, 'url' => null],
-            ])" class="mb-6" />
+    {{-- Miga de pan + cabecera de pagina interior --}}
+    <x-ui.breadcrumb-bar :items="array_values(array_filter([
+        ['label' => 'Noticias', 'url' => route('news.index')],
+        $item->category ? ['label' => $item->category->name, 'url' => route('news.index', ['categoria' => $item->category->slug])] : null,
+        ['label' => $item->title, 'url' => null],
+    ]))" />
 
-            <div class="max-w-3xl">
-                @if($item->category)
-                    <span class="font-sans text-[10px] tracking-[0.18em] uppercase font-semibold"
-                          style="color: {{ $item->category->color ?: 'rgb(var(--color-primary))' }};">
-                        {{ $item->category->name }}
-                    </span>
-                @endif
-                <h1 class="font-serif text-[2.25rem] md:text-[3rem] leading-[1.1] text-fg mt-4" style="font-weight:500;">
-                    {{ $item->title }}
-                </h1>
-                @if($item->excerpt)
-                    <p class="mt-6 text-lg text-muted leading-[1.55]">{{ $item->excerpt }}</p>
-                @endif
-                <div class="mt-6 flex flex-wrap items-center gap-4 text-sm text-muted">
-                    @if($item->author)
-                        <span>Por <strong class="text-fg font-medium">{{ $item->author->name }}</strong></span>
-                        <span aria-hidden="true">·</span>
-                    @endif
-                    <time datetime="{{ $item->published_at?->toIso8601String() }}">
-                        {{ $item->published_at?->translatedFormat('d \\d\\e F \\d\\e Y') }}
-                    </time>
-                    <span aria-hidden="true">·</span>
-                    <span>{{ $item->reading_time }} min de lectura</span>
-                </div>
-            </div>
+    <x-ui.page-header :title="$item->title" :description="$item->excerpt">
+        @if($item->category)
+        <x-slot:meta>
+            {{-- El color propio de la categoria (definido por el admin) se
+                 respeta como color de TEXTO sobre el tinte celeste del chip. --}}
+            <span class="pill"
+                  @if($item->category->color) style="color: {{ $item->category->color }};" @endif>
+                {{ $item->category->name }}
+            </span>
+        </x-slot:meta>
+        @endif
+
+        <div class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted">
+            @if($item->author)
+                <span>Por <strong class="font-semibold text-fg">{{ $item->author->name }}</strong></span>
+                <span aria-hidden="true">·</span>
+            @endif
+            <time datetime="{{ $item->published_at?->toIso8601String() }}">
+                {{ $item->published_at?->translatedFormat('d \\d\\e F \\d\\e Y') }}
+            </time>
+            <span aria-hidden="true">·</span>
+            <span>{{ $item->reading_time }} min de lectura</span>
         </div>
-    </header>
+    </x-ui.page-header>
 
     {{-- Imagen destacada --}}
     @if($item->cover_url)
-        <div class="section-wrap !pt-10 !pb-0">
-            <figure class="aspect-[16/9] rounded-hero overflow-hidden bg-brand-soft/30">
+        <div class="section-wrap !pb-0">
+            <figure class="aspect-[16/9] rounded-card overflow-hidden bg-cloud-gradient">
                 <img src="{{ $item->cover_url }}"
                      alt="{{ $item->cover_image_alt ?: $item->title }}"
                      loading="eager" fetchpriority="high" decoding="async"
@@ -172,9 +156,10 @@
 
                 @if(! empty($item->content))
                     {{-- Contenido legacy (RichEditor) --}}
-                    <div class="prose prose-lg max-w-none
-                                prose-headings:font-serif prose-headings:text-fg
-                                prose-p:text-fg/85 prose-p:leading-[1.75]
+                    <div class="prose max-w-none
+                                prose-headings:font-serif prose-headings:uppercase prose-headings:text-brand-navy
+                                prose-p:text-sm prose-p:text-fg prose-p:leading-[1.7]
+                                prose-li:text-sm
                                 prose-a:text-brand-primary prose-a:no-underline hover:prose-a:underline
                                 prose-strong:text-fg
                                 prose-img:rounded-card">
@@ -183,7 +168,7 @@
                 @endif
 
                 {{-- Compartir --}}
-                <div class="mt-12 pt-8 border-t border-border flex items-center gap-3 text-sm text-muted">
+                <div class="mt-10 pt-6 border-t border-border flex items-center gap-3 text-[11px] uppercase tracking-[0.07em] font-bold text-muted">
                     <span>Compartir:</span>
                     <a href="https://twitter.com/intent/tweet?url={{ urlencode(url()->current()) }}&text={{ urlencode($item->title) }}"
                        target="_blank" rel="noopener"
@@ -219,13 +204,13 @@
 
     {{-- Relacionadas --}}
     @if($related->isNotEmpty())
-        <section class="bg-brand-soft/20 border-t border-border">
+        <section class="bg-card border-t border-border">
             <div class="section-wrap">
-                <header class="mb-10">
-                    <span class="font-sans text-[11px] tracking-[0.18em] uppercase text-muted font-semibold">SEGUIR LEYENDO</span>
-                    <h2 class="font-serif text-section-title text-fg mt-2">Tambien te puede interesar</h2>
+                <header class="mb-6">
+                    <span class="kicker">Seguir leyendo</span>
+                    <h2 class="font-serif text-section-title uppercase text-brand-navy mt-1.5">Tambien te puede interesar</h2>
                 </header>
-                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-[18px]">
                     @foreach($related as $item)
                         @include('pages.news.partials.card', ['item' => $item])
                     @endforeach

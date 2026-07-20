@@ -11,6 +11,11 @@
         'split' => 'max-w-5xl mx-auto',
         default => 'max-w-2xl mx-auto',
     };
+
+    // Clases de campo compartidas por input/textarea/select del preview. Formas de
+    // B: borde marcado de 1px, radio 2px y CERO sombra -- el foco se marca con el
+    // borde celeste, no con un halo.
+    $fieldClass = 'w-full rounded-pill border border-border bg-card px-3 py-2 text-[13px] text-fg placeholder-muted/70';
 @endphp
 
 {{-- ══ PREVIEW EN EDITOR VISUAL ════════════════════════════════════════════ --}}
@@ -20,43 +25,47 @@
     $fields = $form ? $form->activeFields : collect();
 @endphp
 
-<section @if($bgColor) style="background-color:{{ $bgColor }};" @endif>
+<section class="bg-bg" @if($bgColor) style="background-color:{{ $bgColor }};" @endif>
     <div class="section-wrap">
 
-        {{-- Cabecera de sección --}}
-        @if($title || $desc)
-            <div class="text-center mb-10">
-                @if($title)
-                    <h2 class="text-3xl md:text-4xl font-serif font-semibold text-fg mb-3">{{ $title }}</h2>
-                @endif
-                @if($desc)
-                    <p class="text-muted text-lg max-w-xl mx-auto">{{ $desc }}</p>
-                @endif
-            </div>
-        @endif
-
+        {{-- Cabecera dentro de la MISMA columna que el formulario: si se dejara
+             fuera, con layout 'centered' el titulo quedaria a la izquierda de la
+             pagina y la caja centrada, sin eje comun. En B el texto se alinea a
+             la izquierda de su columna, no al centro. --}}
         <div class="{{ $wrapClass }}">
 
+            @if($title || $desc)
+                <header class="mb-6">
+                    @if($title)
+                        <h2 class="font-serif text-section-title text-brand-navy">{{ $title }}</h2>
+                    @endif
+                    @if($desc)
+                        <p class="mt-3 text-[13px] text-muted leading-[1.6]">{{ $desc }}</p>
+                    @endif
+                </header>
+            @endif
+
             @if(!$form)
-                {{-- Sin formulario configurado --}}
-                <div class="rounded-2xl border-2 border-dashed border-indigo-300 bg-indigo-50 p-10 text-center">
-                    <svg class="w-10 h-10 text-indigo-400 mx-auto mb-3" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                {{-- Sin formulario configurado. Es chrome de editor, pero se pinta
+                     con los tokens del sitio para no introducir una paleta ajena. --}}
+                <div class="rounded-card border border-dashed border-brand-primary bg-brand-soft/40 p-8 text-center">
+                    <svg class="w-8 h-8 text-brand-primary mx-auto mb-3" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
                     </svg>
-                    <p class="text-sm font-semibold text-indigo-700 mb-1">Formulario sin configurar</p>
-                    <p class="text-xs text-indigo-500">Haz clic en <strong>Editar</strong> para seleccionar un formulario.</p>
+                    <p class="font-sans text-[11px] font-bold uppercase tracking-[0.14em] text-brand-navy mb-1">Formulario sin configurar</p>
+                    <p class="text-[12px] text-muted">Haz clic en <strong class="text-brand-navy">Editar</strong> para seleccionar un formulario.</p>
                 </div>
             @else
                 {{-- Preview fiel al form-renderer --}}
-                <div class="rounded-2xl border border-border bg-card shadow-sm overflow-hidden" style="pointer-events:none;">
-                    <div class="p-6 md:p-8 space-y-6">
+                <div class="card-surface overflow-hidden" style="pointer-events:none;">
+                    <div class="p-5 md:p-7 space-y-4">
                         @foreach($fields as $field)
                             @php $key = $field->field_key; @endphp
                             <div>
-                                <label class="block text-sm font-medium text-fg mb-1.5">
+                                <label class="block font-sans text-[11px] font-bold uppercase tracking-[0.08em] text-brand-navy mb-1.5">
                                     {{ $field->label }}
                                     @if($field->required)
-                                        <span class="text-red-500 ml-0.5">*</span>
+                                        <span class="text-[#B3261E] ml-0.5">*</span>
                                     @endif
                                 </label>
 
@@ -65,11 +74,11 @@
                                         rows="4"
                                         placeholder="{{ $field->placeholder }}"
                                         disabled
-                                        class="w-full rounded-lg border border-border px-3.5 py-2.5 text-sm bg-bg text-fg placeholder-muted/60 resize-y"
+                                        class="{{ $fieldClass }} resize-y"
                                     ></textarea>
 
                                 @elseif($field->type === 'select')
-                                    <select disabled class="w-full rounded-lg border border-border px-3.5 py-2.5 text-sm bg-bg text-fg cursor-pointer">
+                                    <select disabled class="{{ $fieldClass }} cursor-pointer">
                                         <option>{{ $field->placeholder ?: '— Selecciona una opción —' }}</option>
                                         @foreach($field->options ?? [] as $opt)
                                             <option>{{ $opt['label'] }}</option>
@@ -77,19 +86,21 @@
                                     </select>
 
                                 @elseif($field->type === 'radio')
-                                    <div class="space-y-2 mt-1">
+                                    <div class="space-y-1.5 mt-1">
                                         @foreach($field->options ?? [] as $opt)
                                             <label class="flex items-center gap-2.5">
                                                 <input type="radio" disabled class="w-4 h-4 text-brand-primary border-border">
-                                                <span class="text-sm text-fg">{{ $opt['label'] }}</span>
+                                                <span class="text-[13px] text-fg">{{ $opt['label'] }}</span>
                                             </label>
                                         @endforeach
                                     </div>
 
                                 @elseif($field->type === 'checkbox')
-                                    <label class="flex items-start gap-3 mt-1">
-                                        <input type="checkbox" disabled class="mt-0.5 w-4 h-4 rounded border-border flex-shrink-0">
-                                        <span class="text-sm text-fg leading-relaxed">{{ $field->placeholder ?: $field->label }}</span>
+                                    <label class="flex items-start gap-2.5 mt-1">
+                                        {{-- rounded-none: el plugin @tailwindcss/forms redondea la casilla
+                                             por defecto y B no admite esquinas redondeadas. --}}
+                                        <input type="checkbox" disabled class="mt-0.5 w-4 h-4 rounded-none text-brand-primary border-border flex-shrink-0">
+                                        <span class="text-[13px] text-fg leading-[1.6]">{{ $field->placeholder ?: $field->label }}</span>
                                     </label>
 
                                 @else
@@ -97,24 +108,23 @@
                                         type="{{ $field->type }}"
                                         placeholder="{{ $field->placeholder }}"
                                         disabled
-                                        class="w-full rounded-lg border border-border px-3.5 py-2.5 text-sm bg-bg text-fg placeholder-muted/60"
+                                        class="{{ $fieldClass }}"
                                     >
                                 @endif
 
                                 @if($field->help_text)
-                                    <p class="mt-1.5 text-xs text-muted">{{ $field->help_text }}</p>
+                                    <p class="mt-1.5 text-[11px] text-muted">{{ $field->help_text }}</p>
                                 @endif
                             </div>
                         @endforeach
                     </div>
 
-                    {{-- Footer igual al form-renderer --}}
-                    <div class="px-6 md:px-8 pb-6 md:pb-8 pt-2 flex items-center justify-between gap-4">
-                        <p class="text-xs text-muted">
-                            <span class="text-red-500">*</span> Campos obligatorios
+                    {{-- Footer igual al form-renderer, separado por filete gris --}}
+                    <div class="px-5 md:px-7 py-4 border-t border-border flex items-center justify-between gap-4">
+                        <p class="text-[11px] text-muted">
+                            <span class="text-[#B3261E]">*</span> Campos obligatorios
                         </p>
-                        <button type="button" disabled
-                            class="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-6 py-2.5 text-sm font-semibold text-white shadow-sm opacity-90">
+                        <button type="button" disabled class="btn-primary opacity-90">
                             {{ $form->submit_label ?: 'Enviar' }}
                         </button>
                     </div>
@@ -127,19 +137,19 @@
 
 {{-- ══ PÁGINA PÚBLICA ═══════════════════════════════════════════════════════ --}}
 @elseif($formId)
-<section @if($bgColor) style="background-color:{{ $bgColor }};" @endif>
+<section class="bg-bg" @if($bgColor) style="background-color:{{ $bgColor }};" @endif>
     <div class="section-wrap">
-        @if($title || $desc)
-            <div class="text-center mb-10">
-                @if($title)
-                    <h2 class="text-3xl md:text-4xl font-serif font-semibold text-fg mb-3">{{ $title }}</h2>
-                @endif
-                @if($desc)
-                    <p class="text-muted text-lg max-w-xl mx-auto">{{ $desc }}</p>
-                @endif
-            </div>
-        @endif
         <div class="{{ $wrapClass }}">
+            @if($title || $desc)
+                <header class="mb-6">
+                    @if($title)
+                        <h2 class="font-serif text-section-title text-brand-navy">{{ $title }}</h2>
+                    @endif
+                    @if($desc)
+                        <p class="mt-3 text-[13px] text-muted leading-[1.6]">{{ $desc }}</p>
+                    @endif
+                </header>
+            @endif
             @livewire('form-renderer', ['formId' => (int) $formId], key('form-'.$formId))
         </div>
     </div>

@@ -158,9 +158,14 @@ document.addEventListener('DOMContentLoaded', () => {
     animateHeroTitle();
     setupCounters();
     setupSmoothScroll();
+    // OJO: cada valor de data-stagger usado en una plantilla TIENE que estar
+    // registrado aqui. La regla base de app.css deja esos elementos en
+    // opacity:0 a la espera de la animacion, asi que uno sin registrar queda
+    // invisible de forma permanente.
     staggerEntry('[data-stagger="quick-link"]', { gap: 0.06 });
     staggerEntry('[data-stagger="flight-row"]', { gap: 0.09, start: 0.2 });
     staggerEntry('[data-stagger="value-row"]', { gap: 0.1 });
+    staggerEntry('[data-stagger="stat"]', { gap: 0.08 });
 });
 
 // ===========================================================================

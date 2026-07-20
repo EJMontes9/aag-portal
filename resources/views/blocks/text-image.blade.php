@@ -1,8 +1,9 @@
 @props(['block'])
 @php
+    // Enum de fondo ('bg','soft','card') guardado en BD: no se renombra.
     $bg = $block->get('background', 'bg');
     $bgClass = match($bg) {
-        'soft' => 'bg-brand-soft/30',
+        'soft' => 'bg-brand-soft',
         'card' => 'bg-card',
         default => 'bg-bg',
     };
@@ -18,22 +19,28 @@
     }
 @endphp
 
+{{-- Texto + imagen (o mapa).
+
+     El medio se trata como una caja de B: borde gris de 1px, radio 4px y cero
+     sombra. La sombra anterior era el rasgo mas visible de la Propuesta A. --}}
 <section class="{{ $bgClass }}">
     <div class="section-wrap">
-        <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div class="@if($side === 'left') lg:order-2 @endif">
                 @if($block->get('kicker'))
-                    {{-- Kicker en azul primario, all-caps, bold — estilo Propuesta B --}}
-                    <span class="font-sans text-[11px] tracking-[0.15em] uppercase text-brand-primary font-bold">{{ $block->get('kicker') }}</span>
+                    {{-- .kicker ya define familia, 11px, mayusculas, tracking y
+                         color celeste: reconstruirlo a mano lo desincroniza del
+                         resto del sitio cuando se retoque el API de diseno. --}}
+                    <span class="kicker">{{ $block->get('kicker') }}</span>
                 @endif
                 @if($block->get('title'))
-                    <h2 class="font-serif text-section-title text-brand-navy mt-3">{{ $block->get('title') }}</h2>
+                    <h2 class="font-serif text-section-title text-brand-navy mt-2">{{ $block->get('title') }}</h2>
                 @endif
                 @if($block->get('body'))
-                    <p class="mt-5 text-muted leading-[1.7] whitespace-pre-line">{{ $block->get('body') }}</p>
+                    <p class="mt-4 text-sm text-muted leading-relaxed whitespace-pre-line">{{ $block->get('body') }}</p>
                 @endif
                 @if($block->get('cta_label'))
-                    <a href="{{ $block->get('cta_url', '#') }}" class="btn-primary mt-7">{{ $block->get('cta_label') }}</a>
+                    <a href="{{ $block->get('cta_url', '#') }}" class="btn-primary mt-6">{{ $block->get('cta_label') }}</a>
                 @endif
             </div>
 
@@ -41,21 +48,23 @@
                 @if($imageUrl)
                     <img src="{{ $imageUrl }}"
                          alt="{{ $block->get('title', '') }}"
-                         class="w-full rounded-hero shadow-md"
+                         class="w-full rounded-card border border-border block"
                          loading="lazy">
 
                 @elseif($cleanEmbed)
                     {{-- El contenedor usa aspect-ratio; el iframe se ajusta al 100% x 100% --}}
-                    <div class="map-embed-wrap w-full overflow-hidden rounded-hero shadow-md"
+                    <div class="map-embed-wrap w-full card-surface overflow-hidden"
                          style="aspect-ratio:4/3; min-height:260px;">
                         {!! $cleanEmbed !!}
                     </div>
 
                 @else
-                    <div class="w-full rounded-hero bg-gradient-to-br from-brand-soft to-brand-accent/40
+                    {{-- Placeholder sin foto: el gradiente navy->celeste es el
+                         relleno que usa B para los contenedores de imagen vacios. --}}
+                    <div class="w-full rounded-card border border-border bg-cloud-gradient
                                 flex items-center justify-center"
                          style="aspect-ratio:4/3; min-height:260px;">
-                        <svg class="w-16 h-16 text-brand-accent/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg class="w-14 h-14 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                   d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"

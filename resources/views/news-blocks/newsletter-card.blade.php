@@ -66,12 +66,13 @@
                x-model="email"
                required
                placeholder="{{ $placeholder }}"
-               class="w-full px-4 py-2.5 rounded-md bg-white text-fg text-sm placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand-accent"
+               class="w-full px-4 py-2.5 rounded-pill bg-card text-fg text-sm placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand-accent"
                :disabled="loading">
 
         <button type="submit"
                 :disabled="loading || !email"
-                class="w-full px-4 py-2.5 rounded-md bg-brand-accent text-white font-semibold text-sm hover:bg-brand-accent/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+                {{-- Amarillo institucional = color de accion sobre fondo oscuro, con texto oscuro (token on-accent) --}}
+                class="w-full px-4 py-2.5 rounded-pill bg-brand-accent text-on-accent font-semibold text-sm hover:bg-brand-accent/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
             <span x-show="!loading">{{ $buttonLabel }}</span>
             <span x-show="loading" x-cloak>Enviando...</span>
         </button>
@@ -79,7 +80,8 @@
         <p x-show="message"
            x-cloak
            x-transition.opacity
-           :class="success ? 'text-emerald-300' : 'text-rose-300'"
+           {{-- Sobre navy: tinte celeste de marca para el exito, rojo apagado legible para el error --}}
+           :class="success ? 'text-brand-soft' : 'text-[#F2B8B5]'"
            class="text-xs leading-relaxed"
            x-text="message"></p>
     </form>

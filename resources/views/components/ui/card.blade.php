@@ -21,7 +21,9 @@
         default => 'p-6',
     };
 
-    $hoverClass = $hover ? 'transition hover:-translate-y-1 hover:shadow-lg' : '';
+    // B es un diseno estatico: el hover solo cambia el color del borde, nunca desplaza
+    // la caja ni saca una sombra.
+    $hoverClass = $hover ? 'transition-colors hover:border-brand-primary' : '';
 @endphp
 
 <div {{ $attributes->merge(['class' => trim("$toneClass $paddingClass $hoverClass")]) }}>

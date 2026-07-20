@@ -1,15 +1,13 @@
 @extends('layouts.app', ['title' => $page->meta_title ?: $page->title, 'description' => $page->meta_description, 'editablePage' => $page])
 
 @section('content')
-    {{-- Breadcrumbs solo en paginas internas, no en home --}}
+    {{-- Miga de pan solo en paginas internas, no en home.
+         Usa el mismo componente de banda que el resto de paginas interiores
+         para que todas compartan el estilo de la Propuesta B. --}}
     @if($page->key !== 'home')
-        <div class="bg-bg border-b border-border">
-            <div class="section-wrap !py-4">
-                <x-layout.breadcrumbs :items="[
-                    ['label' => $page->title, 'url' => null]
-                ]" />
-            </div>
-        </div>
+        <x-ui.breadcrumb-bar :items="[
+            ['label' => $page->title, 'url' => null]
+        ]" />
     @endif
 
     @foreach($page->activeBlocks as $block)

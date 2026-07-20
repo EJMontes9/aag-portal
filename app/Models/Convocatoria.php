@@ -133,19 +133,26 @@ class Convocatoria extends Model
     }
 
     /**
-     * Devuelve información visual (color, label) según la extensión del archivo.
+     * Devuelve la etiqueta legible del tipo de archivo segun su extension.
+     *
+     * Antes devolvia ademas clases de Tailwind ('bg' y 'text') con un color
+     * pastel por extension. Se eliminaron por dos motivos: no pertenecen a la
+     * paleta institucional, y ademas NUNCA llegaban a aplicarse — Tailwind
+     * escanea las rutas de `content` en tailwind.config.js, donde app/Models
+     * no esta incluido, asi que esas clases jamas se compilaban y el badge
+     * salia sin estilo. Las vistas ahora usan clases literales propias.
      */
     public static function fileTypeInfo(string $path): array
     {
         $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
         return match($ext) {
-            'pdf'               => ['label' => 'PDF',   'text' => 'text-red-700',    'bg' => 'bg-red-50 border-red-200'],
-            'doc', 'docx'       => ['label' => 'Word',  'text' => 'text-blue-700',   'bg' => 'bg-blue-50 border-blue-200'],
-            'xls', 'xlsx'       => ['label' => 'Excel', 'text' => 'text-green-700',  'bg' => 'bg-green-50 border-green-200'],
-            'ppt', 'pptx'       => ['label' => 'PPT',   'text' => 'text-orange-700', 'bg' => 'bg-orange-50 border-orange-200'],
-            'zip', 'rar', '7z'  => ['label' => 'ZIP',   'text' => 'text-yellow-700', 'bg' => 'bg-yellow-50 border-yellow-200'],
-            'jpg', 'jpeg', 'png', 'gif', 'webp' => ['label' => 'IMG', 'text' => 'text-purple-700', 'bg' => 'bg-purple-50 border-purple-200'],
-            default             => ['label' => strtoupper($ext) ?: 'DOC', 'text' => 'text-gray-700', 'bg' => 'bg-gray-50 border-gray-200'],
+            'pdf'               => ['label' => 'PDF'],
+            'doc', 'docx'       => ['label' => 'Word'],
+            'xls', 'xlsx'       => ['label' => 'Excel'],
+            'ppt', 'pptx'       => ['label' => 'PPT'],
+            'zip', 'rar', '7z'  => ['label' => 'ZIP'],
+            'jpg', 'jpeg', 'png', 'gif', 'webp' => ['label' => 'IMG'],
+            default             => ['label' => strtoupper($ext) ?: 'DOC'],
         };
     }
 }

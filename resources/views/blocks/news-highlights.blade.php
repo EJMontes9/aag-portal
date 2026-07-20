@@ -18,24 +18,35 @@
     if ($items->isEmpty()) return;
 @endphp
 
-{{-- Sección noticias estilo Propuesta B:
-     título ALL CAPS Neulis Black navy + "VER TODAS →" en azul a la derecha
-     fondo blanco, grid de 4 cards compactas --}}
+{{-- Noticias — Propuesta B: titulo en MAYUSCULAS Neulis Black navy a la
+     izquierda y "VER TODAS →" en celeste a la derecha, sobre fondo blanco. --}}
+@php
+    // Rejilla ESTATICA: una clase construida en runtime ("lg:grid-cols-{$n}")
+    // no existe cuando Tailwind escanea las plantillas en build, y por tanto
+    // nunca se compila. Hay que escribir las variantes literales.
+    $cols = min($items->count(), 4);
+    $gridClass = match($cols) {
+        1 => 'grid-cols-1',
+        2 => 'sm:grid-cols-2',
+        3 => 'sm:grid-cols-2 lg:grid-cols-3',
+        default => 'sm:grid-cols-2 lg:grid-cols-4',
+    };
+@endphp
 <section class="bg-card">
     <div class="section-wrap">
-        <header class="flex items-center justify-between mb-8" data-aos="fade-up">
-            <h2 class="font-serif text-[18px] font-bold text-brand-navy tracking-[0.06em] uppercase">
+        <header class="flex items-center justify-between gap-4 mb-6" data-aos="fade-up">
+            <h2 class="font-serif text-[18px] text-brand-navy tracking-[0.06em] uppercase">
                 {{ $block->get('title', 'NOTICIAS Y BOLETINES') }}
             </h2>
             @if($block->get('show_view_all'))
                 <a href="{{ route('news.index') }}"
-                   class="text-[11px] font-bold text-brand-primary hover:text-brand-navy tracking-[0.05em] transition-colors uppercase">
+                   class="shrink-0 text-[11px] font-bold text-brand-primary hover:text-brand-navy tracking-[0.05em] transition-colors uppercase">
                     {{ $block->get('view_all_label', 'VER TODAS →') }}
                 </a>
             @endif
         </header>
 
-        <div class="grid sm:grid-cols-2 lg:grid-cols-{{ min($items->count(), 4) }} gap-6">
+        <div class="grid {{ $gridClass }} gap-4">
             @foreach($items as $item)
                 @include('pages.news.partials.card', ['item' => $item])
             @endforeach

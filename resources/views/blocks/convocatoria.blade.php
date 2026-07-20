@@ -377,77 +377,133 @@
     // (La lista de documentos se incluye directamente en cada layout)
 @endphp
 
-{{-- ════ LAYOUT: SPLIT (recomendado, dos columnas) ════════════════════════ --}}
+{{-- ════ LAYOUT: SPLIT (tarjeta unica con cabecera navy) ══════════════════
+
+     Antes eran dos columnas (1.3fr / 1fr) con items-start: la izquierda crecia
+     con todo el contenido y la derecha solo tenia el countdown, una caja de
+     unos 200px, de modo que quedaba un hueco enorme a su lado. El desequilibrio
+     era estructural, no de contenido: cualquier convocatoria con cronograma o
+     requisitos lo reproducia.
+
+     Ahora es una sola tarjeta a lo ancho, con el countdown integrado en la
+     cabecera navy en horizontal (que es donde mejor funciona: son cuatro cifras
+     cortas) y el cuerpo repartido en dos columnas que SI se llenan. No hay
+     hueco posible, haya el contenido que haya. --}}
 @if($procesoLayout !== 'card' && $procesoLayout !== 'minimal')
 <section class="bg-bg">
     <div class="section-wrap">
-        <div class="max-w-5xl mx-auto grid md:grid-cols-[1.3fr_1fr] gap-4 items-start"
-             data-aos="fade-up" data-aos-duration="700">
+        <article class="max-w-5xl mx-auto card-surface overflow-hidden"
+                 data-aos="fade-up" data-aos-duration="700">
 
-            {{-- ── Columna izquierda: info ──────────────────────────────────── --}}
-            <div class="card-surface p-6 md:p-8 flex flex-col gap-5">
+            {{-- ── Cabecera navy: identidad + titulo + countdown ─────────────── --}}
+            <div class="bg-brand-navy rule-accent px-6 md:px-8 py-6">
 
-                {{-- Logo institucional + chip de estado + título --}}
-                <div>
-                    @if($logo)
-                    <div class="flex items-center gap-3 mb-4 pb-3 border-b border-border">
-                        <img src="{{ $logo }}" alt="{{ settings('site_name','AAG') }}" class="h-8 object-contain">
-                        <span class="text-[13px] text-muted leading-snug">
-                            {{ settings('site_name','Autoridad Aeroportuaria de Guayaquil') }}
-                        </span>
-                    </div>
-                    @endif
-                    <span class="{{ $chipClass }}">
-                        {{-- Cuadrado en color heredado del chip: sin circulos ni parpadeo,
-                             el color del chip ya distingue abierto de cerrado. --}}
-                        <span class="w-1.5 h-1.5 bg-current inline-block"></span>
-                        {{ $chipLabel }}
+                @if($logo)
+                {{-- Logo blanqueado para que funcione sobre navy, igual que en el
+                     pie de pagina. Es el sello de oficialidad del anuncio. --}}
+                <div class="flex items-center gap-3 mb-4 pb-4 border-b border-white/15">
+                    <img src="{{ $logo }}" alt="" aria-hidden="true"
+                         class="h-7 w-auto object-contain" style="filter:brightness(0) invert(1);">
+                    <span class="text-[13px] text-on-navy/75 leading-snug">
+                        {{ settings('site_name','Autoridad Aeroportuaria de Guayaquil') }}
                     </span>
-                    <h2 class="font-serif text-section-title text-brand-navy mt-2.5">
-                        {{ $conv->title }}
-                    </h2>
-                    @if($conv->short_description)
-                        <p class="mt-2.5 text-[15px] text-muted leading-relaxed">
-                            {{ $conv->short_description }}
-                        </p>
-                    @endif
                 </div>
-
-                {{-- Datos clave: área / modalidad / cierre --}}
-                @if($conv->area || $conv->modality || $closes)
-                <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-y border-border py-4">
-                    @if($conv->area)
-                    <div>
-                        <dt class="font-sans text-[11px] tracking-[0.14em] uppercase text-muted font-bold mb-1">ÁREA</dt>
-                        <dd class="text-[14px] font-semibold text-fg">{{ $conv->area }}</dd>
-                    </div>
-                    @endif
-                    @if($conv->modality)
-                    <div>
-                        <dt class="font-sans text-[11px] tracking-[0.14em] uppercase text-muted font-bold mb-1">MODALIDAD</dt>
-                        <dd class="text-[14px] font-semibold text-fg">{{ $conv->modality }}</dd>
-                    </div>
-                    @endif
-                    @if($closes)
-                    <div class="sm:col-span-2">
-                        <dt class="font-sans text-[11px] tracking-[0.14em] uppercase text-muted font-bold mb-1">FECHA DE CIERRE</dt>
-                        <dd class="text-[14px] font-semibold text-fg num-tabular">
-                            {{ $closes->translatedFormat('d \\d\\e F \\d\\e Y · H:i') }}
-                        </dd>
-                    </div>
-                    @endif
-                </dl>
                 @endif
 
-                {{-- Cronograma (si existe) --}}
+                <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+
+                    {{-- Titulo y bajada --}}
+                    <div class="min-w-0 flex-1">
+                        <span class="{{ $chipClass }}">
+                            <span class="w-1.5 h-1.5 bg-current inline-block"></span>
+                            {{ $chipLabel }}
+                        </span>
+                        <h2 class="font-serif text-section-title text-on-navy mt-3">
+                            {{ $conv->title }}
+                        </h2>
+                        @if($conv->short_description)
+                            <p class="mt-2.5 text-[15px] text-on-navy/80 leading-relaxed max-w-[60ch]">
+                                {{ $conv->short_description }}
+                            </p>
+                        @endif
+                    </div>
+
+                    {{-- Countdown en horizontal. Al ir en la cabecera ya no necesita
+                         una columna propia, que era el origen del hueco. --}}
+                    @if($isOpen && $closes && $closes->isFuture())
+                    <div class="shrink-0 lg:text-right">
+                        <p class="font-sans text-[11px] tracking-[0.14em] uppercase font-bold mb-2.5 text-brand-accent">
+                            TIEMPO RESTANTE
+                        </p>
+                        <div class="flex gap-2"
+                             x-data="countdown('{{ $closes->toIso8601String() }}')"
+                             x-init="start()">
+                            @foreach(['days' => 'DÍAS', 'hours' => 'HRS', 'minutes' => 'MIN', 'seconds' => 'SEG'] as $k => $l)
+                            <div class="text-center min-w-[58px]">
+                                <div class="rounded-card py-2 px-1 mb-1 border border-white/20 bg-white/[0.06]">
+                                    <span class="font-serif text-[24px] leading-none text-on-navy num-tabular block"
+                                          x-text="String({{ $k }}).padStart(2,'0')">00</span>
+                                </div>
+                                <span class="block font-sans text-[11px] tracking-[0.1em] uppercase font-bold text-on-navy/65">{{ $l }}</span>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    @else
+                    <div class="shrink-0 flex items-center gap-3 border border-white/20 rounded-card px-4 py-3">
+                        <svg class="w-6 h-6 text-on-navy/50 shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"/>
+                        </svg>
+                        <div>
+                            <p class="font-sans text-[11px] font-bold tracking-[0.14em] uppercase text-on-navy/70">Proceso cerrado</p>
+                            @if($closes)
+                            <p class="font-serif text-[17px] text-on-navy mt-0.5 num-tabular">
+                                {{ $closes->translatedFormat('d M Y') }}
+                            </p>
+                            @endif
+                        </div>
+                    </div>
+                    @endif
+                </div>
+            </div>
+
+            {{-- ── Datos clave: banda de 3 columnas separadas por filete ─────── --}}
+            @if($conv->area || $conv->modality || $closes)
+            <dl class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-border border-b border-border">
+                @if($conv->area)
+                <div class="px-6 md:px-8 py-4">
+                    <dt class="font-sans text-[11px] tracking-[0.14em] uppercase text-muted font-bold mb-1">ÁREA</dt>
+                    <dd class="text-[15px] font-semibold text-fg">{{ $conv->area }}</dd>
+                </div>
+                @endif
+                @if($conv->modality)
+                <div class="px-6 md:px-8 py-4">
+                    <dt class="font-sans text-[11px] tracking-[0.14em] uppercase text-muted font-bold mb-1">MODALIDAD</dt>
+                    <dd class="text-[15px] font-semibold text-fg">{{ $conv->modality }}</dd>
+                </div>
+                @endif
+                @if($closes)
+                <div class="px-6 md:px-8 py-4">
+                    <dt class="font-sans text-[11px] tracking-[0.14em] uppercase text-muted font-bold mb-1">FECHA DE CIERRE</dt>
+                    <dd class="text-[15px] font-semibold text-fg num-tabular">
+                        {{ $closes->translatedFormat('d \\d\\e F \\d\\e Y · H:i') }}
+                    </dd>
+                </div>
+                @endif
+            </dl>
+            @endif
+
+            {{-- ── Cuerpo: cronograma y requisitos a dos columnas ────────────── --}}
+            @if(count($cronograma) || count($requirements))
+            <div class="px-6 md:px-8 py-6 grid gap-8 @if(count($cronograma) && count($requirements)) lg:grid-cols-2 @endif">
+
                 @if(count($cronograma))
                 <div>
-                    <p class="font-sans text-[11px] tracking-[0.14em] uppercase text-muted font-bold mb-2.5">CRONOGRAMA</p>
+                    <p class="font-sans text-[11px] tracking-[0.14em] uppercase text-muted font-bold mb-3">CRONOGRAMA</p>
                     <ol>
                         @foreach($cronograma as $idx => $item)
-                        <li class="flex items-center gap-3 py-2 border-b border-border last:border-0">
-                            {{-- Indice en cuadrado navy, no en circulo celeste. --}}
-                            <span class="w-5 h-5 rounded-pill flex items-center justify-center font-sans text-[11px] font-bold flex-shrink-0 bg-brand-soft text-brand-navy">
+                        <li class="flex items-center gap-3 py-2.5 border-b border-border last:border-0">
+                            <span class="w-6 h-6 rounded-pill flex items-center justify-center font-sans text-[12px] font-bold flex-shrink-0 bg-brand-soft text-brand-navy">
                                 {{ $idx+1 }}
                             </span>
                             <span class="text-[14px] font-semibold text-fg flex-1 min-w-0">{{ $item['etapa'] ?? '' }}</span>
@@ -463,14 +519,15 @@
                 </div>
                 @endif
 
-                {{-- Requisitos mínimos --}}
                 @if(count($requirements))
                 <div>
-                    <p class="font-sans text-[11px] tracking-[0.14em] uppercase text-muted font-bold mb-2.5">REQUISITOS MÍNIMOS</p>
-                    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-1.5">
+                    <p class="font-sans text-[11px] tracking-[0.14em] uppercase text-muted font-bold mb-3">REQUISITOS MÍNIMOS</p>
+                    {{-- Una sola columna cuando comparte fila con el cronograma; a
+                         dos cuando va solo, para no dejar una lista larga y estrecha. --}}
+                    <ul class="grid @if(!count($cronograma)) sm:grid-cols-2 @endif gap-x-8 gap-y-2">
                         @foreach($requirements as $req)
-                        <li class="flex items-start gap-2 text-[14px] text-fg leading-snug">
-                            <svg class="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-brand-accent" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <li class="flex items-start gap-2.5 text-[14px] text-fg leading-snug">
+                            <svg class="w-4 h-4 flex-shrink-0 mt-0.5 text-brand-accent" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
                             </svg>
                             {{ $req }}
@@ -479,107 +536,73 @@
                     </ul>
                 </div>
                 @endif
+            </div>
+            @endif
 
-                {{-- Botón ver detalles completos (página interna) --}}
-                <a href="{{ $convLink }}" class="btn-primary self-start mt-auto">
+            {{-- ── Documentos: a lo ancho, no en una columna estrecha ────────── --}}
+            @if($docTotal > 0)
+            <div class="border-t border-border" x-data="{ open: false }">
+                <button type="button" @click="open = !open" :aria-expanded="open"
+                        class="w-full flex items-center justify-between gap-3 px-6 md:px-8 py-4 text-left transition-colors hover:bg-brand-soft/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-primary"
+                        :class="open ? 'bg-brand-soft/40' : ''">
+                    <div>
+                        <p class="text-[15px] font-bold text-brand-navy">Documentos del proceso</p>
+                        <p class="text-[13px] text-muted">{{ $docTotal }} archivo{{ $docTotal !== 1 ? 's' : '' }} disponible{{ $docTotal !== 1 ? 's' : '' }}</p>
+                    </div>
+                    <span class="shrink-0 font-sans text-[20px] font-bold leading-none w-5 text-center transition-colors"
+                          :class="open ? 'text-brand-primary' : 'text-muted'"
+                          x-text="open ? '−' : '+'" aria-hidden="true">+</span>
+                </button>
+                <div x-show="open"
+                     x-transition:enter="transition ease-out duration-150"
+                     x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                     style="display:none;">
+                    <div class="border-t border-border">
+                        @if($conv->bases_pdf)
+                        @php $info = \App\Models\Convocatoria::fileTypeInfo($conv->bases_pdf); @endphp
+                        <div class="flex flex-wrap items-center gap-3 px-6 md:px-8 py-3 border-b border-border last:border-0">
+                            <span class="w-9 h-9 rounded-pill flex items-center justify-center text-[11px] font-bold border border-border flex-shrink-0 bg-brand-soft text-brand-navy">{{ $info['label'] }}</span>
+                            <span class="flex-1 min-w-[12ch] text-[15px] font-semibold text-fg truncate">Bases del proceso</span>
+                            <a href="{{ Storage::disk('public')->url($conv->bases_pdf) }}" target="_blank" download
+                               aria-label="Descargar bases del proceso"
+                               class="flex-shrink-0 rounded-pill font-sans text-[13px] font-bold uppercase tracking-[0.06em] text-brand-primary hover:text-brand-navy transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card">Descargar</a>
+                        </div>
+                        @endif
+                        @foreach($documentos as $doc)
+                        @php
+                            $archivo = $doc['archivo'] ?? $doc['path'] ?? '';
+                            $nombre  = $doc['nombre'] ?? basename($archivo);
+                            $info    = \App\Models\Convocatoria::fileTypeInfo($archivo);
+                            $url     = $archivo ? Storage::disk('public')->url($archivo) : '#';
+                        @endphp
+                        @if($archivo)
+                        <div class="flex flex-wrap items-center gap-3 px-6 md:px-8 py-3 border-b border-border last:border-0">
+                            <span class="w-9 h-9 rounded-pill flex items-center justify-center text-[11px] font-bold border border-border flex-shrink-0 bg-brand-soft text-brand-navy">{{ $info['label'] }}</span>
+                            <span class="flex-1 min-w-[12ch] text-[15px] font-semibold text-fg truncate" title="{{ $nombre }}">{{ $nombre }}</span>
+                            <a href="{{ $url }}" target="_blank" download
+                               aria-label="Descargar {{ $nombre }}"
+                               class="flex-shrink-0 rounded-pill font-sans text-[13px] font-bold uppercase tracking-[0.06em] text-brand-primary hover:text-brand-navy transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card">Descargar</a>
+                        </div>
+                        @endif
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            {{-- ── Pie: llamada a la accion ──────────────────────────────────── --}}
+            <div class="border-t border-border bg-bg px-6 md:px-8 py-5 flex flex-wrap items-center justify-between gap-4">
+                <p class="text-[14px] text-muted">
+                    Consulta las bases completas y el detalle del proceso.
+                </p>
+                <a href="{{ $convLink }}" class="btn-primary">
                     Ver convocatoria completa
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
                     </svg>
                 </a>
             </div>
-
-            {{-- ── Columna derecha: countdown + documentos ─────────────────────── --}}
-            <div class="flex flex-col gap-4 md:sticky md:top-6">
-
-                {{-- Countdown sobre banda navy plana --}}
-                <div class="bg-brand-navy rounded-card p-6">
-                    @if($isOpen && $closes && $closes->isFuture())
-                        <p class="font-sans text-[11px] tracking-[0.14em] uppercase font-bold mb-3 text-brand-accent">TIEMPO RESTANTE</p>
-                        {{-- Se retiro el :class de escalado al cambiar de segundo:
-                             B es un diseno estatico, sin transformaciones. --}}
-                        <div class="grid grid-cols-4 gap-2"
-                             x-data="countdown('{{ $closes->toIso8601String() }}')"
-                             x-init="start()">
-                            @foreach(['days' => 'DÍAS', 'hours' => 'HRS', 'minutes' => 'MIN', 'seconds' => 'SEG'] as $k => $l)
-                            <div class="text-center">
-                                <div class="rounded-card py-2.5 mb-1.5 border border-white/20 bg-white/[0.06]">
-                                    <span class="font-serif text-[26px] leading-none text-on-navy num-tabular block"
-                                          x-text="String({{ $k }}).padStart(2,'0')">00</span>
-                                </div>
-                                <span class="block font-sans text-[11px] tracking-[0.12em] uppercase font-bold text-on-navy/60">{{ $l }}</span>
-                            </div>
-                            @endforeach
-                        </div>
-                        <p class="mt-3.5 text-[12px] text-center text-on-navy/65 num-tabular">
-                            Cierre: {{ $closes->translatedFormat('d \\d\\e F \\d\\e Y · H:i') }}
-                        </p>
-                    @else
-                        <div class="text-center py-1">
-                            <svg class="w-7 h-7 mx-auto mb-2.5 text-on-navy/40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"/>
-                            </svg>
-                            <p class="font-sans text-[12px] font-bold tracking-[0.14em] uppercase text-on-navy/70">Proceso cerrado</p>
-                            @if($closes)
-                            <p class="font-serif text-[18px] text-on-navy/70 mt-1 num-tabular">
-                                {{ $closes->translatedFormat('d \\d\\e F · H:i') }}
-                            </p>
-                            @endif
-                        </div>
-                    @endif
-                </div>
-
-                {{-- Documentos --}}
-                @if($docTotal > 0)
-                <div class="card-surface overflow-hidden" x-data="{ open: false }">
-                    <button type="button" @click="open = !open" :aria-expanded="open"
-                            class="w-full flex items-center justify-between gap-3 px-4 py-3.5 text-left transition-colors hover:bg-brand-soft/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-primary"
-                            :class="open ? 'bg-brand-soft/40' : ''">
-                        <div>
-                            <p class="text-[14px] font-bold text-brand-navy">Documentos del proceso</p>
-                            <p class="text-[12px] text-muted">{{ $docTotal }} archivo{{ $docTotal !== 1 ? 's' : '' }}</p>
-                        </div>
-                        {{-- aria-hidden: el estado ya lo comunica aria-expanded. --}}
-                        <span class="shrink-0 font-sans text-[18px] font-bold leading-none w-4 text-center transition-colors"
-                              :class="open ? 'text-brand-primary' : 'text-muted'"
-                              x-text="open ? '−' : '+'" aria-hidden="true">+</span>
-                    </button>
-                    <div x-show="open"
-                         x-transition:enter="transition ease-out duration-150"
-                         x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                         style="display:none;">
-                        <div class="border-t border-border">
-                            @if($conv->bases_pdf)
-                            @php $info = \App\Models\Convocatoria::fileTypeInfo($conv->bases_pdf); @endphp
-                            <div class="flex items-center gap-3 px-4 py-2.5 border-b border-border last:border-0">
-                                <span class="w-8 h-8 rounded-pill flex items-center justify-center text-[11px] font-bold border border-border flex-shrink-0 bg-brand-soft text-brand-navy">{{ $info['label'] }}</span>
-                                <span class="flex-1 text-[14px] font-semibold text-fg truncate">Bases del proceso</span>
-                                <a href="{{ Storage::disk('public')->url($conv->bases_pdf) }}" target="_blank" download
-                                   class="flex-shrink-0 rounded-pill font-sans text-[12px] font-bold uppercase tracking-[0.06em] text-brand-primary hover:text-brand-navy transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card">Descargar</a>
-                            </div>
-                            @endif
-                            @foreach($documentos as $doc)
-                            @php
-                                $archivo = $doc['archivo'] ?? $doc['path'] ?? '';
-                                $nombre  = $doc['nombre'] ?? basename($archivo);
-                                $info    = \App\Models\Convocatoria::fileTypeInfo($archivo);
-                                $url     = $archivo ? Storage::disk('public')->url($archivo) : '#';
-                            @endphp
-                            @if($archivo)
-                            <div class="flex items-center gap-3 px-4 py-2.5 border-b border-border last:border-0">
-                                <span class="w-8 h-8 rounded-pill flex items-center justify-center text-[11px] font-bold border border-border flex-shrink-0 bg-brand-soft text-brand-navy">{{ $info['label'] }}</span>
-                                <span class="flex-1 text-[14px] font-semibold text-fg truncate" title="{{ $nombre }}">{{ $nombre }}</span>
-                                <a href="{{ $url }}" target="_blank" download
-                                   class="flex-shrink-0 rounded-pill font-sans text-[12px] font-bold uppercase tracking-[0.06em] text-brand-primary hover:text-brand-navy transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card">Descargar</a>
-                            </div>
-                            @endif
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-                @endif
-            </div>
-        </div>
+        </article>
     </div>
 </section>
 

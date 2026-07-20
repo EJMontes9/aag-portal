@@ -152,8 +152,11 @@
                          x-init="start()">
                         @foreach(['days' => 'DÍAS', 'hours' => 'HRS', 'minutes' => 'MIN', 'seconds' => 'SEG'] as $k => $l)
                         <div class="text-center">
-                            <div class="rounded-pill py-2.5 mb-1.5 bg-white/10 border border-white/15">
-                                <span class="block font-serif text-[1.6rem] leading-none text-white num-tabular"
+                            {{-- Misma caja que el countdown del bloque de portada
+                                 (rounded-card, borde /20, fondo /[0.06]) para que
+                                 el contador se vea igual en los dos sitios. --}}
+                            <div class="rounded-card py-2.5 mb-1.5 bg-white/[0.06] border border-white/20">
+                                <span class="block font-serif text-[24px] leading-none text-white num-tabular"
                                       x-text="String({{ $k }}).padStart(2,'0')">00</span>
                             </div>
                             {{-- 12px y opacidad mas alta: DIAS/HRS/MIN/SEG son la

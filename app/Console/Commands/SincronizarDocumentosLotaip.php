@@ -66,6 +66,82 @@ class SincronizarDocumentosLotaip extends Command
      */
     protected const CARPETAS_IGNORADAS = ['articulo 19', 'article 19', 'art 19', 'excel', 'varios'];
 
+    /**
+     * Variantes de nombre con que puede aparecer la carpeta de un mes.
+     * El criterio ha ido cambiando: 2023 y 2024 usan "01-Enero"; 2026, "Enero".
+     */
+    protected function variantesDeCarpeta(int $mes): array
+    {
+        $nombre = LotaipMonth::MONTH_NAMES[$mes];
+
+        return [
+            $nombre,                                  // Enero
+            sprintf('%02d-%s', $mes, $nombre),        // 01-Enero
+            sprintf('%d-%s', $mes, $nombre),          // 1-Enero
+            sprintf('%02d_%s', $mes, $nombre),        // 01_Enero
+            sprintf('%02d %s', $mes, $nombre),        // 01 Enero
+        ];
+    }
+
+    /**
+     * Busca el config_link.txt de un mes.
+     *
+     * Es el mecanismo del propio explorador: si una carpeta contiene un
+     * archivo config_link.txt, en vez de listar su contenido muestra un enlace.
+     * La AAG lo usa desde 2025 para remitir al portal nacional de transparencia
+     * de la Defensoria del Pueblo, donde se publica ahora la informacion; los
+     * archivos se siguen subiendo por detras pero no se muestran.
+     *
+     * Formato del archivo:  URL|Texto del enlace
+     * (el texto es opcional; si falta, se usa la propia URL)
+     *
+     * @return array{url:string,label:string}|null
+     */
+    protected function buscarEnlaceDeMes(string $base, string $anio, int $mes, ?string $carpetaConocida = null): ?array
+    {
+        // Si ya se sabe como se llama la carpeta (porque tiene archivos), se
+        // prueba solo esa; si no, se tantean las variantes conocidas.
+        $candidatas = $carpetaConocida ? [$carpetaConocida] : $this->variantesDeCarpeta($mes);
+
+        foreach ($candidatas as $carpeta) {
+            $url = $base . '/' . rawurlencode($anio) . '/' . rawurlencode($carpeta) . '/config_link.txt';
+
+            try {
+                $resp = Http::timeout(15)->get($url);
+            } catch (\Throwable) {
+                continue;
+            }
+
+            if (! $resp->successful()) {
+                continue;
+            }
+
+            $contenido = trim($resp->body());
+            if ($contenido === '') {
+                continue;
+            }
+
+            $partes  = explode('|', $contenido);
+            $destino = trim($partes[0]);
+            $texto   = isset($partes[1]) ? trim($partes[1]) : '';
+
+            // Solo http/https: el contenido viene de un archivo del servidor,
+            // pero acaba siendo un enlace que pulsa el ciudadano.
+            $esquema = strtolower((string) parse_url($destino, PHP_URL_SCHEME));
+            if (! in_array($esquema, ['http', 'https'], true)) {
+                $this->warn("    config_link.txt de {$anio}/{$carpeta} ignorado: esquema no permitido");
+                continue;
+            }
+
+            return [
+                'url'   => $destino,
+                'label' => $texto !== '' ? $texto : 'Ver documentos',
+            ];
+        }
+
+        return null;
+    }
+
     public function handle(): int
     {
         $seccion = $this->option('seccion');
@@ -94,15 +170,13 @@ class SincronizarDocumentosLotaip extends Command
             return self::FAILURE;
         }
 
-        $totales = ['anios' => 0, 'meses' => 0, 'docs' => 0, 'nuevos' => 0];
+        $totales = ['anios' => 0, 'meses' => 0, 'docs' => 0, 'nuevos' => 0, 'enlaces' => 0];
 
         foreach ($anios as $anio) {
+            // OJO: un año sin archivos NO se descarta. Desde 2025 hay meses que
+            // solo tienen un config_link.txt remitiendo a otro portal, sin
+            // ningun archivo listado; 2026 es asi entero.
             $archivos = $this->descubrirArchivos($base, $anio);
-
-            if (empty($archivos)) {
-                $this->line("  {$anio}: sin archivos todavia");
-                continue;
-            }
 
             $totales['anios']++;
             $this->line("  <fg=cyan>{$anio}</>");
@@ -116,17 +190,58 @@ class SincronizarDocumentosLotaip extends Command
 
             // Agrupar por mes
             $porMes = [];
+            $carpetaDeMes = [];
             foreach ($archivos as $ruta) {
                 $info = $this->analizarRuta($ruta, $anio);
                 if ($info) {
                     $porMes[$info['mes']][] = $info;
+                    $carpetaDeMes[$info['mes']] = $info['carpeta'];
+                }
+            }
+
+            // Meses que NO tienen archivos: pueden tener un config_link.txt que
+            // remite a otro portal. Es el caso de 2025 y 2026, donde la
+            // informacion pasó a publicarse en el portal de la Defensoria.
+            foreach (range(1, 12) as $m) {
+                if (! isset($porMes[$m])) {
+                    $porMes[$m] = [];
                 }
             }
             ksort($porMes);
 
             foreach ($porMes as $numeroMes => $documentos) {
-                $totales['meses']++;
                 $nombreMes = LotaipMonth::MONTH_NAMES[$numeroMes] ?? "Mes {$numeroMes}";
+
+                // Con archivos -> se listan en el portal.
+                // Sin archivos -> se mira si hay enlace de redireccion.
+                $enlace = empty($documentos)
+                    ? $this->buscarEnlaceDeMes($base, $anio, $numeroMes)
+                    : null;
+
+                if (empty($documentos) && ! $enlace) {
+                    continue; // mes vacio: no se toca
+                }
+
+                $totales['meses']++;
+
+                if ($enlace) {
+                    $this->line(sprintf('    %-12s  →  %s', $nombreMes, $enlace['label']));
+                    $totales['enlaces']++;
+
+                    if (! $dryRun) {
+                        LotaipMonth::updateOrCreate(
+                            ['year_id' => $registroAnio->id, 'month' => $numeroMes],
+                            [
+                                'mode'           => 'redirect',
+                                'redirect_url'   => $enlace['url'],
+                                'redirect_label' => $enlace['label'],
+                                'is_active'      => true,
+                            ]
+                        );
+                    }
+
+                    continue;
+                }
 
                 $this->line(sprintf('    %-12s %3d documentos', $nombreMes, count($documentos)));
 
@@ -181,12 +296,13 @@ class SincronizarDocumentosLotaip extends Command
 
         $this->newLine();
         $this->info(sprintf(
-            '%s %d documentos en %d meses de %d años.%s',
+            '%s %d documentos y %d meses con enlace, en %d meses de %d años.%s',
             $dryRun ? 'Se registrarian' : 'Registrados',
             $totales['docs'],
+            $totales['enlaces'],
             $totales['meses'],
             $totales['anios'],
-            (! $dryRun && $totales['nuevos'] > 0) ? " ({$totales['nuevos']} nuevos)" : ''
+            (! $dryRun && $totales['nuevos'] > 0) ? " ({$totales['nuevos']} documentos nuevos)" : ''
         ));
 
         return self::SUCCESS;
@@ -233,6 +349,9 @@ class SincronizarDocumentosLotaip extends Command
             'literal'   => $literal ? mb_substr($literal, 0, 255) : null,
             'extension' => strtolower(pathinfo($archivo, PATHINFO_EXTENSION)),
             'mes'       => $mes,
+            // Nombre real de la carpeta ("01-Enero" o "Enero" segun el año),
+            // para poder pedir su config_link.txt sin tantear variantes.
+            'carpeta'   => $partes[$pos + 1],
         ];
     }
 

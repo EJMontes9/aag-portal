@@ -20,6 +20,14 @@ class Faq extends Model
 
     protected static function booted(): void
     {
+        // SEGURIDAD -- La respuesta se pinta sin escapar ({!! !!}); se limpia
+        // el HTML antes de guardarlo. Ver App\Services\HtmlSanitizer.
+        static::saving(function (self $m) {
+            if ($m->isDirty('answer')) {
+                $m->answer = \App\Services\HtmlSanitizer::limpiar($m->answer);
+            }
+        });
+
         $bust = function () {
             Cache::forget('faqs_public');
             Cache::forget('sitemap_xml');

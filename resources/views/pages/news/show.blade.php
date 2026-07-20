@@ -66,7 +66,7 @@
     }
 @endphp
 <script type="application/ld+json">
-{!! json_encode($articleSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+{!! json_ld($articleSchema) !!}
 </script>
 @endpush
 

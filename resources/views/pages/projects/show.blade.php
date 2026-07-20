@@ -9,7 +9,7 @@
     $siteName = settings('site_name', 'Autoridad Aeroportuaria de Guayaquil');
 @endphp
 <script type="application/ld+json">
-{!! json_encode(array_filter([
+{!! json_ld(array_filter([
     '@context'    => 'https://schema.org',
     '@type'       => 'Project',
     'name'        => $project->title,
@@ -20,7 +20,7 @@
     'endDate'     => $project->end_date?->toDateString(),
     'location'    => $project->location ? ['@type' => 'Place', 'name' => $project->location] : null,
     'funder'      => ['@type' => 'GovernmentOrganization', '@id' => url('/') . '#organization'],
-], fn($v) => $v !== null && $v !== ''), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
+], fn($v) => $v !== null && $v !== '')) !!}
 </script>
 @endpush
 

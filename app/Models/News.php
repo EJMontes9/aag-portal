@@ -52,6 +52,31 @@ class News extends Model
             if ($m->status === 'published' && empty($m->published_at)) {
                 $m->published_at = now();
             }
+
+            // SEGURIDAD -- El cuerpo se pinta sin escapar ({!! !!}), asi que se
+            // limpia ANTES de guardar. La barra del editor limita lo que se
+            // puede hacer con el raton, no lo que llega al servidor: sin esto,
+            // quien tenga acceso al panel puede inyectar JavaScript que se
+            // ejecuta en el navegador de cada visitante.
+            if ($m->isDirty('content')) {
+                $m->content = \App\Services\HtmlSanitizer::limpiar($m->content);
+            }
+
+            // Los bloques de contenido de la noticia guardan su HTML dentro de
+            // un JSON. El bloque "texto" tambien se pinta sin escapar, asi que
+            // se limpia igual, recorriendo la estructura.
+            if ($m->isDirty('content_blocks') && is_array($m->content_blocks)) {
+                $bloques = $m->content_blocks;
+
+                foreach ($bloques as $i => $bloque) {
+                    if (($bloque['type'] ?? null) === 'text' && isset($bloque['data']['content'])) {
+                        $bloques[$i]['data']['content'] =
+                            \App\Services\HtmlSanitizer::limpiar($bloque['data']['content']);
+                    }
+                }
+
+                $m->content_blocks = $bloques;
+            }
         });
 
         $bust = function () {

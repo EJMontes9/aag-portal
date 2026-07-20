@@ -31,11 +31,11 @@
 
 @push('json-ld')
 <script type="application/ld+json">
-{!! json_encode([
+{!! json_ld([
     '@context'        => 'https://schema.org',
     '@type'           => 'BreadcrumbList',
     'itemListElement' => $breadcrumbList,
-], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
+]) !!}
 </script>
 @endpush
 

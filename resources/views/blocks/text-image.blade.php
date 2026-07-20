@@ -10,13 +10,9 @@
     $side     = $block->get('image_side', 'right');
     $imageUrl = $block->get('image') ? Storage::disk('public')->url($block->get('image')) : null;
 
-    // Limpiar width/height/style del iframe e inyectar estilos para llenar el contenedor
-    $rawEmbed   = $block->get('map_embed', '');
-    $cleanEmbed = '';
-    if ($rawEmbed) {
-        $cleanEmbed = preg_replace('/\s+(width|height|style)\s*=\s*"[^"]*"/', '', $rawEmbed);
-        $cleanEmbed = str_replace('<iframe', '<iframe style="width:100%;height:100%;border:0;display:block;"', $cleanEmbed);
-    }
+    // SEGURIDAD -- Igual que en el bloque de mapa: se extrae solo la direccion
+    // y se valida el proveedor, en vez de pintar el HTML del campo.
+    $embedUrl = \App\Services\EmbedUrl::extraer($block->get('map_embed'), 'mapa');
 @endphp
 
 {{-- Texto + imagen (o mapa).
@@ -53,11 +49,18 @@
                          class="w-full rounded-card border border-border block"
                          loading="lazy">
 
-                @elseif($cleanEmbed)
-                    {{-- El contenedor usa aspect-ratio; el iframe se ajusta al 100% x 100% --}}
+                @elseif($embedUrl)
+                    {{-- El contenedor usa aspect-ratio; el iframe se ajusta al 100% x 100%.
+                         El iframe se construye aqui con la URL ya validada. --}}
                     <div class="map-embed-wrap w-full card-surface overflow-hidden"
                          style="aspect-ratio:4/3; min-height:260px;">
-                        {!! $cleanEmbed !!}
+                        <iframe src="{{ $embedUrl }}"
+                                title="{{ $block->get('title', 'Mapa') }}"
+                                style="width:100%;height:100%;border:0;display:block;"
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"
+                                sandbox="allow-scripts allow-same-origin allow-popups"
+                                allowfullscreen></iframe>
                     </div>
 
                 @else

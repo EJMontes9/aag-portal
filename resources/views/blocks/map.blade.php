@@ -16,12 +16,13 @@
         default  => 'height:450px',   // medium
     };
 
-    $embedCode = $block->get('embed_code', '');
-    $title     = $block->get('title', '');
+    $title = $block->get('title', '');
 
-    // Eliminar width/height/style del iframe y forzar que llene el contenedor
-    $cleanEmbed = preg_replace('/\s+(width|height|style)\s*=\s*"[^"]*"/', '', $embedCode);
-    $cleanEmbed = str_replace('<iframe', '<iframe style="width:100%;height:100%;border:0;display:block;"', $cleanEmbed);
+    // SEGURIDAD -- Antes se pintaba el HTML del campo tal cual, quitandole solo
+    // width/height/style, que es un saneo cosmetico: un <script> pegado ahi se
+    // ejecutaba. Ahora se extrae UNICAMENTE la direccion, se comprueba que sea
+    // de un proveedor conocido, y el iframe lo construye esta plantilla.
+    $embedUrl = \App\Services\EmbedUrl::extraer($block->get('embed_code'), 'mapa');
 @endphp
 
 {{-- Mapa a ancho completo.
@@ -36,12 +37,22 @@
             <h2 class="font-serif text-section-title text-brand-navy mb-8">{{ $title }}</h2>
         @endif
 
-        @if($cleanEmbed)
+        @if($embedUrl)
             {{-- .card-surface = caja blanca, borde 1px marcado, radio 4px y cero
                  sombra; es el unico envoltorio permitido en B. --}}
             <div class="map-embed-wrap w-full card-surface overflow-hidden"
                  style="{{ $heightStyle }}">
-                {!! $cleanEmbed !!}
+                {{-- El iframe se construye aqui, con la URL ya validada.
+                     sandbox limita lo que puede hacer el contenido incrustado:
+                     se le permite ejecutar scripts (el mapa los necesita) pero
+                     no acceder a nuestra pagina ni abrir ventanas. --}}
+                <iframe src="{{ $embedUrl }}"
+                        title="{{ $title ?: 'Mapa' }}"
+                        style="width:100%;height:100%;border:0;display:block;"
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"
+                        sandbox="allow-scripts allow-same-origin allow-popups"
+                        allowfullscreen></iframe>
             </div>
         @else
             {{-- Estado vacio: caja de la misma forma que el mapa real, en gris

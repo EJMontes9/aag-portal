@@ -47,36 +47,33 @@ class SubscriberController extends Controller
 
         RateLimiter::hit($key, 600);
 
-        // Buscar existente
+        // ── SEGURIDAD: respuesta uniforme ────────────────────────────────────
+        // Antes el mensaje cambiaba segun el estado del correo ("Ya estas
+        // suscrito" / "Ya enviamos un correo" / "Gracias por suscribirte"), lo
+        // que convertia el formulario en un oraculo: cualquiera podia ir
+        // probando direcciones y averiguar cuales estan en la lista. Eso es un
+        // dato personal, y ademas util para preparar campanas de phishing
+        // dirigidas.
+        //
+        // Ahora la respuesta es SIEMPRE la misma, pase lo que pase por dentro.
+        $respuesta = response()->json([
+            'ok' => true,
+            'message' => 'Gracias. Si tu correo es valido, quedara registrado en el boletin.',
+        ]);
+
         $existing = Subscriber::where('email', $data['email'])->first();
 
         if ($existing) {
-            if ($existing->status === 'confirmed') {
-                return response()->json([
-                    'ok' => true,
-                    'message' => 'Ya estas suscrito al boletin. Gracias por seguirnos.',
-                ]);
-            }
-            if ($existing->status === 'unsubscribed') {
-                $existing->update([
-                    'status' => 'confirmed',
-                    'confirmed_at' => now(),
-                    'unsubscribed_at' => null,
-                ]);
-                return response()->json([
-                    'ok' => true,
-                    'message' => 'Bienvenido de vuelta. Te reactivamos al boletin.',
-                ]);
-            }
-            // pending -> reenviar / confirmar
-            return response()->json([
-                'ok' => true,
-                'message' => 'Ya enviamos un correo de confirmacion a este email.',
-            ]);
+            // Quien se dio de baja NO se reactiva solo: es una decision
+            // explicita suya, y revertirla porque alguien (quiza otra persona)
+            // escriba su correo en el formulario seria reinscribirlo sin su
+            // consentimiento. Para volver, tiene que pedirlo por contacto.
+            //
+            // Los estados 'confirmed' y 'pending' tampoco se tocan: ya estan
+            // en la lista.
+            return $respuesta;
         }
 
-        // Crear nuevo. Por ahora marcamos 'confirmed' directo
-        // (cuando configures mail real puedes cambiar a 'pending' y enviar correo).
         Subscriber::create([
             'email' => $data['email'],
             'name' => $data['name'] ?? null,
@@ -87,9 +84,6 @@ class SubscriberController extends Controller
             'user_agent' => substr((string) $request->userAgent(), 0, 500),
         ]);
 
-        return response()->json([
-            'ok' => true,
-            'message' => '¡Gracias por suscribirte al boletin AAG!',
-        ]);
+        return $respuesta;
     }
 }

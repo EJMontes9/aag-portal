@@ -24,10 +24,17 @@ class NewsController extends Controller
             }
         }
 
-        if ($q = $request->get('q')) {
+        // La busqueda se acota a 80 caracteres: mas alla no aporta nada y evita
+        // que se manden cadenas enormes que encarecen el LIKE innecesariamente.
+        // (El valor va como binding de PDO, asi que no hay inyeccion posible;
+        //  esto es por coste, no por seguridad de la consulta.)
+        $q = trim((string) $request->get('q'));
+        $q = $q !== '' ? mb_substr($q, 0, 80) : '';
+
+        if ($q !== '') {
             $query->where(function ($x) use ($q) {
-                $x->where('title', 'like', "%$q%")
-                  ->orWhere('excerpt', 'like', "%$q%");
+                $x->where('title', 'like', "%{$q}%")
+                  ->orWhere('excerpt', 'like', "%{$q}%");
             });
         }
 

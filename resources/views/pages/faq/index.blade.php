@@ -21,13 +21,13 @@
     ])->values()->all();
 @endphp
 <script type="application/ld+json">
-{!! json_encode([
+{!! json_ld([
     '@context'   => 'https://schema.org',
     '@type'      => 'FAQPage',
     'url'        => route('faq.index'),
     'name'       => 'Preguntas frecuentes — Autoridad Aeroportuaria de Guayaquil',
     'mainEntity' => $faqItems,
-], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+]) !!}
 </script>
 @endpush
 @endif

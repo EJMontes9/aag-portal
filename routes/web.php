@@ -25,23 +25,29 @@ Route::get('/', function () {
     return view('page', compact('page'));
 })->name('home');
 
-// Noticias publicas (van antes del catch-all)
-Route::get('/noticias', [NewsController::class, 'index'])->name('news.index');
+// ── Paginas con BUSQUEDA ────────────────────────────────────────────────────
+// Llevan limite de peticiones porque su busqueda hace LIKE '%texto%' sobre
+// columnas largas y sin indice util: cada consulta recorre la tabla entera.
+// Sin limite, un script puede saturar la base de datos desde una sola IP.
+// 60 por minuto es holgado para una persona navegando.
+Route::middleware('throttle:60,1')->group(function () {
+    Route::get('/noticias', [NewsController::class, 'index'])->name('news.index');
+    Route::get('/faq', [FaqController::class, 'index'])->name('faq.index');
+    Route::get('/proyectos', [ProjectController::class, 'index'])->name('projects.index');
+    Route::get('/convocatorias', [ConvocatoriaController::class, 'index'])->name('convocatorias.index');
+});
+
+// Fichas de detalle: consultas por clave indexada, sin busqueda.
 Route::get('/noticias/{slug}', [NewsController::class, 'show'])->name('news.show');
-
-// FAQ
-Route::get('/faq', [FaqController::class, 'index'])->name('faq.index');
-
-// Proyectos y obras
-Route::get('/proyectos', [ProjectController::class, 'index'])->name('projects.index');
 Route::get('/proyectos/{slug}', [ProjectController::class, 'show'])->name('projects.show');
-
-// Convocatorias (van antes del catch-all)
-Route::get('/convocatorias', [ConvocatoriaController::class, 'index'])->name('convocatorias.index');
 Route::get('/convocatorias/{slug}', [ConvocatoriaController::class, 'show'])->name('convocatorias.show');
 
-// Suscripcion al boletin
-Route::post('/subscribe', [SubscriberController::class, 'store'])->name('subscribe.store');
+// Suscripcion al boletin: envia correo y escribe en base de datos, asi que el
+// limite es mucho mas estrecho. El controlador ademas aplica su propio control
+// por direccion de correo.
+Route::post('/subscribe', [SubscriberController::class, 'store'])
+    ->middleware('throttle:10,10')
+    ->name('subscribe.store');
 
 Route::get('/{slug}', function (string $slug) {
     $page = Page::where('slug', $slug)->where('status', 'published')->with('activeBlocks')->first();

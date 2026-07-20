@@ -65,9 +65,14 @@
         $embed = 'https://player.vimeo.com/video/' . $videoId . '?' . http_build_query($params);
     }
 
-    // Si pegaron directamente una URL de embed u otro formato
+    // SEGURIDAD -- Si no se reconocio YouTube ni Vimeo, antes se ponia la URL
+    // TAL CUAL en el src del iframe. Eso permitia empotrar cualquier sitio de
+    // terceros dentro del portal (phishing con apariencia oficial) y, segun el
+    // navegador, esquemas como data: o javascript:.
+    // Ahora esa URL de reserva tambien pasa por la lista de proveedores; si no
+    // esta, no se renderiza nada.
     if (! $embed && $url) {
-        $embed = $url;
+        $embed = \App\Services\EmbedUrl::extraer($url, 'video');
     }
 
     // ── Estilos de fondo ─────────────────────────────────────────────────────

@@ -10,6 +10,40 @@ if (! function_exists('settings')) {
     }
 }
 
+if (! function_exists('json_ld')) {
+    /**
+     * Serializa datos estructurados (schema.org) para incrustarlos en un
+     * <script type="application/ld+json">.
+     *
+     * SEGURIDAD -- Existe para que las banderas correctas no dependan de que
+     * cada plantilla se acuerde de ponerlas.
+     *
+     * El bloque JSON-LD va DENTRO de un <script>, y ahi el navegador busca la
+     * secuencia "</script>" en crudo para cerrarlo: no hay escapado de HTML que
+     * valga. Si un titulo de noticia contiene "</script><script>...", cierra el
+     * bloque de datos y abre uno de JavaScript ejecutable.
+     *
+     * JSON_HEX_TAG convierte < y > en < y >, con lo que esa secuencia
+     * deja de existir. Las demas banderas HEX cubren comillas y ampersands.
+     *
+     * Ojo: NO se usa JSON_UNESCAPED_SLASHES a proposito. Era justo lo que
+     * dejaba pasar la barra de "</script>". Las barras escapadas ("\/") son
+     * JSON valido y los buscadores las interpretan igual.
+     */
+    function json_ld(array $data): string
+    {
+        return json_encode(
+            $data,
+            JSON_UNESCAPED_UNICODE
+            | JSON_HEX_TAG
+            | JSON_HEX_AMP
+            | JSON_HEX_APOS
+            | JSON_HEX_QUOT
+            | JSON_PRETTY_PRINT
+        ) ?: '{}';
+    }
+}
+
 if (! function_exists('setting_asset')) {
     function setting_asset(string $key, ?string $default = null): ?string
     {

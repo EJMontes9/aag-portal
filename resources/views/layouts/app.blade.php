@@ -265,12 +265,12 @@
 
     {{-- Organization: presente en TODAS las páginas --}}
     <script type="application/ld+json">
-    {!! json_encode($orgSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+    {!! json_ld($orgSchema) !!}
     </script>
 
     {{-- WebPage genérico --}}
     <script type="application/ld+json">
-    {!! json_encode([
+    {!! json_ld([
         '@context'  => 'https://schema.org',
         '@type'     => 'WebPage',
         '@id'       => $canonical . '#webpage',
@@ -281,13 +281,13 @@
         'isPartOf'    => ['@id' => $orgUrl . '#website'],
         'about'       => ['@id' => $orgUrl . '#organization'],
         'dateModified' => now()->toIso8601String(),
-    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
+    ]) !!}
     </script>
 
     @if($isHome)
     {{-- WebSite con SearchAction: solo en la homepage --}}
     <script type="application/ld+json">
-    {!! json_encode($webSiteSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+    {!! json_ld($webSiteSchema) !!}
     </script>
     @endif
 

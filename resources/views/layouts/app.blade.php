@@ -199,7 +199,12 @@
             $fontFamilies[$fontSerif] = $serifSpec;
             $fontFamilies[$fontSans] = $sansSpec;
         }
-        $fontFamilies[$fontMono] = $monoSpec;
+
+        // La mono NO se pide a Google: ninguna plantilla del front publico usa
+        // ya la clase font-mono (las cifras van con .num-tabular sobre la
+        // familia de marca). Cargarla era una peticion externa por nada, con
+        // su coste de red y de privacidad. La variable CSS se sigue definiendo
+        // mas abajo y cae a la monoespaciada del sistema si algo la usara.
 
         // Quitar las que se auto-hospedan -- no existen en Google Fonts.
         $googleFontFamilies = collect($fontFamilies)->except($selfHostedFonts);

@@ -57,13 +57,38 @@ class SecurityHeaders
         // Es la defensa de fondo contra el XSS: aunque se cuele HTML en un
         // contenido, el navegador no ejecuta scripts de otros origenes.
         //
-        // 'unsafe-inline' en script-src sigue siendo necesario HOY porque
-        // Alpine.js y Livewire usan atributos y bloques en linea, y el portal
-        // inyecta el bloque de variables de color en un <style>. Con eso, la
-        // CSP no detiene un XSS en linea, pero si limita a donde se pueden
-        // enviar los datos robados (connect-src) y de donde se puede cargar
-        // codigo. Para endurecerla hace falta pasar a nonces, que es un
-        // cambio mayor.
+        // 'unsafe-inline' y 'unsafe-eval' son ambos necesarios. Conviene leer
+        // esto antes de intentar quitarlos "por endurecer":
+        //
+        //   'unsafe-inline' -> Alpine y Livewire usan atributos en linea, y el
+        //                      portal inyecta las variables de color en un
+        //                      <style> generado en cada peticion.
+        //
+        //   'unsafe-eval'   -> Alpine 3 compila CADA expresion (x-show, x-data,
+        //                      :class...) con new Function(), tambien cuando se
+        //                      sirve compilado por Vite. Sin esta directiva el
+        //                      navegador lo bloquea y Alpine falla a medias:
+        //                      retira los x-cloak pero no evalua los x-show, de
+        //                      modo que todo queda visible a la vez.
+        //
+        //                      Ocurrio de verdad: el navegador de transparencia
+        //                      mostraba los cuatro anios apilados (enero a
+        //                      diciembre repetido cuatro veces) en vez de uno.
+        //                      Afectaba igual al menu movil, al acordeon de FAQ,
+        //                      al slider y al contador de convocatorias.
+        //
+        //                      El sintoma es silencioso: la pagina carga sin
+        //                      errores visibles y solo se ve en la consola del
+        //                      navegador ("Alpine Expression Error: ...
+        //                      'unsafe-eval' is not an allowed source"). Si
+        //                      alguna vez algo interactivo deja de responder,
+        //                      mirar ahi primero.
+        //
+        // Con ambas directivas la CSP no detiene un XSS en linea, pero sigue
+        // aportando: limita DE DONDE se puede cargar codigo y, sobre todo,
+        // A DONDE se pueden enviar los datos robados (connect-src). Quitarlas
+        // exigiria migrar a la build CSP de Alpine, que obliga a reescribir
+        // todas las expresiones como metodos de un componente.
         //
         // En el panel /admin no se aplica: Filament genera scripts propios y
         // una CSP restrictiva lo rompe.
@@ -86,7 +111,7 @@ class SecurityHeaders
 
             $response->headers->set('Content-Security-Policy', implode('; ', [
                 "default-src 'self'",
-                "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com",
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com",
                 "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
                 "font-src 'self' data: https://fonts.gstatic.com",
                 "img-src 'self' data: https:",

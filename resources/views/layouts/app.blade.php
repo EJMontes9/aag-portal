@@ -296,10 +296,26 @@
 
 </head>
 <body class="min-h-screen bg-bg text-fg antialiased">
+    {{-- ══ SALTAR AL CONTENIDO ═══════════════════════════════════════════════════
+         Requisito WCAG 2.1 AA (2.4.1 Evitar bloques). Quien navega con teclado o
+         lector de pantalla tendria que pasar por todo el menu en CADA pagina
+         antes de llegar al contenido; esto lo salta de un tabulador.
+
+         Permanece oculto hasta que recibe el foco: es el primer elemento
+         enfocable del documento, asi que basta pulsar Tab nada mas cargar.
+         No se usa 'hidden' ni display:none porque eso lo sacaria del orden de
+         tabulacion y dejaria de cumplir su funcion. --}}
+    <a href="#contenido"
+       class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100]
+              focus:bg-brand focus:text-white focus:px-4 focus:py-2 focus:rounded
+              focus:outline-none focus:ring-2 focus:ring-brand-accent">
+        Saltar al contenido
+    </a>
+
     <x-alerts.convocatoria-alert />
     <x-layout.header />
 
-    <main>
+    <main id="contenido" tabindex="-1">
         {{ $slot ?? '' }}
         @yield('content')
     </main>

@@ -50,6 +50,15 @@
     };
 @endphp
 
+{{-- ══════════════════════════════════════════════════════════════════════════
+     Las tres franjas van dentro de un <header role="banner">: es el landmark
+     que los lectores de pantalla usan para saltar directamente a la cabecera
+     (WCAG 2.1 AA). Antes eran tres <div> hermanos sueltos, sin landmark que
+     los agrupara. El role= es redundante en navegadores modernos, pero algunas
+     ayudas tecnicas mas antiguas todavia lo necesitan.
+     ══════════════════════════════════════════════════════════════════════════ --}}
+<header role="banner">
+
 {{-- ── Franja 1: utilidades institucionales, sobre amarillo ──────────────── --}}
 @if($topbarEnabled && $topbarItems->isNotEmpty())
 <div class="hidden md:block bg-brand-accent text-on-accent">
@@ -219,3 +228,5 @@
         </nav>
     </div>
 </div>
+
+</header>

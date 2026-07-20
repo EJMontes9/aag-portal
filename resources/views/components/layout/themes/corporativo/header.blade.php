@@ -39,16 +39,16 @@
     };
 @endphp
 
-{{-- Franja 1: utilidades institucionales (FAQ, transparencia, etc.) --}}
+{{-- Franja 1: utilidades institucionales sobre fondo amarillo acento (Propuesta B) --}}
 @if($topbarEnabled && $topbarItems->isNotEmpty())
-<div class="bg-bg border-b border-border text-[11px]">
+<div class="bg-brand-accent text-on-accent text-[11px]">
     <div class="max-w-[1280px] mx-auto px-6 md:px-10 h-8 flex items-center justify-end gap-5">
         <nav class="flex items-center gap-5" aria-label="Enlaces institucionales">
             @foreach($topbarItems as $i => $item)
-                @if($i > 0)<span class="text-border" aria-hidden="true">·</span>@endif
+                @if($i > 0)<span class="opacity-40" aria-hidden="true">·</span>@endif
                 <a href="{{ $item->url ?? '#' }}"
                    @if($item->target) target="{{ $item->target }}" @endif
-                   class="tracking-[0.1em] uppercase text-[10px] font-semibold text-muted hover:text-brand-primary transition-colors">
+                   class="tracking-[0.1em] uppercase text-[10px] font-bold text-on-accent/80 hover:text-on-accent transition-colors">
                     {{ $item->label }}
                 </a>
             @endforeach

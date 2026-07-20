@@ -12,6 +12,7 @@
         'warn'    => 'bg-amber-50 text-amber-800 border border-amber-200',
         'neutral' => 'bg-card text-fg border border-border',
         'soft'    => 'bg-brand-soft/70 text-brand-navy',
+        'accent'  => 'bg-brand-accent text-on-accent',
     ];
     $pillClass = $pillColors[$pillTone] ?? $pillColors['success'];
 
@@ -235,7 +236,7 @@
     <div class="relative z-10 w-full max-w-[1280px] mx-auto px-6 md:px-10 py-24 flex flex-col {{ $centered ? 'items-center text-center' : '' }}">
         <div class="{{ $centered ? 'max-w-3xl mx-auto' : 'max-w-2xl' }}">
             @if($pill)
-                <span class="pill bg-white/15 text-white border border-white/20 mb-7 inline-flex" data-aos="fade-down">{{ $pill }}</span>
+                <span class="pill {{ $pillClass }} mb-7 inline-flex" data-aos="fade-down">{{ $pill }}</span>
             @endif
             @if($h1)
                 <h1 class="font-serif text-display text-white" style="font-weight:400; text-shadow:0 2px 20px rgba(0,0,0,.3);" data-hero-title>{!! italic_markdown_words($h1) !!}</h1>

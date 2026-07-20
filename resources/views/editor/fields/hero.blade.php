@@ -243,25 +243,31 @@
                 <button type="button" wire:click="clearBlockImage('background_image')" class="ve-img-remove">✕ Quitar</button>
             </div>
         @else
-            <div class="ve-media-actions"
-                 x-data="{ uploading:false }"
-                 x-on:livewire-upload-start="uploading=true"
-                 x-on:livewire-upload-finish="$wire.uploadBlockImage('background_image'); uploading=false"
-                 x-on:livewire-upload-error="uploading=false">
-                <label class="ve-btn ve-btn-ghost ve-media-upload-btn" style="cursor:pointer;">
-                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v1.75A.75.75 0 003.75 19h12.5a.75.75 0 00.75-.75V16.5M16 9l-4-4-4 4M12 4.5v9"/>
-                    </svg>
-                    Subir imagen de fondo
-                    <input type="file" accept="image/*" wire:model="blockImage" class="sr-only">
-                </label>
-                <button type="button" class="ve-btn ve-btn-ghost"
-                        @click="window.dispatchEvent(new CustomEvent('open-media-picker-js',{detail:{field:'background_image',type:'image'}}))">
-                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M14 8h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
-                    Desde galería
-                </button>
+            <div x-data="{ uploading:false, uploadErr:'' }"
+                 x-on:livewire-upload-start="uploading=true; uploadErr=''"
+                 x-on:livewire-upload-finish="$wire.uploadBlockImage('background_image').then(() => { uploading=false })"
+                 x-on:livewire-upload-error="uploading=false; uploadErr='Error al subir el archivo. Intenta con Desde galería.'">
+                <div class="ve-media-actions">
+                    <label class="ve-btn ve-btn-ghost ve-media-upload-btn" style="cursor:pointer;">
+                        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v1.75A.75.75 0 003.75 19h12.5a.75.75 0 00.75-.75V16.5M16 9l-4-4-4 4M12 4.5v9"/>
+                        </svg>
+                        <span x-show="!uploading">Subir imagen de fondo</span>
+                        <span x-show="uploading">Subiendo…</span>
+                        <input type="file" accept="image/*" wire:model="blockImage" class="sr-only">
+                    </label>
+                    <button type="button" class="ve-btn ve-btn-ghost"
+                            @click="window.dispatchEvent(new CustomEvent('open-media-picker-js',{detail:{field:'background_image',type:'image'}}))">
+                        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M14 8h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        Desde galería
+                    </button>
+                </div>
+                <p x-show="uploadErr" x-text="uploadErr" style="color:#dc2626;font-size:12px;margin-top:6px;"></p>
+                @error('blockImage')
+                    <p class="ve-hint" style="color:#dc2626;margin-top:4px;">{{ $message }}</p>
+                @enderror
             </div>
         @endif
         <div class="ve-grid-2" style="margin-top:12px;">

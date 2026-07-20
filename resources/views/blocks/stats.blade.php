@@ -9,8 +9,8 @@
         'navy' => 'bg-brand-navy text-on-navy',
         default => 'bg-bg',
     };
-    $kickerClass = $bg === 'navy' ? 'text-on-navy/60' : 'text-muted';
-    $titleClass = $bg === 'navy' ? 'text-on-navy' : 'text-fg';
+    $kickerClass = $bg === 'navy' ? 'text-on-navy/60' : 'text-brand-primary';
+    $titleClass = $bg === 'navy' ? 'text-on-navy' : 'text-brand-navy';
     $valueClass = $bg === 'navy' ? 'text-on-navy' : 'text-fg';
     $labelClass = $bg === 'navy' ? 'text-on-navy/70' : 'text-muted';
 @endphp

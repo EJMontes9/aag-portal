@@ -8,10 +8,10 @@
     <div class="section-wrap grid lg:grid-cols-[1fr_1.15fr] gap-16">
         <div data-aos="fade-right">
             @if($block->get('kicker'))
-                <span class="font-sans text-[11px] tracking-[0.18em] uppercase text-muted font-semibold">{{ $block->get('kicker') }}</span>
+                <span class="font-sans text-[11px] tracking-[0.15em] uppercase text-brand-primary font-bold">{{ $block->get('kicker') }}</span>
             @endif
             @if($block->get('title'))
-                <h2 class="font-serif text-section-title text-fg mt-4">
+                <h2 class="font-serif text-section-title text-brand-navy mt-4">
                     {!! italic_markdown($block->get('title')) !!}
                 </h2>
             @endif

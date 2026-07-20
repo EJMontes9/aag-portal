@@ -18,29 +18,24 @@
     if ($items->isEmpty()) return;
 @endphp
 
-<section class="bg-bg">
+{{-- Sección noticias estilo Propuesta B:
+     título ALL CAPS Neulis Black navy + "VER TODAS →" en azul a la derecha
+     fondo blanco, grid de 4 cards compactas --}}
+<section class="bg-card">
     <div class="section-wrap">
-        <header class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-12" data-aos="fade-up">
-            <div class="max-w-2xl">
-                @if($block->get('kicker'))
-                    <span class="font-sans text-[11px] tracking-[0.18em] uppercase text-muted font-semibold">{{ $block->get('kicker') }}</span>
-                @endif
-                @if($block->get('title'))
-                    <h2 class="font-serif text-section-title text-fg mt-3">{{ $block->get('title') }}</h2>
-                @endif
-                @if($block->get('subtitle'))
-                    <p class="mt-4 text-muted leading-[1.65]">{{ $block->get('subtitle') }}</p>
-                @endif
-            </div>
+        <header class="flex items-center justify-between mb-8" data-aos="fade-up">
+            <h2 class="font-serif text-[18px] font-bold text-brand-navy tracking-[0.06em] uppercase">
+                {{ $block->get('title', 'NOTICIAS Y BOLETINES') }}
+            </h2>
             @if($block->get('show_view_all'))
                 <a href="{{ route('news.index') }}"
-                   class="inline-flex items-center gap-2 text-sm font-semibold text-brand-primary hover:text-brand-navy transition-colors">
-                    {{ $block->get('view_all_label', 'Ver todas las noticias →') }}
+                   class="text-[11px] font-bold text-brand-primary hover:text-brand-navy tracking-[0.05em] transition-colors uppercase">
+                    {{ $block->get('view_all_label', 'VER TODAS →') }}
                 </a>
             @endif
         </header>
 
-        <div class="grid sm:grid-cols-2 lg:grid-cols-{{ min($items->count(), 4) }} gap-8">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-{{ min($items->count(), 4) }} gap-6">
             @foreach($items as $item)
                 @include('pages.news.partials.card', ['item' => $item])
             @endforeach

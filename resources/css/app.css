@@ -45,9 +45,9 @@
 
     /* Radio de esquinas por tema */
     [data-radius="square"] {
-        --radius-pill: 4px;
-        --radius-card: 4px;
-        --radius-hero: 6px;
+        --radius-pill: 2px;   /* Propuesta B: border-radius:2px en botones */
+        --radius-card: 4px;   /* Propuesta B: border-radius:4px en cards */
+        --radius-hero: 4px;
     }
     [data-radius="soft"] {
         --radius-pill: 999px;
@@ -196,7 +196,9 @@
        con fondo navy/gradiente) -- usadas por blocks/hero.blade.php pero
        nunca se habian definido: quedaban como texto plano sin estilo. */
     .btn-white {
-        @apply inline-flex items-center justify-center gap-2 rounded-pill bg-white text-brand-navy px-6 py-3 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-soft hover:shadow-lg active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-white/60;
+        /* CTA primario sobre fondo oscuro/foto — usa el acento de marca (amarillo #EFC600 en corporativo)
+           tal como aparece en la Propuesta B aprobada. El color de texto lo calcula contrast_text_tuple(). */
+        @apply inline-flex items-center justify-center gap-2 rounded-pill bg-brand-accent text-on-accent px-6 py-3 text-sm font-bold tracking-wide transition-all duration-200 hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-brand-accent/50;
     }
 
     .btn-ghost-white {

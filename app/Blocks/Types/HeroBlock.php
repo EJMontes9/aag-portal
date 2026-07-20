@@ -70,6 +70,7 @@ class HeroBlock extends BlockType
                                 'warn'    => 'Ámbar (precaución)',
                                 'neutral' => 'Neutral',
                                 'soft'    => 'Azul suave',
+                                'accent'  => 'Amarillo acento (Propuesta B)',
                             ])
                             ->default('success'),
                         Forms\Components\Textarea::make('h1')

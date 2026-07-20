@@ -197,6 +197,23 @@ class SiteSettingsPage extends Page implements HasForms
                                                 ->default($theme['defaults']['gradients']),
                                         ])->columns(4);
                                 })->values()->all(),
+
+                                Section::make('Bloques de contenido')
+                                    ->description('Controla el estilo visual de los bloques reutilizables del Home.')
+                                    ->schema([
+                                        Radio::make('quick_links_layout')
+                                            ->label('Accesos Rápidos — estilo de tarjeta')
+                                            ->options([
+                                                'b' => 'Layout B — Compacto centrado (Propuesta B aprobada)',
+                                                'a' => 'Layout A — Tarjetas con descripción (Propuesta A)',
+                                            ])
+                                            ->descriptions([
+                                                'b' => '6 columnas, íconos centrados, solo etiqueta. Fondo gris. (por defecto)',
+                                                'a' => '4 columnas, íconos a la izquierda, con descripción. Fondo blanco.',
+                                            ])
+                                            ->default('b')
+                                            ->required(),
+                                    ]),
                             ]),
                         Tab::make('Contacto')
                             ->icon('heroicon-o-envelope')
@@ -484,6 +501,7 @@ class SiteSettingsPage extends Page implements HasForms
             str_starts_with($key, 'color_')       => 'Colores',
             in_array($key, ['dark_mode_enabled', 'default_theme']) => 'Tema',
             str_starts_with($key, 'theme_')       => 'Plantilla visual',
+            str_starts_with($key, 'quick_links_') => 'Plantilla visual',
             str_starts_with($key, 'contact_')     => 'Contacto',
             str_starts_with($key, 'social_')      => 'Redes Sociales',
             str_starts_with($key, 'header_') || str_starts_with($key, 'topbar_') => 'Header / CTA',

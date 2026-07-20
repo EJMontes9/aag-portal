@@ -223,7 +223,12 @@
         <link href="{{ $fontsUrl }}" rel="stylesheet">
     @endif
 
-    {{-- ══ VARIABLES CSS ════════════════════════════════════════════════════════ --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    {{-- ══ VARIABLES CSS ════════════════════════════════════════════════════════
+         IMPORTANTE: este <style> va DESPUÉS de @vite para que los valores
+         dinámicos de la BD (colores, fuentes) sobreescriban los defaults
+         compilados en app.css. No mover antes del @vite. --}}
     <style>
         :root {
             --font-serif: '{{ $fontSerif }}', ui-serif, Georgia, serif;
@@ -254,7 +259,6 @@
         }
     </style>
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
 
     {{-- ══ STRUCTURED DATA JSON-LD ══════════════════════════════════════════════

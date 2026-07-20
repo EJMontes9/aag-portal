@@ -11,6 +11,9 @@
     $soft = hex_to_rgb_tuple(settings('color_soft'), '207 224 243');
     $bgLight = hex_to_rgb_tuple(settings('color_bg_light'), '250 250 251');
     $fgLight = hex_to_rgb_tuple(settings('color_fg_light'), '15 23 42');
+
+    // Mismos tokens del tema activo que usa el layout público
+    $themeTokens = \App\Support\Theme::activeTokens();
 @endphp
 <!DOCTYPE html>
 <html lang="es"
@@ -18,7 +21,11 @@
       data-theme-default="light"
       data-anim-enabled="false"
       data-anim-speed="normal"
-      data-anim-mobile="true">
+      data-anim-mobile="true"
+      data-radius="{{ $themeTokens['radius'] }}"
+      data-density="{{ $themeTokens['density'] }}"
+      data-gradients="{{ $themeTokens['gradients'] ? 'on' : 'off' }}"
+      data-elevation="{{ $themeTokens['elevation'] }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,6 +36,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family={{ $encodeFontUrl($fontSerif) }}:ital,wght@0,400;0,500;0,600;1,400;1,500&family={{ $encodeFontUrl($fontSans) }}:wght@400;500;600;700&family={{ $encodeFontUrl($fontMono) }}:wght@400;500;600&display=swap" rel="stylesheet">
 
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    {{-- IMPORTANTE: después de @vite para sobreescribir defaults del CSS compilado --}}
     <style>
         :root {
             --font-serif: '{{ $fontSerif }}', ui-serif, Georgia, serif;
@@ -49,8 +59,6 @@
             --color-border: 226 232 240;
         }
     </style>
-
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
 <body class="bg-bg text-fg antialiased">

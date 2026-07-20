@@ -23,10 +23,11 @@
         <div class="grid lg:grid-cols-2 gap-12 items-center">
             <div class="@if($side === 'left') lg:order-2 @endif">
                 @if($block->get('kicker'))
-                    <span class="font-sans text-[11px] tracking-[0.18em] uppercase text-muted font-semibold">{{ $block->get('kicker') }}</span>
+                    {{-- Kicker en azul primario, all-caps, bold — estilo Propuesta B --}}
+                    <span class="font-sans text-[11px] tracking-[0.15em] uppercase text-brand-primary font-bold">{{ $block->get('kicker') }}</span>
                 @endif
                 @if($block->get('title'))
-                    <h2 class="font-serif text-section-title text-fg mt-3">{{ $block->get('title') }}</h2>
+                    <h2 class="font-serif text-section-title text-brand-navy mt-3">{{ $block->get('title') }}</h2>
                 @endif
                 @if($block->get('body'))
                     <p class="mt-5 text-muted leading-[1.7] whitespace-pre-line">{{ $block->get('body') }}</p>

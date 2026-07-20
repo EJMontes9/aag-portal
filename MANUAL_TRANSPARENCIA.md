@@ -137,15 +137,26 @@ y sincronizar.
 
 ---
 
-## 5. Los tres estados de un mes
+## 5. Qué se muestra y qué no
 
-En el portal, cada mes se ve de una de estas tres formas:
+En el portal, un mes puede verse de dos formas:
 
 | Se ve así | Significa |
 |---|---|
 | 📁 **Enero** — 75 archivos | Hay archivos y se listan en el portal |
 | 🔗 **Febrero** · Transparencia activa | Hay un `config_link.txt`: enlaza fuera |
-| 📁 **Junio** — Sin documentos | La carpeta está vacía o no existe |
+
+**Los meses sin nada no aparecen.** Si una carpeta no existe en el servidor, o
+existe pero está vacía y sin `config_link.txt`, ese mes **se oculta**. Así el
+portal no anuncia meses que todavía no tienen información publicada.
+
+Ejemplo real: en 2026 sólo existen las carpetas de Enero a Junio, así que el
+portal muestra esos seis y nada más. Cuando se cree la carpeta de Julio con su
+contenido, aparecerá sola en la siguiente sincronización.
+
+> Un mes oculto **no se borra**: si más adelante recibe archivos o un
+> `config_link.txt`, vuelve a mostrarse automáticamente. Y si tiene documentos
+> cargados a mano desde el panel, nunca se oculta.
 
 ---
 
@@ -207,6 +218,15 @@ Los documentos añadidos a mano conviven con los sincronizados.
 
 **Un mes muestra un enlace y quiero que muestre los archivos**
 Borra el `config_link.txt` de esa carpeta y sincroniza.
+
+**Quiero cambiar a dónde apunta el enlace**
+Edita el `config_link.txt` de esa carpeta y sincroniza. El portal no guarda la
+dirección en ningún sitio más: la lee de ese archivo cada vez. Si cambias el
+destino en las carpetas, cambia en el portal.
+
+**Un mes no aparece en el portal**
+Es lo esperado si su carpeta no existe o está vacía (ver §5). Comprueba que la
+carpeta exista y tenga archivos o un `config_link.txt`.
 
 **Cambié la dirección del subdominio y se rompieron enlaces**
 Los documentos con ruta relativa se recalculan solos. Los que tuvieran

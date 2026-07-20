@@ -170,7 +170,7 @@ class SincronizarDocumentosLotaip extends Command
             return self::FAILURE;
         }
 
-        $totales = ['anios' => 0, 'meses' => 0, 'docs' => 0, 'nuevos' => 0, 'enlaces' => 0];
+        $totales = ['anios' => 0, 'meses' => 0, 'docs' => 0, 'nuevos' => 0, 'enlaces' => 0, 'ocultos' => 0];
 
         foreach ($anios as $anio) {
             // OJO: un año sin archivos NO se descarta. Desde 2025 hay meses que
@@ -219,7 +219,32 @@ class SincronizarDocumentosLotaip extends Command
                     : null;
 
                 if (empty($documentos) && ! $enlace) {
-                    continue; // mes vacio: no se toca
+                    // El mes no tiene nada en el servidor: ni archivos ni
+                    // config_link.txt. Se OCULTA en vez de dejarlo como "Sin
+                    // documentos", que es lo que hacia antes.
+                    //
+                    // El seeder inicial creo los doce meses de cada año, asi
+                    // que sin esto el portal anuncia meses que ni siquiera
+                    // existen como carpeta (Julio a Diciembre de 2026).
+                    //
+                    // Solo se ocultan los que estan VACIOS de verdad: si el mes
+                    // tiene documentos cargados a mano desde el panel, se
+                    // respeta y no se toca.
+                    if (! $dryRun) {
+                        $mesExistente = LotaipMonth::where('year_id', $registroAnio->id)
+                            ->where('month', $numeroMes)
+                            ->withCount('documents')
+                            ->first();
+
+                        if ($mesExistente && $mesExistente->documents_count === 0 && $mesExistente->is_active) {
+                            $mesExistente->update(['is_active' => false]);
+                            $totales['ocultos']++;
+                        }
+                    } else {
+                        $totales['ocultos']++;
+                    }
+
+                    continue;
                 }
 
                 $totales['meses']++;
@@ -304,6 +329,14 @@ class SincronizarDocumentosLotaip extends Command
             $totales['anios'],
             (! $dryRun && $totales['nuevos'] > 0) ? " ({$totales['nuevos']} documentos nuevos)" : ''
         ));
+
+        if ($totales['ocultos'] > 0) {
+            $this->line(sprintf(
+                '%s %d meses sin contenido en el servidor.',
+                $dryRun ? 'Se ocultarian' : 'Ocultados',
+                $totales['ocultos']
+            ));
+        }
 
         return self::SUCCESS;
     }

@@ -13,6 +13,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         // Redirige usuarios invitados al login de Filament
         $middleware->redirectGuestsTo(fn () => route('filament.admin.auth.login'));
+
+        // Cabeceras de seguridad en todas las respuestas web.
+        $middleware->web(append: [
+            \App\Http\Middleware\SecurityHeaders::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

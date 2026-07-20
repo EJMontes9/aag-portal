@@ -1,0 +1,57 @@
+# ============================================================================
+# Bloqueo de ejecucion en la carpeta de archivos subidos
+# ============================================================================
+# Este directorio se sirve al publico a traves del symlink public_html/storage
+# y contiene archivos SUBIDOS POR USUARIOS. Aqui nunca debe ejecutarse codigo.
+#
+# La defensa principal esta en el codigo (App\Services\MediaService valida el
+# MIME real y deriva la extension de una allowlist). Esto es la segunda capa,
+# por si en el futuro se anade otra via de subida que se salte esa validacion.
+#
+# IMPORTANTE: este archivo esta versionado a proposito (ver el .gitignore de
+# esta misma carpeta, que lo excluye de la regla "*") para que viaje al
+# servidor en el despliegue. Si se pierde, la proteccion desaparece en
+# silencio.
+# ============================================================================
+
+# --- Desactivar el motor PHP -------------------------------------------------
+# php_flag solo funciona con mod_php. En cPanel con PHP-FPM/suPHP puede quedar
+# ignorado (o dar error 500 si no esta permitido en .htaccess), por eso ademas
+# se bloquea por nombre de archivo mas abajo, que si funciona siempre.
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php8.c>
+    php_flag engine off
+</IfModule>
+
+# --- Bloquear por extension --------------------------------------------------
+# Cubre las variantes que distintas configuraciones de Apache pueden mandar al
+# interprete, no solo .php.
+<FilesMatch "(?i)\.(php|php[0-9]?|phtml|pht|phps|phar|cgi|pl|py|rb|sh|bash|exe|dll|jar|htaccess|htpasswd|ini|conf)$">
+    Require all denied
+</FilesMatch>
+
+# --- Impedir que se les asigne un handler ------------------------------------
+<IfModule mod_mime.c>
+    RemoveHandler .php .php3 .php4 .php5 .php7 .php8 .phtml .pht .phar .cgi .pl .py
+    RemoveType .php .php3 .php4 .php5 .php7 .php8 .phtml .pht .phar
+</IfModule>
+
+# --- Forzar descarga de lo que el navegador podria interpretar ---------------
+# Un SVG o un HTML servido desde nuestro propio dominio ejecuta JavaScript en
+# nuestro origen (XSS almacenado). MediaService ya no permite subirlos, pero
+# pueden quedar archivos antiguos de antes de este cambio.
+<FilesMatch "(?i)\.(svg|svgz|html?|xhtml|xml|xsl|js|mjs)$">
+    <IfModule mod_headers.c>
+        Header set Content-Disposition "attachment"
+        Header set Content-Type "application/octet-stream"
+        Header set X-Content-Type-Options "nosniff"
+    </IfModule>
+</FilesMatch>
+
+# --- Sin listados de directorio ----------------------------------------------
+Options -Indexes -ExecCGI

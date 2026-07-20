@@ -15,6 +15,7 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -26,6 +27,30 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
 {
+    public function boot(): void
+    {
+        // ──────────────────────────────────────────────────────────────────────
+        // SEGURIDAD -- Cerrar por defecto.
+        //
+        // Filament, cuando NO encuentra una Policy para el modelo de un
+        // Resource, devuelve Response::allow(): permite. El proyecto tiene 15
+        // recursos y una sola policy, de modo que todos los demas quedaban
+        // abiertos a cualquiera capaz de entrar al panel, incluido el rol
+        // "editor": contenido completo del portal, datos personales de
+        // suscriptores y envios de formularios de contacto.
+        //
+        // Con esto, la ausencia de policy DENIEGA en lugar de permitir. Es la
+        // configuracion segura, y ademas hace que falte cualquier permiso se
+        // note de inmediato en vez de pasar inadvertido.
+        //
+        // Requiere que existan las policies: se generan con
+        //   php artisan shield:generate --all
+        // y se asignan al super_admin con
+        //   php artisan shield:super-admin --user=1
+        // ──────────────────────────────────────────────────────────────────────
+        Resource::checkPolicyExistence(false);
+    }
+
     public function panel(Panel $panel): Panel
     {
         return $panel
@@ -33,6 +58,11 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            // Pagina de perfil: sin ella no habia NINGUNA forma de cambiar la
+            // contrasena desde la aplicacion, lo que obligaba a dejar la que
+            // sembraba el seeder.
+            ->profile()
+            ->passwordReset()
             ->brandName('Autoridad Aeroportuaria de Guayaquil')
             ->brandLogoHeight('2.5rem')
             ->favicon(asset('favicon.ico'))

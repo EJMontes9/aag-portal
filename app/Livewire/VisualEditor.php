@@ -64,7 +64,17 @@ class VisualEditor extends Component
         $this->authorizeEditor();
         if (! $this->editingBlockId) return;
 
-        $block = PageBlock::find($this->editingBlockId);
+        // SEGURIDAD -- Se busca el bloque DENTRO de la pagina que se esta
+        // editando, no globalmente. $editingBlockId es una propiedad publica y
+        // en Livewire el cliente puede fijar su valor en la peticion, asi que
+        // un PageBlock::find() suelto permitia escribir en bloques de
+        // cualquier otra pagina (y ademas invalidaba la cache de la pagina
+        // equivocada, dejando el cambio invisible y el log de auditoria
+        // apuntando al sitio erroneo).
+        //
+        // Es el mismo patron que ya usaban openBlock, moveUp, moveDown,
+        // toggleVisibility y deleteBlock; saveBlock era la excepcion.
+        $block = $this->page->blocks()->whereKey($this->editingBlockId)->first();
         if (! $block) return;
 
         $block->update(['settings' => $this->editingBlockSettings ?? []]);
@@ -253,16 +263,49 @@ class VisualEditor extends Component
     {
         $this->authorizeEditor();
 
+        // SEGURIDAD -- La regla "image" de Laravel ACEPTA SVG, y aqui el
+        // archivo se guardaba tal cual, sin reprocesar. Un SVG puede contener
+        // <script> y se sirve desde nuestro propio dominio, asi que ejecutaba
+        // JavaScript con la sesion de quien lo abriera (normalmente un
+        // administrador). Se sustituye por una lista explicita de formatos
+        // rasterizados.
         $this->validate([
-            'slideImage' => 'required|image|max:4096',
+            'slideImage' => [
+                'required',
+                'image',
+                'max:4096',
+                'mimes:jpg,jpeg,png,gif,webp',
+                'mimetypes:image/jpeg,image/png,image/gif,image/webp',
+            ],
         ], [
-            'slideImage.image' => 'El archivo debe ser una imagen.',
-            'slideImage.max'   => 'La imagen debe pesar menos de 4 MB.',
+            'slideImage.image'     => 'El archivo debe ser una imagen.',
+            'slideImage.max'       => 'La imagen debe pesar menos de 4 MB.',
+            'slideImage.mimes'     => 'Formato no permitido. Usa JPG, PNG, GIF o WebP.',
+            'slideImage.mimetypes' => 'El contenido del archivo no corresponde a una imagen valida.',
         ]);
 
         if (! $this->slideImage) return;
 
-        $path = $this->slideImage->store($directory, 'public');
+        // El directorio venia del cliente. Flysystem ya bloquea el path
+        // traversal, pero se restringe a una lista conocida para que no se
+        // puedan sembrar carpetas arbitrarias en el disco publico.
+        $directoriosPermitidos = ['banners', 'bloques', 'media'];
+        if (! in_array($directory, $directoriosPermitidos, true)) {
+            $directory = 'bloques';
+        }
+
+        // Se pasa por MediaService para que re-codifique a WebP: ademas de
+        // pesar menos, el reprocesado destruye cualquier carga util incrustada
+        // en los metadatos de la imagen (polyglots).
+        try {
+            $media = MediaService::upload($this->slideImage, $directory);
+            $path  = $media->path;
+        } catch (\Throwable $e) {
+            report($e);
+            $this->addError('slideImage', 'No se pudo procesar la imagen.');
+            return;
+        }
+
         $items = $this->editingBlockSettings[$repeaterKey] ?? [];
         if (! isset($items[$index])) return;
         $items[$index][$field] = $path;
@@ -284,11 +327,20 @@ class VisualEditor extends Component
     {
         $this->authorizeEditor();
 
+        // Mismo criterio que uploadSlideImage: "image" a secas admite SVG.
         $this->validate([
-            'blockImage' => 'required|image|max:20480',
+            'blockImage' => [
+                'required',
+                'image',
+                'max:10240',
+                'mimes:jpg,jpeg,png,gif,webp',
+                'mimetypes:image/jpeg,image/png,image/gif,image/webp',
+            ],
         ], [
-            'blockImage.image' => 'El archivo debe ser una imagen.',
-            'blockImage.max'   => 'La imagen no puede superar 20 MB.',
+            'blockImage.image'     => 'El archivo debe ser una imagen.',
+            'blockImage.max'       => 'La imagen no puede superar 10 MB.',
+            'blockImage.mimes'     => 'Formato no permitido. Usa JPG, PNG, GIF o WebP.',
+            'blockImage.mimetypes' => 'El contenido del archivo no corresponde a una imagen valida.',
         ]);
 
         if (! $this->blockImage) return;
@@ -299,7 +351,9 @@ class VisualEditor extends Component
             $this->blockImage = null;
             $this->dispatch('editor-toast', type: 'success', message: 'Imagen subida y comprimida a WebP');
         } catch (\Throwable $e) {
-            $this->addError('blockImage', 'Error al procesar la imagen: ' . $e->getMessage());
+            // Sin $e->getMessage() al usuario: puede filtrar rutas del servidor.
+            report($e);
+            $this->addError('blockImage', 'No se pudo procesar la imagen.');
         }
     }
 

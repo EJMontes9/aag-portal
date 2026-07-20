@@ -8,6 +8,7 @@ use App\Models\SiteSetting;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
@@ -21,17 +22,7 @@ class DatabaseSeeder extends Seeder
             Role::findOrCreate($roleName);
         }
 
-        $admin = User::updateOrCreate(
-            ['email' => 'admin@aag.gob.ec'],
-            ['name' => 'Administrador AAG', 'password' => Hash::make('password')]
-        );
-        $admin->syncRoles(['super_admin']);
-
-        $editor = User::updateOrCreate(
-            ['email' => 'editor@aag.gob.ec'],
-            ['name' => 'Editor AAG', 'password' => Hash::make('password')]
-        );
-        $editor->syncRoles(['editor']);
+        $this->crearUsuariosIniciales();
 
         $settings = [
             // Identidad
@@ -165,5 +156,54 @@ class DatabaseSeeder extends Seeder
         $this->call(FaqSeeder::class);
         $this->call(ProjectSeeder::class);
         $this->call(TransparencySeeder::class);
+    }
+
+    /**
+     * Crea las cuentas iniciales del panel.
+     *
+     * SEGURIDAD -- Antes esto sembraba admin@aag.gob.ec y editor@aag.gob.ec
+     * con la contrasena literal "password", y ademas usaba updateOrCreate, de
+     * modo que CADA ejecucion del seeder volvia a ponerla, revirtiendo
+     * cualquier cambio que se hubiera hecho a mano. Como la aplicacion no
+     * tenia pagina de perfil ni recuperacion por correo, esa contrasena no
+     * habia forma de cambiarla desde dentro. Era la puerta de entrada al
+     * panel para cualquiera que conociera el patron.
+     *
+     * Ahora:
+     *   - Nunca se toca la contrasena de un usuario que ya existe.
+     *   - Si hay que crearlo, la contrasena es aleatoria y se imprime UNA sola
+     *     vez por consola, para copiarla y cambiarla en el primer acceso.
+     *   - Se puede fijar una concreta con SEED_ADMIN_PASSWORD en el entorno,
+     *     util para despliegues automatizados.
+     */
+    protected function crearUsuariosIniciales(): void
+    {
+        $cuentas = [
+            ['email' => 'admin@aag.gob.ec',  'name' => 'Administrador AAG', 'rol' => 'super_admin'],
+            ['email' => 'editor@aag.gob.ec', 'name' => 'Editor AAG',        'rol' => 'editor'],
+        ];
+
+        foreach ($cuentas as $cuenta) {
+            $existente = User::where('email', $cuenta['email'])->first();
+
+            if ($existente) {
+                // Se respetan tanto la contrasena como los roles ya asignados.
+                $this->command?->info("Usuario {$cuenta['email']} ya existe: no se modifica.");
+                continue;
+            }
+
+            $plano = env('SEED_ADMIN_PASSWORD') ?: Str::password(20);
+
+            $usuario = User::create([
+                'name'     => $cuenta['name'],
+                'email'    => $cuenta['email'],
+                'password' => Hash::make($plano),
+            ]);
+            $usuario->syncRoles([$cuenta['rol']]);
+
+            $this->command?->warn("Usuario creado: {$cuenta['email']}");
+            $this->command?->warn("  Contrasena: {$plano}");
+            $this->command?->warn('  Guardala ahora y cambiala tras el primer acceso: no se volvera a mostrar.');
+        }
     }
 }

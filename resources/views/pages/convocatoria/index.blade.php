@@ -103,10 +103,48 @@
         </div>
         @endif
 
-        {{-- Convocatorias cerradas --}}
-        @if($cerradas->isNotEmpty())
-        <section class="mt-10">
-            <h2 class="font-serif text-lg uppercase text-brand-navy rule-accent pb-2.5 mb-5">Procesos anteriores</h2>
+        {{-- Archivo historico de procesos cerrados.
+             La seccion se pinta tambien cuando el filtro no devuelve nada: si
+             desapareciera, el usuario que acaba de elegir un anio se quedaria
+             sin el desplegable para corregirlo. --}}
+        @if($cerradas->isNotEmpty() || $anio)
+        <section class="mt-10" id="archivo">
+            <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-5">
+                <h2 class="font-serif text-lg uppercase text-brand-navy rule-accent pb-2.5 mb-0">Procesos anteriores</h2>
+
+                {{-- Formulario GET con boton visible en vez de auto-submit por JS:
+                     el filtro sigue funcionando sin JavaScript, que es lo que se
+                     espera de un archivo publico consultable. --}}
+                @if($anios->isNotEmpty())
+                <form method="GET" action="{{ route('convocatorias.index') }}" class="flex items-center gap-2.5">
+                    @if($tipo)
+                        <input type="hidden" name="tipo" value="{{ $tipo }}">
+                    @endif
+                    <label for="conv-anio" class="text-[12px] font-bold uppercase tracking-[0.07em] text-muted shrink-0">Anio</label>
+                    <select name="anio" id="conv-anio"
+                            class="rounded-pill border border-border bg-card px-4 py-2.5 text-[15px] num-tabular focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                        <option value="">Todos</option>
+                        @foreach($anios as $a)
+                            <option value="{{ $a }}" @selected($anio === $a)>{{ $a }}</option>
+                        @endforeach
+                    </select>
+                    <button type="submit"
+                            class="shrink-0 rounded-pill bg-brand-navy px-4 py-2.5 text-[12px] font-bold uppercase tracking-[0.07em] text-on-navy transition-colors hover:bg-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
+                        Filtrar
+                    </button>
+                </form>
+                @endif
+            </div>
+
+            {{-- Recuento: en un archivo paginado el usuario necesita saber
+                 cuanto hay en total, no solo lo que ve en la pagina actual. --}}
+            @if($cerradas->total() > 0)
+            <p class="mb-4 text-[12px] text-muted num-tabular">
+                {{ $cerradas->total() }} proceso{{ $cerradas->total() !== 1 ? 's' : '' }}@if($anio) de {{ $anio }}@endif
+                &middot; pagina {{ $cerradas->currentPage() }} de {{ $cerradas->lastPage() }}
+            </p>
+            @endif
+
             <div class="flex flex-col gap-2">
                 @foreach($cerradas as $conv)
                 <a href="{{ route('convocatorias.show', $conv->slug) }}"
@@ -127,6 +165,21 @@
                 </a>
                 @endforeach
             </div>
+
+            {{-- Filtro sin resultados: se ofrece la salida (quitar el anio) en
+                 vez de dejar un hueco en blanco. --}}
+            @if($cerradas->isEmpty())
+            <div class="px-5 text-center py-12 rounded-card border border-dashed border-border bg-card">
+                <p class="text-[15px] font-semibold text-fg">No hay procesos cerrados en {{ $anio }}</p>
+                <a href="{{ route('convocatorias.index', $tipo ? ['tipo' => $tipo] : []) }}#archivo" class="btn-ghost mt-5">Ver todo el archivo</a>
+            </div>
+            @endif
+
+            @if($cerradas->hasPages())
+            <div class="mt-8">
+                {{ $cerradas->links() }}
+            </div>
+            @endif
         </section>
         @endif
 

@@ -261,6 +261,68 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
+    // Visor de PDF de las fichas de convocatoria.
+    //
+    // El foco se atrapa a mano en lugar de con x-trap porque el plugin
+    // @alpinejs/focus no esta instalado y la CSP del sitio no deja cargarlo
+    // desde un CDN. Por el mismo motivo el PDF va en un <iframe> al mismo
+    // origen y no en un <object>, que la CSP bloquea con object-src 'none'.
+    window.Alpine.data('pdfPreview', () => ({
+        abierto: false,
+        url: '',
+        nombre: '',
+        origen: null,
+
+        ver(url, nombre) {
+            this.url = url;
+            this.nombre = nombre;
+            // Se guarda quien abrio el visor para devolverle el foco al cerrar:
+            // sin esto el teclado vuelve al inicio del documento y se pierde el
+            // punto de lectura en una lista larga de documentos.
+            this.origen = document.activeElement;
+            this.abierto = true;
+            document.body.classList.add('overflow-hidden');
+            // x-show aplica la visibilidad despues de este tick; enfocar antes
+            // seria enfocar un elemento aun oculto y el navegador lo ignora.
+            this.$nextTick(() => this.enfocables()[0]?.focus());
+        },
+
+        cerrar() {
+            if (! this.abierto) return;
+            this.abierto = false;
+            document.body.classList.remove('overflow-hidden');
+            // Se vacia la URL para que el iframe suelte el PDF en vez de
+            // mantenerlo cargado mientras el modal esta cerrado.
+            this.url = '';
+            this.origen?.focus();
+        },
+
+        enfocables() {
+            if (! this.$refs.panel) return [];
+            return Array.from(this.$refs.panel.querySelectorAll(
+                'a[href], button:not([disabled]), iframe, [tabindex]:not([tabindex="-1"])'
+            )).filter((el) => el.offsetParent !== null);
+        },
+
+        // Ciclo manual de Tab / Shift+Tab: al llegar al ultimo elemento se
+        // vuelve al primero, para que el foco no se escape al fondo de la
+        // pagina mientras el modal esta abierto.
+        atrapar(e) {
+            const items = this.enfocables();
+            if (! items.length) return;
+            const primero = items[0];
+            const ultimo = items[items.length - 1];
+
+            if (e.shiftKey && document.activeElement === primero) {
+                e.preventDefault();
+                ultimo.focus();
+            } else if (! e.shiftKey && document.activeElement === ultimo) {
+                e.preventDefault();
+                primero.focus();
+            }
+        },
+    }));
+
     // Alerta de convocatoria
     window.Alpine.data('convocatoriaAlert', (id, mode, frequency) => ({
         show: false,

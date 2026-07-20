@@ -4,6 +4,7 @@ use App\Http\Controllers\ConvocatoriaController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SubscriberController;
 use App\Livewire\VisualEditor;
@@ -35,6 +36,10 @@ Route::middleware('throttle:60,1')->group(function () {
     Route::get('/faq', [FaqController::class, 'index'])->name('faq.index');
     Route::get('/proyectos', [ProjectController::class, 'index'])->name('projects.index');
     Route::get('/convocatorias', [ConvocatoriaController::class, 'index'])->name('convocatorias.index');
+
+    // El buscador global es el caso extremo de lo anterior: una sola peticion
+    // lanza cinco LIKE '%texto%' sobre cinco tablas distintas.
+    Route::get('/buscar', [SearchController::class, 'index'])->name('search');
 });
 
 // Fichas de detalle: consultas por clave indexada, sin busqueda.
@@ -53,5 +58,5 @@ Route::get('/{slug}', function (string $slug) {
     $page = Page::where('slug', $slug)->where('status', 'published')->with('activeBlocks')->first();
     abort_unless($page, 404);
     return view('page', compact('page'));
-})->where('slug', '^(?!admin|api|livewire|storage|noticias|faq|proyectos|convocatorias|subscribe)[a-z0-9\-]+$')
+})->where('slug', '^(?!admin|api|livewire|storage|noticias|faq|proyectos|convocatorias|buscar|subscribe)[a-z0-9\-]+$')
   ->name('page.show');

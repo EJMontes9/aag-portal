@@ -116,6 +116,27 @@
             <x-ui.brand-mark />
 
             <div class="flex items-center gap-3">
+                {{-- Buscador global. Va en la franja 3 y no en la barra de
+                     navegacion porque esa franja es la unica que sobrevive en
+                     todos los anchos: la 4 desaparece por debajo de lg. En
+                     movil el campo se recupera dentro del menu desplegable, ya
+                     que a 360px no cabe junto a la marca. --}}
+                <form method="GET" action="{{ route('search') }}" role="search" class="hidden md:block">
+                    <label for="header-q" class="sr-only">Buscar en el portal</label>
+                    <div class="relative">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
+                        </svg>
+                        <input type="search"
+                               id="header-q"
+                               name="q"
+                               value="{{ request()->routeIs('search') ? request('q') : '' }}"
+                               maxlength="100"
+                               placeholder="Buscar..."
+                               class="w-40 lg:w-52 pl-9 pr-3 py-2 rounded-pill border border-border bg-card text-[14px] focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                    </div>
+                </form>
+
                 @if($darkAllowed)
                     <button type="button" @click="$store.theme.toggle()"
                             class="hidden sm:flex w-9 h-9 items-center justify-center text-muted hover:text-fg hover:bg-border/40 transition"
@@ -185,6 +206,24 @@
     {{-- ── Menu movil ────────────────────────────────────────────────────── --}}
     <div x-show="mobileOpen" x-cloak x-transition class="lg:hidden border-t border-border bg-card max-h-[80vh] overflow-y-auto">
         <nav class="max-w-[1440px] mx-auto px-5 py-4 flex flex-col gap-1" x-data="{ mobileSection: null }">
+            {{-- Buscador en movil: sustituye al campo de la franja 3, que en
+                 este ancho esta oculto. --}}
+            <form method="GET" action="{{ route('search') }}" role="search" class="mb-3 md:hidden">
+                <label for="header-q-mobile" class="sr-only">Buscar en el portal</label>
+                <div class="relative">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
+                    </svg>
+                    <input type="search"
+                           id="header-q-mobile"
+                           name="q"
+                           value="{{ request()->routeIs('search') ? request('q') : '' }}"
+                           maxlength="100"
+                           placeholder="Buscar en el portal..."
+                           class="w-full pl-9 pr-3 py-2.5 rounded-pill border border-border bg-card text-[15px] focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
+                </div>
+            </form>
+
             @foreach($topLevelItems as $item)
                 @php $children = $childrenOf($item); @endphp
                 @if($children->isEmpty())

@@ -38,6 +38,20 @@ class NewsController extends Controller
             });
         }
 
+        // El link en el <head> anuncia el feed con ?format=rss (ver layouts/app.blade.php).
+        // Si no se atiende aqui, ese enlace queda roto y los lectores de feeds reciben HTML.
+        if ($request->get('format') === 'rss') {
+            $feedItems = News::query()
+                ->published()
+                ->latest('published_at')
+                ->limit(20)
+                ->get();
+
+            return response()
+                ->view('seo.rss', ['news' => $feedItems])
+                ->header('Content-Type', 'application/rss+xml; charset=UTF-8');
+        }
+
         $news = $query->paginate(9)->withQueryString();
 
         return view('pages.news.index', [

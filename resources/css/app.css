@@ -205,6 +205,16 @@
         letter-spacing: 0.08em;
     }
 
+    /* Resaltado de coincidencias del buscador global. Se estiliza el elemento
+       `mark` y no una clase utilitaria porque el HTML lo genera
+       SearchController, y tailwind.config.js no escanea app/Http: una clase
+       escrita alli nunca se compilaria. Amarillo institucional al 40% para que
+       el texto navy encima siga cumpliendo contraste. */
+    mark {
+        @apply bg-brand-accent/40 text-inherit;
+        padding: 0 1px;
+    }
+
     /* ── Botones ──────────────────────────────────────────────────────────────
        Todos comparten la firma de B: MAYUSCULAS, 11-12px, weight 700,
        letter-spacing .8px, radio 2px, sin sombra y sin desplazamiento en hover

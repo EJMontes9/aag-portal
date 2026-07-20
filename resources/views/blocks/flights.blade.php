@@ -2,52 +2,40 @@
 
 {{-- Estado de vuelos — Propuesta B.
 
-     El tablero es una MUESTRA ILUSTRATIVA, no datos en vivo: el bloque no
-     tiene campo para los vuelos y la AAG no expone un servicio propio; la
-     informacion real esta en el portal de TAGSA, al que apunta el boton.
-     Por eso lleva una marca visible de "ejemplo": un tablero de aeropuerto
-     con aspecto de dato real induce a error al ciudadano, que puede llegar a
-     planificar con el.
+     DECISION DE DISENO IMPORTANTE:
+     Este panel NO muestra horarios ni destinos legibles, a proposito.
 
-     Las horas se calculan a partir del momento de la visita en lugar de estar
-     fijas: un panel congelado en "14:20" a las nueve de la manana se lee de
-     inmediato como roto. --}}
+     La AAG no expone un servicio propio de vuelos: la informacion real vive
+     en el portal de TAGSA. Cualquier hora concreta que se pinte aqui —aunque
+     sea de ejemplo— puede llevar a un pasajero a creer que su vuelo sale a
+     esa hora. En un portal institucional eso no es un detalle estetico, es
+     informacion que la gente usa para tomar decisiones.
+
+     Por eso el tablero se representa como una silueta difuminada: se reconoce
+     al instante que ahi hay un panel de salidas, pero no hay ningun dato que
+     leer ni con el que equivocarse. Encima va la llamada a la accion hacia la
+     fuente oficial, que es el objetivo real del bloque.
+
+     Si algun dia se conecta una fuente de datos en vivo, se sustituye la
+     silueta por las filas reales y se retira el velo. --}}
 @php
-    $ahora = now();
-
-    // Salidas de ejemplo: se reparten en tramos de 25 minutos desde la proxima
-    // media hora en punto, para que el tablero sea siempre coherente con el
-    // reloj del visitante.
-    $base = $ahora->copy()->addMinutes(30 - ($ahora->minute % 30))->second(0);
-
-    $salidas = [
-        ['destino' => 'Quito',        'iata' => 'UIO', 'estado' => 'Abordando', 'tono' => 'proceso'],
-        ['destino' => 'Bogotá',       'iata' => 'BOG', 'estado' => 'A tiempo',  'tono' => 'abierto'],
-        ['destino' => 'Ciudad de Panamá', 'iata' => 'PTY', 'estado' => 'A tiempo', 'tono' => 'abierto'],
-        ['destino' => 'Madrid',       'iata' => 'MAD', 'estado' => 'Retrasado', 'tono' => 'cerrado'],
+    // Anchos de las barras de la silueta. Fijos y no aleatorios: el panel debe
+    // verse igual en cada visita, si no parece que algo esta cargando.
+    $filas = [
+        ['hora' => 'w-12', 'destino' => 'w-28', 'estado' => 'w-20'],
+        ['hora' => 'w-12', 'destino' => 'w-36', 'estado' => 'w-24'],
+        ['hora' => 'w-12', 'destino' => 'w-24', 'estado' => 'w-20'],
+        ['hora' => 'w-12', 'destino' => 'w-32', 'estado' => 'w-16'],
     ];
-
-    foreach ($salidas as $i => $s) {
-        $salidas[$i]['hora'] = $base->copy()->addMinutes($i * 25)->format('H:i');
-    }
-
-    // Los chips de estado del sistema de diseno, en vez de puntos de color
-    // sueltos: el mismo lenguaje que usan convocatorias y proyectos.
-    $chips = [
-        'abierto' => 'chip-abierto',
-        'proceso' => 'chip-proceso',
-        'cerrado' => 'chip-cerrado',
-    ];
+    $urlVuelos = $block->get('cta_url', 'https://tagsa.aero/vuelos');
 @endphp
 
 <section id="vuelos" class="bg-brand-navy text-on-navy">
-    <div class="section-wrap grid lg:grid-cols-[1fr_1.2fr] gap-8 lg:gap-14 items-center">
+    <div class="section-wrap grid lg:grid-cols-[1fr_1.1fr] gap-8 lg:gap-14 items-center">
 
         {{-- ── Columna de texto ──────────────────────────────────────────── --}}
         <div data-aos="fade-right" data-aos-duration="700">
             @if($block->get('kicker'))
-                {{-- El kicker es celeste por defecto; sobre navy sube a amarillo
-                     para despegar del fondo. --}}
                 <span class="kicker text-brand-accent">{{ $block->get('kicker') }}</span>
             @endif
             @if($block->get('title'))
@@ -58,9 +46,7 @@
             @endif
             @if($block->get('cta_label'))
                 <div class="mt-7 flex flex-wrap items-center gap-4">
-                    {{-- Sobre fondo oscuro la accion principal de B es el amarillo. --}}
-                    <a href="{{ $block->get('cta_url', '#') }}" target="_blank" rel="noopener"
-                       class="btn-white">
+                    <a href="{{ $urlVuelos }}" target="_blank" rel="noopener" class="btn-white">
                         {{ $block->get('cta_label') }}
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
@@ -73,69 +59,77 @@
             @endif
         </div>
 
-        {{-- ── Tablero ───────────────────────────────────────────────────── --}}
+        {{-- ── Panel: silueta de tablero + acceso a la fuente oficial ────── --}}
         <div class="card-surface overflow-hidden" data-aos="fade-left" data-aos-duration="700" data-aos-delay="150">
 
-            {{-- Cabecera navy rematada por el filete amarillo --}}
-            <div class="bg-brand-navy rule-accent px-5 py-3.5 flex items-center justify-between gap-3">
+            {{-- Cabecera navy con el filete amarillo --}}
+            <div class="bg-brand-navy rule-accent px-5 py-3.5 flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-brand-accent shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"/>
+                </svg>
                 <span class="font-sans text-[13px] font-bold uppercase tracking-[0.12em] text-on-navy">
-                    Próximas salidas
-                </span>
-                {{-- Marca honesta: esto no son datos en vivo. --}}
-                <span class="shrink-0 rounded-pill border border-white/30 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-on-navy/80">
-                    Ejemplo
+                    Salidas y llegadas
                 </span>
             </div>
 
-            {{-- Tabla real: es informacion tabular, y asi un lector de pantalla
-                 anuncia "hora / destino / estado" en cada fila en vez de leer
-                 una sucesion de textos sueltos. --}}
-            <table class="w-full text-left border-collapse">
-                <caption class="sr-only">
-                    Muestra ilustrativa de próximas salidas. Consulte el portal de vuelos para información real.
-                </caption>
-                <thead>
-                    <tr class="bg-bg border-b border-border">
-                        <th scope="col" class="px-5 py-2.5 font-sans text-[11px] font-bold uppercase tracking-[0.1em] text-muted">Hora</th>
-                        <th scope="col" class="px-3 py-2.5 font-sans text-[11px] font-bold uppercase tracking-[0.1em] text-muted">Destino</th>
-                        <th scope="col" class="px-5 py-2.5 font-sans text-[11px] font-bold uppercase tracking-[0.1em] text-muted text-right">Estado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($salidas as $s)
-                        <tr class="border-b border-border last:border-0 transition-colors duration-200 hover:bg-brand-soft/40"
-                            data-stagger="flight-row" style="opacity:0;">
+            <div class="relative">
 
-                            {{-- La hora es el dato que se busca de un vistazo: va en
-                                 Neulis Black y con cifras tabulares para que las
-                                 columnas queden alineadas entre filas. --}}
-                            <td class="px-5 py-3.5 align-middle">
-                                <span class="font-serif text-[19px] leading-none text-brand-navy num-tabular">{{ $s['hora'] }}</span>
-                            </td>
+                {{-- Silueta difuminada del tablero.
+                     aria-hidden porque no comunica nada: es una figura, no
+                     informacion. El contenido util para un lector de pantalla
+                     es el texto del velo que va debajo. --}}
+                <div class="px-5 py-4 select-none" aria-hidden="true"
+                     style="filter: blur(4px); opacity: 0.5;">
+                    {{-- Cabecera de columnas simulada --}}
+                    <div class="flex items-center gap-4 pb-2.5 border-b border-border">
+                        <span class="h-2 w-10 rounded-pill bg-border"></span>
+                        <span class="h-2 w-16 rounded-pill bg-border"></span>
+                        <span class="h-2 w-14 rounded-pill bg-border ml-auto"></span>
+                    </div>
 
-                            <td class="px-3 py-3.5 align-middle min-w-0">
-                                <div class="flex items-baseline gap-2">
-                                    <span class="font-sans text-[15px] font-semibold text-fg truncate">{{ $s['destino'] }}</span>
-                                    {{-- El codigo IATA da el aire de tablero de
-                                         aeropuerto sin recurrir a adornos. --}}
-                                    <span class="shrink-0 font-sans text-[12px] font-bold tracking-[0.08em] text-muted">{{ $s['iata'] }}</span>
-                                </div>
-                            </td>
-
-                            <td class="px-5 py-3.5 align-middle text-right">
-                                <span class="{{ $chips[$s['tono']] ?? 'chip-cerrado' }}">{{ $s['estado'] }}</span>
-                            </td>
-                        </tr>
+                    @foreach($filas as $f)
+                        <div class="flex items-center gap-4 py-3.5 border-b border-border last:border-0">
+                            {{-- La "hora": una barra navy mas marcada, que es lo
+                                 que da la lectura de tablero --}}
+                            <span class="h-3.5 {{ $f['hora'] }} rounded-pill bg-brand-navy/35"></span>
+                            <span class="h-3 {{ $f['destino'] }} rounded-pill bg-border"></span>
+                            <span class="h-4 {{ $f['estado'] }} rounded-pill bg-brand-soft ml-auto"></span>
+                        </div>
                     @endforeach
-                </tbody>
-            </table>
+                </div>
 
-            {{-- Pie: de donde sale la informacion real --}}
+                {{-- Velo con la llamada a la accion.
+                     Es el contenido real del panel: explica que el dato esta
+                     fuera y lleva alli. --}}
+                <div class="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center"
+                     style="background: rgb(255 255 255 / 0.72);">
+                    <span class="flex items-center justify-center w-11 h-11 rounded-card bg-brand-soft">
+                        <svg class="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+                        </svg>
+                    </span>
+
+                    <p class="font-sans text-[15px] font-bold text-brand-navy leading-snug max-w-[30ch]">
+                        El estado de los vuelos se consulta en el portal de TAGSA
+                    </p>
+                    <p class="text-[13px] text-muted leading-relaxed max-w-[34ch]">
+                        Allí encontrarás los horarios de salidas y llegadas actualizados al momento.
+                    </p>
+
+                    <a href="{{ $urlVuelos }}" target="_blank" rel="noopener" class="btn-primary mt-1">
+                        Ver vuelos
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            {{-- Pie: deja explicito que aqui no hay datos, por si alguien se
+                 queda mirando la silueta --}}
             <div class="bg-bg border-t border-border px-5 py-3">
-                <p class="text-[13px] text-muted">
-                    Información oficial en
-                    <a href="{{ $block->get('cta_url', 'https://tagsa.aero/vuelos') }}" target="_blank" rel="noopener"
-                       class="rounded-pill font-semibold text-brand-primary hover:text-brand-navy transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg">tagsa.aero</a>
+                <p class="text-[13px] text-muted text-center">
+                    Esta vista es ilustrativa: no muestra horarios reales.
                 </p>
             </div>
         </div>

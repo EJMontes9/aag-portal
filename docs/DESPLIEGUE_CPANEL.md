@@ -201,20 +201,22 @@ conviven, y se elige por mes.
 
 ---
 
-## Pendientes conocidos
+## Pendientes de la revisión de seguridad: todos cerrados
 
-Estos puntos se identificaron en la revisión de seguridad y **siguen abiertos**.
-No bloquean la publicación, pero conviene resolverlos:
+Los seis puntos que abrió la primera revisión **ya están resueltos**. Se listan
+con dónde quedó cada uno, porque el historial ayuda a no reabrirlos por error:
 
-1. **HTML del editor enriquecido sin sanear** (noticias, FAQ, proyectos): un
-   usuario del panel puede inyectar HTML arbitrario, que se ejecuta en el
-   navegador de los visitantes. Solución: sanear con HTMLPurifier al guardar.
-2. **JSON-LD sin `JSON_HEX_TAG`** (11 puntos): un título con `</script>`
-   permite salir del bloque de datos estructurados.
-3. **`embed_code` de mapas** se inserta sin validar: aceptar sólo la URL y
-   construir el `<iframe>` en la plantilla.
-4. **Documentos LOTAIP accesibles antes de publicarse**: los flags ocultan el
-   enlace, no el archivo. Solución: disco privado + controlador que valide.
-5. **Sin límite de peticiones** en el front público ni en `/livewire/update`.
-6. **Enumeración de suscriptores**: la respuesta del boletín revela si una
-   dirección ya está registrada.
+| # | Punto | Estado |
+|---|---|---|
+| 1 | HTML del editor sin sanear | Cerrado — `App\Services\HtmlSanitizer` (lista blanca), aplicado al guardar en `News`, `Faq` y `Project` |
+| 2 | JSON-LD sin `JSON_HEX_TAG` | Cerrado — helper único en `app/Helpers/helpers.php`; las 6 plantillas con JSON-LD lo usan |
+| 3 | `embed_code` sin validar | Cerrado — `App\Services\EmbedUrl` extrae y valida la URL; el `<iframe>` lo construye la plantilla |
+| 4 | Documentos LOTAIP accesibles al subirlos | **No es un fallo: es lo pedido.** En transparencia los documentos deben poder verse desde que se publican. Se deja así a propósito |
+| 5 | Sin límite de peticiones | Cerrado — `throttle:60,1` en el front, `throttle:10,1` en las subidas de Livewire y 9 puntos con `RateLimiter` propio |
+| 6 | Enumeración de suscriptores | Cerrado — el boletín responde siempre lo mismo, exista o no la dirección |
+
+Lo que **sí** sigue abierto está en `SEGURIDAD.md`, secciones 10 y 12. Lo
+resumido: Laravel 11 ya no recibe parches de seguridad y quedan tres avisos
+mitigados en la aplicación pero sin parche oficial (el parche existe sólo en
+Laravel 12.60+). No bloquea publicar; sí conviene planificar la subida de
+versión como trabajo aparte.

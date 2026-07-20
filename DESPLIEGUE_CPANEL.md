@@ -167,6 +167,32 @@ Si dejas la dirección del subdominio vacía, los documentos externos con ruta
 relativa **dejan de listarse** (en vez de mostrar un enlace roto). Los que
 tienen URL completa se siguen viendo.
 
+### Sincronizar la estructura con el subdominio
+
+```bash
+php artisan lotaip:sincronizar --dry-run   # ver qué haría
+php artisan lotaip:sincronizar             # aplicarlo
+```
+
+Recorre el subdominio, detecta qué años y meses tienen archivos, y enlaza cada
+mes con su carpeta del explorador. Es idempotente: se puede repetir sin
+duplicar nada.
+
+**No copia archivos ni registra documento a documento**, y es deliberado: hay
+más de mil archivos y la estructura no es uniforme (2023 es plana; 2024 y 2025
+anidan cuatro niveles: `AÑO/Mes/Artículo 19/N. Literal/archivo.csv`).
+Mantener mil registros sincronizados a mano sería frágil, y aplanarlos
+perdería una jerarquía que sí tiene sentido para el ciudadano.
+
+La consecuencia práctica es la buena: **cuando subas archivos nuevos por FTP
+aparecen solos**, sin volver a ejecutar nada. Sólo hace falta repetir el
+comando cuando se cree un **mes o año nuevo**.
+
+Si en algún momento prefieres que ciertos documentos se listen dentro del
+portal (con nombre, formato y peso en la línea gráfica del sitio), puedes
+registrarlos uno a uno en **Transparencia › Documentos**: los dos modos
+conviven, y se elige por mes.
+
 ## 11. Mantenimiento
 
 - [ ] Copias de seguridad de la base de datos y de `storage/app/public`.

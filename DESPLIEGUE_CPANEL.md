@@ -146,7 +146,28 @@ chmod -R 755 storage bootstrap/cache
 - [ ] Entrar al panel con un usuario `editor` y comprobar que **no** ve
       Suscriptores ni Envíos de formulario
 
-## 10. Mantenimiento
+## 10. Documentos de transparencia (LOTAIP)
+
+Los documentos pueden vivir en **dos sitios**, y cada documento elige el suyo:
+
+| Origen | Dónde está el archivo | Cómo se sube |
+|---|---|---|
+| **Subdominio** (por defecto) | `https://document.aag.org.ec/` | por FTP, fuera del portal |
+| **Este portal** | `storage/app/public/lotaip/` | desde el panel |
+
+- [ ] Configura la dirección del subdominio en **Ajustes del sitio › Documentos**.
+- [ ] Comprueba que un documento de cada tipo abre correctamente.
+
+**Sobre los enlaces ya publicados:** un documento cuyo `file_path` guarda una
+dirección completa (`https://…`) **conserva ese enlace tal cual**, aunque se
+cambie el subdominio configurado. Es deliberado: la documentación difundida
+anteriormente sigue funcionando pase lo que pase con esta configuración.
+
+Si dejas la dirección del subdominio vacía, los documentos externos con ruta
+relativa **dejan de listarse** (en vez de mostrar un enlace roto). Los que
+tienen URL completa se siguen viendo.
+
+## 11. Mantenimiento
 
 - [ ] Copias de seguridad de la base de datos y de `storage/app/public`.
 - [ ] `composer audit` de vez en cuando para revisar dependencias.

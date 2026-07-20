@@ -18,6 +18,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -149,6 +150,49 @@ class SiteSettingsPage extends Page implements HasForms
                                         TextInput::make('contact_email')->label('Email')->email(),
                                         Textarea::make('contact_map_embed')->label('HTML embed del mapa (Google Maps iframe)')->rows(3),
                                     ])->columns(2),
+                            ]),
+                        Tab::make('Documentos')
+                            ->icon('heroicon-o-folder-open')
+                            ->schema([
+                                Section::make('Subdominio de documentos')
+                                    ->description(
+                                        'Los documentos de transparencia (LOTAIP y Rendición de Cuentas) pueden vivir en un '
+                                        . 'subdominio propio al que se suben por FTP, en lugar de guardarse en este portal. '
+                                        . 'Aquí se indica su dirección; luego, en cada documento, se elige de dónde sale su archivo.'
+                                    )
+                                    ->schema([
+                                        TextInput::make('documents_base_url')
+                                            ->label('Dirección del subdominio')
+                                            ->placeholder('https://document.aag.org.ec')
+                                            ->url()
+                                            ->maxLength(255)
+                                            ->helperText(
+                                                'Sin barra al final. Los documentos marcados como "en el subdominio" se enlazan '
+                                                . 'como esta dirección + la ruta indicada en cada uno. '
+                                                . 'Si cambias esta dirección, cambian TODOS esos enlaces a la vez.'
+                                            )
+                                            ->columnSpanFull(),
+
+                                        Placeholder::make('documents_ejemplo')
+                                            ->label('Ejemplo de enlace')
+                                            ->content(function (Get $get) {
+                                                $base = rtrim(trim((string) $get('documents_base_url')), '/');
+
+                                                return $base === ''
+                                                    ? 'Indica la dirección para ver un ejemplo.'
+                                                    : $base . '/2026/01/literal-b2-distributivo.pdf';
+                                            })
+                                            ->columnSpanFull(),
+
+                                        Placeholder::make('documents_nota')
+                                            ->label('Importante')
+                                            ->content(
+                                                'Los documentos que ya tengan guardada una dirección completa (empezando por https://) '
+                                                . 'NO se ven afectados por este ajuste: conservan su enlace original. Así, la documentación '
+                                                . 'ya publicada sigue funcionando aunque se cambie el subdominio.'
+                                            )
+                                            ->columnSpanFull(),
+                                    ]),
                             ]),
                         Tab::make('Redes Sociales')
                             ->icon('heroicon-o-share')

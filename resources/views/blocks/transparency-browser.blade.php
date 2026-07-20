@@ -31,10 +31,15 @@
                             'mode' => $m->mode,
                             'redirect_url' => $m->redirect_url,
                             'redirect_label' => $m->redirect_label,
-                            'documents' => $docs->map(fn ($d) => [
+                            // Se descartan los documentos cuyo enlace no se puede
+                            // construir (externos sin URL base configurada, o con
+                            // un esquema no permitido): mejor no listarlos que
+                            // ofrecer una descarga que lleva a ninguna parte.
+                            'documents' => $docs->filter(fn ($d) => $d->url !== '')->values()->map(fn ($d) => [
                                 'id' => $d->id,
                                 'title' => $d->title,
                                 'url' => $d->url,
+                                'is_external' => $d->isExternal(),
                                 'extension' => $d->extension,
                                 'size_human' => $d->size_human,
                                 'icon' => $d->icon,
@@ -203,14 +208,25 @@
                                                                         </div>
                                                                     </td>
                                                                     <td class="px-4 py-2.5 text-right">
+                                                                        {{-- El atributo "download" solo funciona en el mismo
+                                                                             origen: en un archivo del subdominio el navegador
+                                                                             lo ignora y lo abre igualmente. Se pone solo en
+                                                                             los locales, y en los externos se usa el icono de
+                                                                             enlace saliente, que es lo que de verdad ocurre. --}}
                                                                         <a href="{{ $doc['url'] }}"
                                                                            target="_blank" rel="noopener"
-                                                                           download
+                                                                           @unless($doc['is_external']) download @endunless
                                                                            class="inline-flex items-center justify-center w-9 h-9 rounded-pill bg-brand-navy text-on-navy hover:bg-brand-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
-                                                                           aria-label="Descargar {{ $doc['title'] }}">
-                                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/>
-                                                                            </svg>
+                                                                           aria-label="{{ $doc['is_external'] ? 'Abrir' : 'Descargar' }} {{ $doc['title'] }}{{ $doc['is_external'] ? ' (se abre en el repositorio de documentos)' : '' }}">
+                                                                            @if($doc['is_external'])
+                                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+                                                                                </svg>
+                                                                            @else
+                                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+                                                                                </svg>
+                                                                            @endif
                                                                         </a>
                                                                     </td>
                                                                 </tr>

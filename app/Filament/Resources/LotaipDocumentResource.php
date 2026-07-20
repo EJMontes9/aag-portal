@@ -59,13 +59,100 @@ class LotaipDocumentResource extends Resource
                 ])->columns(2),
 
             Forms\Components\Section::make('Archivo')
+                ->description('El documento puede estar subido a este portal o vivir en el subdominio de documentos.')
                 ->schema([
+                    Forms\Components\Radio::make('source')
+                        ->label('¿Dónde está el archivo?')
+                        ->options([
+                            LotaipDocument::SOURCE_EXTERNAL => 'En el subdominio de documentos (se sube por FTP)',
+                            LotaipDocument::SOURCE_LOCAL    => 'Subirlo a este portal',
+                        ])
+                        ->descriptions([
+                            LotaipDocument::SOURCE_EXTERNAL => 'Indica la ruta del archivo dentro del subdominio. No se sube nada desde aquí.',
+                            LotaipDocument::SOURCE_LOCAL    => 'El archivo se guarda en el hosting de este portal.',
+                        ])
+                        // Por defecto, el subdominio: es donde la AAG viene
+                        // publicando los documentos, y donde apuntan los
+                        // enlaces ya difundidos.
+                        ->default(LotaipDocument::SOURCE_EXTERNAL)
+                        ->required()
+                        ->live()
+                        ->columnSpanFull(),
+
+                    // ── Externo ──────────────────────────────────────────────
+                    Forms\Components\TextInput::make('file_path')
+                        ->label('Ruta o URL del archivo')
+                        ->required()
+                        ->maxLength(2000)
+                        ->placeholder('2026/01/literal-b2-distributivo.pdf')
+                        ->helperText(function () {
+                            $base = LotaipDocument::baseUrlExterna();
+
+                            if ($base === '') {
+                                return '⚠ Todavía no has configurado la dirección del subdominio. Ve a Ajustes del sitio › Documentos. '
+                                     . 'Mientras tanto puedes pegar la URL completa del archivo.';
+                            }
+
+                            return 'Ruta dentro de ' . $base . '/ — por ejemplo "2026/01/informe.pdf". '
+                                 . 'También puedes pegar una URL completa si el archivo está en otro sitio.';
+                        })
+                        ->visible(fn (Forms\Get $get) => $get('source') === LotaipDocument::SOURCE_EXTERNAL)
+                        ->rules([
+                            // Si es URL absoluta, solo http/https: un
+                            // "javascript:..." se ejecutaria al pulsar el enlace.
+                            function () {
+                                return function (string $attribute, $value, \Closure $fail) {
+                                    $valor = trim((string) $value);
+                                    if ($valor === '') {
+                                        return;
+                                    }
+                                    // Sin exigir "//": "javascript:alert(1)" no
+                                    // lo lleva y debe rechazarse igualmente.
+                                    if (preg_match('#^[a-z][a-z0-9+.-]*:#i', $valor)) {
+                                        $esquema = strtolower((string) parse_url($valor, PHP_URL_SCHEME));
+                                        if (! in_array($esquema, ['http', 'https'], true)) {
+                                            $fail('La dirección debe empezar por http:// o https://, o ser una ruta como "2026/01/informe.pdf".');
+                                        }
+                                    }
+                                };
+                            },
+                        ])
+                        ->columnSpanFull(),
+
+                    Forms\Components\Placeholder::make('vista_previa_url')
+                        ->label('Enlace resultante')
+                        ->content(function (Forms\Get $get) {
+                            $ruta = trim((string) $get('file_path'));
+                            if ($ruta === '') {
+                                return '—';
+                            }
+                            if (preg_match('#^[a-z][a-z0-9+.-]*://#i', $ruta)) {
+                                return $ruta;
+                            }
+                            $base = LotaipDocument::baseUrlExterna();
+
+                            return $base === ''
+                                ? 'Configura primero la dirección del subdominio en Ajustes del sitio.'
+                                : $base . '/' . ltrim($ruta, '/');
+                        })
+                        ->visible(fn (Forms\Get $get) => $get('source') === LotaipDocument::SOURCE_EXTERNAL)
+                        ->columnSpanFull(),
+
+                    Forms\Components\TextInput::make('file_size')
+                        ->label('Tamaño en bytes (opcional)')
+                        ->numeric()
+                        ->helperText('Solo si quieres que se muestre junto al documento. En los archivos del subdominio no se puede calcular solo.')
+                        ->visible(fn (Forms\Get $get) => $get('source') === LotaipDocument::SOURCE_EXTERNAL),
+
+                    // ── Local ────────────────────────────────────────────────
                     Forms\Components\FileUpload::make('file_path')
                         ->label('Archivo')
                         ->required()
                         ->disk('public')
                         ->directory('lotaip')
-                        ->preserveFilenames()
+                        // Sin preserveFilenames: conservar el nombre original
+                        // permite subir un "informe.php" cuyo contenido pase por
+                        // PDF. Filament renombra a un identificador propio.
                         ->acceptedFileTypes([
                             'application/pdf',
                             'text/csv',
@@ -76,6 +163,7 @@ class LotaipDocumentResource extends Resource
                         ])
                         ->maxSize(51200) // 50 MB
                         ->helperText('Formatos: PDF, CSV, Excel, Word. Maximo 50 MB.')
+                        ->visible(fn (Forms\Get $get) => $get('source') === LotaipDocument::SOURCE_LOCAL)
                         ->columnSpanFull(),
                 ]),
         ]);

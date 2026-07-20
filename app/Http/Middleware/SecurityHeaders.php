@@ -68,6 +68,22 @@ class SecurityHeaders
         // En el panel /admin no se aplica: Filament genera scripts propios y
         // una CSP restrictiva lo rompe.
         if (! $request->is('admin', 'admin/*', 'livewire/*')) {
+            // El subdominio de documentos (LOTAIP) es un origen distinto. Los
+            // enlaces de descarga son navegaciones, que la CSP no bloquea, pero
+            // se declara igualmente para que las miniaturas o vistas previas
+            // que se añadan mas adelante no queden cortadas sin explicacion.
+            $origenDocumentos = '';
+            try {
+                $base = trim((string) settings('documents_base_url', ''));
+                if ($base !== '' && ($host = parse_url($base, PHP_URL_HOST))) {
+                    $esquema = parse_url($base, PHP_URL_SCHEME) ?: 'https';
+                    $origenDocumentos = ' ' . $esquema . '://' . $host;
+                }
+            } catch (\Throwable) {
+                // Si la tabla de ajustes aun no existe (instalacion nueva) se
+                // sigue sin el origen extra en vez de romper la respuesta.
+            }
+
             $response->headers->set('Content-Security-Policy', implode('; ', [
                 "default-src 'self'",
                 "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com",
@@ -76,7 +92,7 @@ class SecurityHeaders
                 "img-src 'self' data: https:",
                 // A donde puede hablar la pagina. Es lo que impide exfiltrar
                 // datos a un servidor del atacante.
-                "connect-src 'self' https://www.google-analytics.com",
+                "connect-src 'self' https://www.google-analytics.com" . $origenDocumentos,
                 // Mapas y videos embebidos.
                 "frame-src 'self' https://www.google.com https://maps.google.com https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com",
                 // Nadie puede empotrarnos a nosotros (equivale a X-Frame-Options).

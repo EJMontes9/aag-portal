@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\LotaipDocument;
 use App\Models\LotaipMonth;
 use App\Models\LotaipYear;
 use Illuminate\Console\Command;
@@ -9,30 +10,40 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 /**
- * Sincroniza la estructura de transparencia con el subdominio de documentos.
+ * Trae al portal los documentos de transparencia alojados en el subdominio.
  *
- * POR QUE ESTE ENFOQUE
- * --------------------
- * Los documentos de la AAG viven en https://document.aag.org.ec, servidos por
- * un explorador propio. Al inspeccionarlo aparecen dos hechos que condicionan
- * la solucion:
+ * QUE HACE Y POR QUE
+ * ------------------
+ * Los archivos se suben por FTP a https://document.aag.org.ec y NO se mueven de
+ * ahi: sus direcciones estan publicadas y enlazadas desde documentacion
+ * anterior. Este comando no copia nada; solo REGISTRA cada archivo en la base
+ * de datos con su ruta, de modo que el portal pueda listarlos con su propio
+ * diseño en vez de mandar al ciudadano al explorador del subdominio.
  *
- *   1. Son mas de mil archivos (solo 2024 tiene 897).
- *   2. La estructura NO es uniforme: 2023 es plana (AÑO/Mes/archivo.pdf),
- *      mientras 2024 y 2025 anidan cuatro niveles
- *      (AÑO/Mes/Articulo 19/N. Literal/archivo.csv).
+ * La descarga apunta a la URL directa del archivo
+ * (https://document.aag.org.ec/2024/01-Enero/.../Metadatos.csv), no al script
+ * "?file=" del explorador: es una direccion limpia, no depende de la ruta
+ * interna del servidor (/home/<usuario>/...) y sobrevive a un cambio de
+ * hosting.
  *
- * Registrar cada archivo como una fila obligaria a mantener mil registros
- * sincronizados a mano y aplanaria una jerarquia que si tiene sentido para el
- * ciudadano. Por eso este comando NO copia archivos: enlaza cada MES con su
- * carpeta del explorador, que ya sabe presentarla.
+ * ESTRUCTURA
+ * ----------
+ * No es uniforme, y el comando lo contempla:
  *
- * La consecuencia practica es la que interesa: cuando se suba un archivo nuevo
- * por FTP, aparece solo. No hay que volver a ejecutar nada.
+ *   2023  ->  AÑO/Mes/archivo.pdf                       (plana)
+ *   2024  ->  AÑO/Mes/Articulo 19/N. Literal/archivo.csv (anidada)
  *
- * Si en algun momento se prefiere el listado dentro del portal (con nombre,
- * formato y peso en la linea grafica del sitio), se puede registrar documento
- * a documento desde Transparencia > Documentos; ambos modos conviven.
+ * Lo que hay entre el mes y el archivo se guarda como "literal", que agrupa los
+ * documentos en la pagina igual que estan en el servidor. Si no hay nada
+ * intermedio (2023), el documento queda suelto en su mes.
+ *
+ * USO
+ * ---
+ *   php artisan lotaip:sincronizar --dry-run   ver que haria
+ *   php artisan lotaip:sincronizar             aplicarlo
+ *
+ * Es idempotente y se ejecuta cada madrugada desde routes/console.php, asi que
+ * subir por FTP es lo unico que hay que hacer: al dia siguiente esta publicado.
  */
 class SincronizarDocumentosLotaip extends Command
 {
@@ -40,15 +51,20 @@ class SincronizarDocumentosLotaip extends Command
                             {--seccion=lotaip : Seccion a sincronizar (lotaip o rendicion)}
                             {--dry-run : Muestra lo que haria sin tocar la base de datos}';
 
-    protected $description = 'Enlaza los meses de transparencia con las carpetas del subdominio de documentos';
+    protected $description = 'Registra en el portal los documentos alojados en el subdominio';
 
-    /** Nombre de carpeta -> numero de mes. El explorador usa "01-Enero", "1-enero", "Enero"... */
     protected const MESES = [
         'enero' => 1, 'febrero' => 2, 'marzo' => 3, 'abril' => 4,
         'mayo' => 5, 'junio' => 6, 'julio' => 7, 'agosto' => 8,
         'septiembre' => 9, 'setiembre' => 9, 'octubre' => 10,
         'noviembre' => 11, 'diciembre' => 12,
     ];
+
+    /**
+     * Carpetas intermedias que no aportan como agrupador: son un nivel
+     * organizativo del servidor, no un literal de la LOTAIP.
+     */
+    protected const CARPETAS_IGNORADAS = ['articulo 19', 'article 19', 'art 19', 'excel', 'varios'];
 
     public function handle(): int
     {
@@ -65,81 +81,96 @@ class SincronizarDocumentosLotaip extends Command
         }
 
         $this->info("Subdominio: {$base}");
-        $this->info("Seccion:    {$seccion}");
         if ($dryRun) {
-            $this->warn('Modo simulacion: no se escribe nada en la base de datos.');
+            $this->warn('Modo simulacion: no se escribe nada.');
         }
         $this->newLine();
 
         $anios = $this->descubrirAnios($base);
 
         if (empty($anios)) {
-            $this->error('No se encontro ninguna carpeta de año en el subdominio.');
+            $this->error('No se encontro ninguna carpeta de año.');
 
             return self::FAILURE;
         }
 
-        $this->line('Años encontrados: ' . implode(', ', $anios));
-        $this->newLine();
-
-        $totalMeses = 0;
-        $totalArchivos = 0;
+        $totales = ['anios' => 0, 'meses' => 0, 'docs' => 0, 'nuevos' => 0];
 
         foreach ($anios as $anio) {
-            $carpetas = $this->descubrirMeses($base, $anio);
+            $archivos = $this->descubrirArchivos($base, $anio);
 
-            if (empty($carpetas)) {
+            if (empty($archivos)) {
                 $this->line("  {$anio}: sin archivos todavia");
                 continue;
             }
 
+            $totales['anios']++;
+            $this->line("  <fg=cyan>{$anio}</>");
+
             $registroAnio = $dryRun
-                ? new LotaipYear(['year' => $anio, 'section' => $seccion])
+                ? new LotaipYear(['id' => 0, 'year' => $anio, 'section' => $seccion])
                 : LotaipYear::firstOrCreate(
                     ['year' => $anio, 'section' => $seccion],
                     ['is_active' => true]
                 );
 
-            $this->line("  {$anio}:");
-
-            foreach ($carpetas as $carpeta => $numArchivos) {
-                $mes = $this->numeroDeMes($carpeta);
-
-                if (! $mes) {
-                    $this->warn("    · carpeta no reconocida como mes: {$carpeta}");
-                    continue;
+            // Agrupar por mes
+            $porMes = [];
+            foreach ($archivos as $ruta) {
+                $info = $this->analizarRuta($ruta, $anio);
+                if ($info) {
+                    $porMes[$info['mes']][] = $info;
                 }
+            }
+            ksort($porMes);
 
-                // Ruta RELATIVA: el explorador la acepta, y asi el enlace no
-                // depende de /home/<usuario>/... Si el hosting cambia, sigue
-                // funcionando.
-                $url = $base . '/?dir=' . rawurlencode($anio . '/' . $carpeta);
+            foreach ($porMes as $numeroMes => $documentos) {
+                $totales['meses']++;
+                $nombreMes = LotaipMonth::MONTH_NAMES[$numeroMes] ?? "Mes {$numeroMes}";
 
-                $this->line(sprintf(
-                    '    · %-12s %4d archivo%s  ->  ?dir=%s/%s',
-                    LotaipMonth::MONTH_NAMES[$mes] ?? $carpeta,
-                    $numArchivos,
-                    $numArchivos === 1 ? ' ' : 's',
-                    $anio,
-                    $carpeta
-                ));
-
-                $totalMeses++;
-                $totalArchivos += $numArchivos;
+                $this->line(sprintf('    %-12s %3d documentos', $nombreMes, count($documentos)));
 
                 if ($dryRun) {
+                    $totales['docs'] += count($documentos);
+                    // Muestra un par de ejemplos para poder revisar el resultado
+                    foreach (array_slice($documentos, 0, 2) as $d) {
+                        $this->line(sprintf(
+                            '                 · %s%s',
+                            $d['literal'] ? "[{$d['literal']}] " : '',
+                            $d['titulo']
+                        ));
+                    }
                     continue;
                 }
 
-                LotaipMonth::updateOrCreate(
-                    ['year_id' => $registroAnio->id, 'month' => $mes],
-                    [
-                        'mode'           => 'redirect',
-                        'redirect_url'   => $url,
-                        'redirect_label' => 'Ver documentos de ' . (LotaipMonth::MONTH_NAMES[$mes] ?? $carpeta),
-                        'is_active'      => true,
-                    ]
+                $registroMes = LotaipMonth::updateOrCreate(
+                    ['year_id' => $registroAnio->id, 'month' => $numeroMes],
+                    ['mode' => 'files', 'is_active' => true]
                 );
+
+                foreach ($documentos as $orden => $doc) {
+                    $existente = LotaipDocument::where('month_id', $registroMes->id)
+                        ->where('file_path', $doc['ruta'])
+                        ->first();
+
+                    if (! $existente) {
+                        $totales['nuevos']++;
+                    }
+
+                    LotaipDocument::updateOrCreate(
+                        ['month_id' => $registroMes->id, 'file_path' => $doc['ruta']],
+                        [
+                            'source'     => LotaipDocument::SOURCE_EXTERNAL,
+                            'title'      => $doc['titulo'],
+                            'literal'    => $doc['literal'],
+                            'extension'  => $doc['extension'],
+                            'is_active'  => true,
+                            'sort_order' => $orden,
+                        ]
+                    );
+
+                    $totales['docs']++;
+                }
             }
         }
 
@@ -150,26 +181,99 @@ class SincronizarDocumentosLotaip extends Command
 
         $this->newLine();
         $this->info(sprintf(
-            '%s %d meses (%d archivos en total).',
-            $dryRun ? 'Se enlazarian' : 'Enlazados',
-            $totalMeses,
-            $totalArchivos
+            '%s %d documentos en %d meses de %d años.%s',
+            $dryRun ? 'Se registrarian' : 'Registrados',
+            $totales['docs'],
+            $totales['meses'],
+            $totales['anios'],
+            (! $dryRun && $totales['nuevos'] > 0) ? " ({$totales['nuevos']} nuevos)" : ''
         ));
-
-        if ($dryRun) {
-            $this->line('Vuelve a ejecutarlo sin --dry-run para aplicarlo.');
-        }
 
         return self::SUCCESS;
     }
 
     /**
-     * Años disponibles, leidos del menu lateral del explorador.
+     * Descompone una ruta del subdominio en los datos del documento.
+     *
+     * "2024/01-Enero/Articulo 19/9. Listado de empresas/Metadatos.csv"
+     *   -> mes 1, literal "9. Listado de empresas", titulo "Metadatos"
      */
+    protected function analizarRuta(string $ruta, string $anio): ?array
+    {
+        $partes = array_values(array_filter(explode('/', $ruta), fn ($p) => $p !== ''));
+
+        $pos = array_search($anio, $partes, true);
+        if ($pos === false || ! isset($partes[$pos + 1])) {
+            return null;
+        }
+
+        $mes = $this->numeroDeMes($partes[$pos + 1]);
+        if (! $mes) {
+            return null;
+        }
+
+        $archivo = end($partes);
+        $intermedias = array_slice($partes, $pos + 2, -1);
+
+        // El agrupador es la ultima carpeta con significado (se descartan los
+        // niveles meramente organizativos, como "Articulo 19").
+        $literal = null;
+        foreach (array_reverse($intermedias) as $carpeta) {
+            if (! in_array($this->normalizar($carpeta), self::CARPETAS_IGNORADAS, true)) {
+                $literal = $carpeta;
+                break;
+            }
+        }
+
+        return [
+            // Ruta RELATIVA al subdominio: el modelo la convierte en URL
+            // directa y escapa cada segmento (hay espacios y tildes de sobra).
+            'ruta'      => implode('/', array_slice($partes, $pos)),
+            'titulo'    => $this->titulo($archivo),
+            'literal'   => $literal ? mb_substr($literal, 0, 255) : null,
+            'extension' => strtolower(pathinfo($archivo, PATHINFO_EXTENSION)),
+            'mes'       => $mes,
+        ];
+    }
+
+    /**
+     * Nombre de archivo -> titulo legible.
+     * "Literal_a4_-_Metas y objetivos.pdf" -> "Literal a4 - Metas y objetivos"
+     */
+    protected function titulo(string $archivo): string
+    {
+        $nombre = pathinfo($archivo, PATHINFO_FILENAME);
+        $nombre = str_replace(['_', '+'], ' ', $nombre);
+        $nombre = preg_replace('/\s+/', ' ', $nombre);
+
+        return trim($nombre) ?: $archivo;
+    }
+
+    protected function numeroDeMes(string $carpeta): ?int
+    {
+        $nombre = $this->normalizar($carpeta);
+        $nombre = preg_replace('/^\d+\s*[-_.]\s*/', '', $nombre);
+
+        foreach (self::MESES as $mes => $numero) {
+            if (str_contains($nombre, $mes)) {
+                return $numero;
+            }
+        }
+
+        return null;
+    }
+
+    protected function normalizar(string $texto): string
+    {
+        $t = mb_strtolower(trim($texto));
+        $t = strtr($t, ['á' => 'a', 'é' => 'e', 'í' => 'i', 'ó' => 'o', 'ú' => 'u', 'ñ' => 'n']);
+
+        return trim(str_replace(['_', '-', '.'], ' ', $t));
+    }
+
     protected function descubrirAnios(string $base): array
     {
         $html = $this->pedir($base . '/');
-
         if ($html === null) {
             return [];
         }
@@ -178,9 +282,7 @@ class SincronizarDocumentosLotaip extends Command
 
         $anios = [];
         foreach ($m[1] as $enlace) {
-            $ruta = urldecode($enlace);
-            // Del final de la ruta, quedarse con lo que sea un año de 4 cifras.
-            $ultimo = basename(rtrim($ruta, '/'));
+            $ultimo = basename(rtrim(urldecode($enlace), '/'));
             if (preg_match('/^(19|20)\d{2}$/', $ultimo)) {
                 $anios[$ultimo] = true;
             }
@@ -193,74 +295,33 @@ class SincronizarDocumentosLotaip extends Command
     }
 
     /**
-     * Carpetas de mes de un año, con cuantos archivos cuelgan de cada una.
+     * Rutas de todos los archivos de un año, leidas de los enlaces de descarga.
      *
-     * Se deducen de los enlaces de descarga (?file=...) en vez de intentar
-     * interpretar los acordeones del explorador: las rutas de archivo son
-     * inequivocas y funcionan igual sea la estructura plana (2023) o anidada
-     * en cuatro niveles (2024-2025).
-     *
-     * @return array<string,int> nombre de carpeta => numero de archivos
+     * @return string[]
      */
-    protected function descubrirMeses(string $base, string $anio): array
+    protected function descubrirArchivos(string $base, string $anio): array
     {
         $html = $this->pedir($base . '/?dir=' . rawurlencode($anio));
-
         if ($html === null) {
             return [];
         }
 
         preg_match_all('/\?file=([^\'"<>\s]+)/', $html, $m);
 
-        $carpetas = [];
+        $rutas = [];
         foreach ($m[1] as $enlace) {
-            $ruta = urldecode($enlace);
-
-            // La ruta puede venir absoluta (/home/.../2024/01-Enero/x.csv) o
-            // relativa; en ambos casos interesa el segmento siguiente al año.
-            $partes = array_values(array_filter(explode('/', $ruta), fn ($p) => $p !== ''));
-            $pos = array_search($anio, $partes, true);
-
-            if ($pos === false || ! isset($partes[$pos + 1])) {
-                continue;
-            }
-
-            $carpetaMes = $partes[$pos + 1];
-            $carpetas[$carpetaMes] = ($carpetas[$carpetaMes] ?? 0) + 1;
+            $rutas[] = urldecode($enlace);
         }
 
-        // Ordenar por numero de mes, no alfabeticamente
-        uksort($carpetas, fn ($a, $b) => ($this->numeroDeMes($a) ?? 99) <=> ($this->numeroDeMes($b) ?? 99));
+        sort($rutas, SORT_NATURAL | SORT_FLAG_CASE);
 
-        return $carpetas;
-    }
-
-    /**
-     * "01-Enero" -> 1 ; "Diciembre" -> 12 ; "Excel" -> null
-     */
-    protected function numeroDeMes(string $carpeta): ?int
-    {
-        $nombre = strtolower(trim($carpeta));
-        $nombre = preg_replace('/^\d+\s*[-_.]\s*/', '', $nombre); // quita "01-"
-        $nombre = str_replace(['_', '-'], ' ', $nombre);
-        $nombre = trim($nombre);
-
-        // Sin tildes, para que "Septiembre" y "septiembre" coincidan igual
-        $nombre = strtr($nombre, ['á' => 'a', 'é' => 'e', 'í' => 'i', 'ó' => 'o', 'ú' => 'u']);
-
-        foreach (self::MESES as $mes => $numero) {
-            if (str_contains($nombre, $mes)) {
-                return $numero;
-            }
-        }
-
-        return null;
+        return $rutas;
     }
 
     protected function pedir(string $url): ?string
     {
         try {
-            $resp = Http::timeout(30)->retry(2, 500)->get($url);
+            $resp = Http::timeout(60)->retry(2, 500)->get($url);
 
             if (! $resp->successful()) {
                 $this->warn("  No se pudo leer {$url} (HTTP {$resp->status()})");

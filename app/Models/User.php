@@ -7,13 +7,18 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser
 {
-    use HasFactory, Notifiable, HasRoles, LogsActivity;
+    // HasApiTokens es lo que permite emitir tokens de la API publica desde el
+    // panel (ver ApiTokenResource). Solo anade una relacion y createToken(); no
+    // abre acceso a nada por si mismo: mientras API_ENABLED sea false las rutas
+    // de la API ni siquiera existen.
+    use HasFactory, Notifiable, HasRoles, LogsActivity, HasApiTokens;
 
     protected $fillable = [
         'name',

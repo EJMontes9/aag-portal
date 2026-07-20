@@ -40,6 +40,16 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        // Guard de la API publica (ver config/api.php). El driver 'sanctum' lo
+        // registra el propio paquete, pero sin esta entrada el middleware
+        // auth:sanctum no encuentra el guard y falla con "Auth guard [sanctum]
+        // is not defined". Se declara siempre, este la API activa o no: no
+        // expone nada por si mismo, solo describe como validar un token.
+        'sanctum' => [
+            'driver' => 'sanctum',
+            'provider' => 'users',
+        ],
     ],
 
     /*

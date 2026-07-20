@@ -35,6 +35,7 @@ Portal institucional de la **Autoridad Aeroportuaria de Guayaquil**.
 | [MANUAL_CONTENIDO.md](MANUAL_CONTENIDO.md) | Uso diario del panel | Redacción / Comunicación |
 | [MANUAL_TRANSPARENCIA.md](MANUAL_TRANSPARENCIA.md) | Publicación de documentos LOTAIP | Transparencia |
 | [MANUAL_USUARIOS_ROLES.md](MANUAL_USUARIOS_ROLES.md) | Cuentas, roles y permisos | Administración |
+| [API.md](API.md) | API pública de solo lectura: cómo activarla, tokens, endpoints | Desarrollo / Sistemas |
 
 ---
 
@@ -81,9 +82,9 @@ Cosas que conviene tener presentes, documentadas con detalle en
   marcado.
 - El explorador del subdominio de documentos (código ajeno a este repositorio)
   tiene una comprobación de ruta que conviene endurecer.
-- **Laravel Sanctum** aparece en el pliego pero no está instalado: el portal no
-  expone ninguna API que lo justifique. Conviene aclararlo con la contraparte
-  antes de instalarlo sólo por cumplir la letra.
+- La **API pública viene desactivada** (`API_ENABLED=false`). Con ella apagada
+  las rutas `/api/*` ni se registran: responden 404, no 401. Se activa cuando
+  alguien vaya a consumirla, no antes. Ver [`API.md`](API.md).
 
 ---
 

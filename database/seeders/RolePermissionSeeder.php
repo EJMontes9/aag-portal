@@ -49,6 +49,18 @@ class RolePermissionSeeder extends Seeder
     ];
 
     /**
+     * Tokens de la API publica. SOLO super_admin y admin.
+     *
+     * Se lista aparte y no dentro de $recursosCriticos porque el criterio no
+     * es el mismo: los criticos se le niegan tambien al admin, y aqui el admin
+     * si entra. Un token de API es una credencial de lectura de todo el
+     * contenido publicado; emitirla no es una tarea de redaccion.
+     */
+    protected array $recursosDeApi = [
+        'api::token',
+    ];
+
+    /**
      * Recursos de la seccion de Transparencia (LOTAIP y Rendicion de Cuentas).
      * Definen el alcance del rol "transparencia".
      */
@@ -86,6 +98,7 @@ class RolePermissionSeeder extends Seeder
         $publisher = array_filter($todos, function ($p) {
             if ($this->perteneceA($p, $this->recursosCriticos)) return false;
             if ($this->perteneceA($p, $this->recursosConDatosPersonales)) return false;
+            if ($this->perteneceA($p, $this->recursosDeApi)) return false;
             if (str_contains($p, 'site::settings')) return false;
             return true;
         });

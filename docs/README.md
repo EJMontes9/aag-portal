@@ -4,6 +4,11 @@ Portal institucional de la **Autoridad Aeroportuaria de Guayaquil**.
 
 ---
 
+> 🔴 **Despliegue en curso.** El estado real del servidor, lo que falta y las
+> decisiones tomadas están en
+> [`ESTADO_Y_TRASPASO.md`](ESTADO_Y_TRASPASO.md). **Léelo primero** si vas a
+> retomar el despliegue.
+
 ## Por dónde empezar
 
 **Si vas a gestionar contenido**

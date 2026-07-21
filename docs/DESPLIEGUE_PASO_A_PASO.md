@@ -1,5 +1,23 @@
 # Publicación paso a paso: primero en pruebas, después en el dominio real
 
+> **Datos reales de la cuenta** (comprobados en el cPanel el 20/07/2026):
+>
+> | | |
+> |---|---|
+> | Usuario de cPanel | `aagorgec` |
+> | Carpeta personal | `/home/aagorgec` |
+> | Dominio principal | `aag.org.ec` → `/public_html` (WordPress) |
+> | IP compartida | `142.132.139.147` |
+> | **PHP** | **8.2 — ya correcta, no hay que tocarla** |
+> | Extensiones | Las 24 que necesita el portal están activas |
+> | Terminal | **Disponible** (Avanzada › Terminal) |
+> | Base de datos existente | `aagorgec_site` (170 MB, del WordPress) — **no tocar** |
+> | Subdominios ya creados | `document`, `dataowncloud`, `monitor`, `principal`, `ticketera` |
+>
+> El selector de PHP permite además configuración **por dominio**
+> (*Seleccionar Versión PHP › Per Domain Settings*), por si en el futuro hiciera
+> falta una versión distinta para el WordPress y para el portal.
+
 Guía operativa para el caso concreto de la AAG: hay un **WordPress publicado y
 en uso**, y el portal nuevo debe verse primero en un subdominio para revisarlo,
 y pasar al dominio principal sólo cuando esté conforme.

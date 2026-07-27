@@ -13,6 +13,15 @@ class QuickActionsWidget extends Widget
 
     protected static ?int $sort = 1;
 
+    // Los accesos rapidos son de contenido general (editar el home, crear
+    // pagina...). El rol "transparencia" no gestiona nada de eso: sin este
+    // filtro veia el mismo panel que un editor, con enlaces a secciones a las
+    // que ademas no tiene permiso de entrar.
+    public static function canView(): bool
+    {
+        return auth()->user()?->can('widget_QuickActionsWidget') ?? false;
+    }
+
     protected function getViewData(): array
     {
         $homePage = Page::where('key', 'home')->first();

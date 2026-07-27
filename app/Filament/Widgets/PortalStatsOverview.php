@@ -13,6 +13,13 @@ class PortalStatsOverview extends BaseWidget
 {
     protected static ?int $sort = 2;
 
+    // Paginas, convocatorias y usuarios del panel: cifras de contenido
+    // general, ajenas al rol "transparencia".
+    public static function canView(): bool
+    {
+        return auth()->user()?->can('widget_PortalStatsOverview') ?? false;
+    }
+
     protected function getStats(): array
     {
         $pagesCount = Page::count();

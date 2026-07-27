@@ -16,6 +16,13 @@ class RecentConvocatoriasWidget extends BaseWidget
 
     protected static ?string $heading = 'Convocatorias recientes';
 
+    // El rol "transparencia" no administra convocatorias: no tiene sentido
+    // que este listado ocupe su panel de entrada.
+    public static function canView(): bool
+    {
+        return auth()->user()?->can('widget_RecentConvocatoriasWidget') ?? false;
+    }
+
     public function table(Table $table): Table
     {
         return $table

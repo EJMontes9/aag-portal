@@ -2,7 +2,20 @@
 @php
     $section = $block->get('section', 'lotaip');
 
-    // Estructura cacheada: years[] con sus months[] y documents[] resueltos
+    // Estructura cacheada: years[] con sus months[] y el CONTEO de documentos
+    // de cada mes, no el listado completo.
+    //
+    // Antes esta cache guardaba, para cada mes de cada año, el HTML de cada
+    // documento (enlace, icono, tamaño...), aunque el visitante solo puede ver
+    // un mes a la vez: el resto queda oculto con x-show, pero igual viaja al
+    // navegador. Con el archivo historico de LOTAIP (mas de mil documentos)
+    // eso eran varios megabytes y quince segundos de carga en CADA visita a
+    // esta pagina, la mayoria de los cuales el visitante ni siquiera llega a
+    // ver.
+    //
+    // Ahora solo se guarda el conteo por mes (para el rotulo "N archivos") y
+    // el listado real de un mes se pide aparte, solo cuando el visitante lo
+    // abre: ver TransparencyController@documentos y el fetch() de mas abajo.
     $cacheKey = 'transparency_tree_'.$section;
     $tree = \Illuminate\Support\Facades\Cache::remember($cacheKey, 300, function () use ($section) {
         return \App\Models\LotaipYear::forSection($section)
@@ -10,20 +23,22 @@
             ->with(['activeMonths' => function ($q) {
                 $q->orderBy('month');
             }, 'activeMonths.activeDocuments' => function ($q) {
-                $q->orderBy('sort_order');
+                // Solo se necesitan estas columnas para contar cuantos
+                // documentos quedan tras el filtro de extension: no hace
+                // falta traer titulo, ruta ni tamaño de cada uno.
+                $q->select('id', 'month_id', 'extension');
             }])
             ->get()
             ->map(function ($year) {
                 return [
                     'id' => $year->id,
                     'year' => $year->year,
-                    'allowed_extensions' => $year->allowed_extensions,
                     'months' => $year->activeMonths->map(function ($m) use ($year) {
                         $effExt = ! empty($m->allowed_extensions) ? $m->allowed_extensions : $year->allowed_extensions;
-                        $docs = $m->activeDocuments;
-                        if (! empty($effExt)) {
-                            $docs = $docs->filter(fn ($d) => in_array($d->extension, $effExt))->values();
-                        }
+                        $docsCount = ! empty($effExt)
+                            ? $m->activeDocuments->whereIn('extension', $effExt)->count()
+                            : $m->activeDocuments->count();
+
                         return [
                             'id' => $m->id,
                             'month' => $m->month,
@@ -31,40 +46,7 @@
                             'mode' => $m->mode,
                             'redirect_url' => $m->redirect_url,
                             'redirect_label' => $m->redirect_label,
-                            // Se descartan los documentos cuyo enlace no se puede
-                            // construir (externos sin URL base configurada, o con
-                            // un esquema no permitido): mejor no listarlos que
-                            // ofrecer una descarga que lleva a ninguna parte.
-                            'documents' => $docs->filter(fn ($d) => $d->url !== '')->values()->map(fn ($d) => [
-                                'id' => $d->id,
-                                'title' => $d->title,
-                                'url' => $d->url,
-                                'is_external' => $d->isExternal(),
-                                'extension' => $d->extension,
-                                'size_human' => $d->size_human,
-                                'icon' => $d->icon,
-                            ])->all(),
-                            // Agrupacion por literal de la LOTAIP, que es como
-                            // estan organizados en el servidor. Sin esto, un mes
-                            // de 2024 son setenta y cinco archivos seguidos con
-                            // titulos que se repiten ("Conjunto de datos",
-                            // "Diccionario de datos", "Metadatos") y no hay forma
-                            // de saber a que corresponde cada uno.
-                            // Los documentos sin literal (los de 2023) van juntos
-                            // en un grupo sin encabezado.
-                            'grupos' => $docs->filter(fn ($d) => $d->url !== '')
-                                ->groupBy(fn ($d) => $d->literal ?: '')
-                                ->map(fn ($grupo, $literal) => [
-                                    'literal' => $literal,
-                                    'documents' => $grupo->values()->map(fn ($d) => [
-                                        'id' => $d->id,
-                                        'title' => $d->title,
-                                        'url' => $d->url,
-                                        'is_external' => $d->isExternal(),
-                                        'extension' => $d->extension,
-                                        'size_human' => $d->size_human,
-                                    ])->all(),
-                                ])->values()->all(),
+                            'documents_count' => $docsCount,
                         ];
                     })->all(),
                 ];
@@ -80,7 +62,7 @@
     // meses (o hasta que se publica la informacion del periodo), y abrir en una
     // pantalla de "sin documentos" hace pensar que no hay nada publicado.
     $anioInicial = $tree->first(
-        fn ($y) => collect($y['months'])->contains(fn ($m) => count($m['documents']) > 0)
+        fn ($y) => collect($y['months'])->contains(fn ($m) => $m['documents_count'] > 0)
     ) ?? $tree->first();
 @endphp
 
@@ -119,8 +101,23 @@
                  x-data="{
                     yearId: {{ $anioInicial['id'] }},
                     monthId: null,
+                    loading: {},
+                    loaded: {},
                     setYear(id) { this.yearId = id; this.monthId = null; },
-                    setMonth(id) { this.monthId = this.monthId === id ? null : id; },
+                    setMonth(id) {
+                        this.monthId = this.monthId === id ? null : id;
+                        // El detalle de cada mes se pide una sola vez y queda
+                        // en memoria: volver a abrir el mismo mes no repite la
+                        // peticion.
+                        if (this.monthId === id && this.loaded[id] === undefined) {
+                            this.loading[id] = true;
+                            fetch(`/transparencia/mes/${id}/documentos`)
+                                .then(r => r.ok ? r.text() : Promise.reject())
+                                .then(html => { this.loaded[id] = html; })
+                                .catch(() => { this.loaded[id] = '<div class=&quot;border-t border-border px-4 py-3.5 text-[14px] text-muted&quot;>No se pudo cargar el listado. Intenta de nuevo.</div>'; })
+                                .finally(() => { this.loading[id] = false; });
+                        }
+                    },
                  }">
 
                 {{-- Sidebar: lista de años --}}
@@ -190,82 +187,32 @@
                                                 {{ $month['name'] }}
                                             </span>
                                             <span class="shrink-0 font-sans text-[12px] text-muted uppercase tracking-[0.05em]">
-                                                @if(count($month['documents']) > 0)
-                                                    {{ count($month['documents']) }} archivo{{ count($month['documents']) !== 1 ? 's' : '' }}
+                                                @if($month['documents_count'] > 0)
+                                                    {{ $month['documents_count'] }} archivo{{ $month['documents_count'] !== 1 ? 's' : '' }}
                                                 @else
                                                     Sin documentos
                                                 @endif
                                             </span>
                                         </button>
 
+                                        {{-- El listado real de este mes no esta en el HTML de la
+                                             pagina: se pide a TransparencyController@documentos la
+                                             primera vez que se abre (ver setMonth() mas arriba) y
+                                             se pinta aqui con x-html. Antes esto llevaba, para CADA
+                                             mes de CADA año, el HTML completo de sus documentos
+                                             (aunque estuviera oculto); con el archivo historico de
+                                             LOTAIP eso eran varios megabytes en cada visita. --}}
                                         <div x-show="monthId === {{ $month['id'] }}"
                                              x-transition:enter="transition ease-out duration-200"
                                              x-transition:enter-start="opacity-0 -translate-y-1"
                                              x-transition:enter-end="opacity-100 translate-y-0"
                                              style="display: none;">
-                                            @if(count($month['documents']) > 0)
-                                                {{-- Los documentos se listan AGRUPADOS por literal de la
-                                                     LOTAIP, que es como estan organizados en el servidor.
-                                                     Sin agrupar, un mes de 2024 son 75 filas seguidas con
-                                                     titulos que se repiten ("Conjunto de datos",
-                                                     "Diccionario de datos", "Metadatos") y resulta
-                                                     imposible saber a que corresponde cada una. --}}
-                                                <div class="border-t border-border">
-                                                    @foreach($month['grupos'] as $grupo)
-                                                        @if($grupo['literal'])
-                                                            <p class="bg-bg px-4 py-2 border-b border-border font-sans text-[12px] font-bold text-brand-navy leading-snug">
-                                                                {{ $grupo['literal'] }}
-                                                            </p>
-                                                        @endif
-
-                                                        <ul>
-                                                            @foreach($grupo['documents'] as $doc)
-                                                                <li class="border-b border-border last:border-0">
-                                                                    <a href="{{ $doc['url'] }}"
-                                                                       target="_blank" rel="noopener"
-                                                                       @unless($doc['is_external']) download @endunless
-                                                                       class="group flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-brand-soft/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-primary"
-                                                                       aria-label="{{ $doc['title'] }} ({{ strtoupper($doc['extension']) }})">
-
-                                                                        {{-- Un solo tinte celeste para todas las extensiones:
-                                                                             el formato ya se lee en texto, y B reserva el
-                                                                             color a estados, no a tipos de archivo. --}}
-                                                                        <span class="inline-flex w-7 h-7 shrink-0 items-center justify-center rounded-pill bg-brand-soft text-brand-navy" aria-hidden="true">
-                                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
-                                                                            </svg>
-                                                                        </span>
-
-                                                                        <span class="flex-1 min-w-0">
-                                                                            <span class="block font-sans text-[14px] font-semibold text-fg leading-snug transition-colors group-hover:text-brand-primary">
-                                                                                {{ $doc['title'] }}
-                                                                            </span>
-                                                                            <span class="block text-[12px] text-muted mt-0.5 num-tabular">
-                                                                                {{ strtoupper($doc['extension']) }}
-                                                                                @if($doc['size_human']) · {{ $doc['size_human'] }} @endif
-                                                                            </span>
-                                                                        </span>
-
-                                                                        {{-- El atributo "download" solo funciona en el mismo
-                                                                             origen; en un archivo del subdominio el navegador
-                                                                             lo ignora y lo abre. Por eso el icono es el de
-                                                                             descarga solo en los locales. --}}
-                                                                        <span class="shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-pill bg-brand-navy text-on-navy transition-colors group-hover:bg-brand-primary" aria-hidden="true">
-                                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/>
-                                                                            </svg>
-                                                                        </span>
-                                                                    </a>
-                                                                </li>
-                                                            @endforeach
-                                                        </ul>
-                                                    @endforeach
-                                                </div>
-                                            @else
+                                            <template x-if="loading[{{ $month['id'] }}]">
                                                 <div class="border-t border-border px-4 py-3.5 text-[14px] text-muted">
-                                                    No hay documentos publicados para este mes.
+                                                    Cargando documentos…
                                                 </div>
-                                            @endif
+                                            </template>
+                                            <div x-show="!loading[{{ $month['id'] }}]" x-html="loaded[{{ $month['id'] }}]"></div>
                                         </div>
                                     </div>
                                 @endif

@@ -7,6 +7,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SubscriberController;
+use App\Http\Controllers\TransparencyController;
 use App\Livewire\VisualEditor;
 use App\Models\Page;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +41,14 @@ Route::middleware('throttle:60,1')->group(function () {
     // El buscador global es el caso extremo de lo anterior: una sola peticion
     // lanza cinco LIKE '%texto%' sobre cinco tablas distintas.
     Route::get('/buscar', [SearchController::class, 'index'])->name('search');
+
+    // Detalle de un mes de Transparencia, pedido bajo demanda por el bloque
+    // "Navegador de Transparencia" (ver transparency-browser.blade.php). Va en
+    // este mismo grupo con limite de peticiones porque, igual que el buscador,
+    // hace una consulta a la base de datos en cada llamada.
+    Route::get('/transparencia/mes/{month}/documentos', [TransparencyController::class, 'documentos'])
+        ->whereNumber('month')
+        ->name('transparency.month.documents');
 });
 
 // Fichas de detalle: consultas por clave indexada, sin busqueda.

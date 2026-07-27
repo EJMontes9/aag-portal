@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\SiteSetting;
+use Filament\Forms\Components\Actions as FormActions;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
@@ -22,6 +23,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Mail;
@@ -194,6 +196,71 @@ class SiteSettingsPage extends Page implements HasForms
                                                 'Los documentos que ya tengan guardada una dirección completa (empezando por https://) '
                                                 . 'NO se ven afectados por este ajuste: conservan su enlace original. Así, la documentación '
                                                 . 'ya publicada sigue funcionando aunque se cambie el subdominio.'
+                                            )
+                                            ->columnSpanFull(),
+                                    ]),
+
+                                Section::make('Publicar los documentos en el portal')
+                                    ->description(
+                                        'Indicar la dirección del subdominio no publica nada por sí solo: hay que recorrerlo y '
+                                        . 'registrar en el portal cada archivo encontrado. Eso es lo que hace este botón. '
+                                        . 'Normalmente se ejecuta solo cada madrugada; púlsalo cuando acabes de subir '
+                                        . 'documentos por FTP y quieras verlos publicados de inmediato.'
+                                    )
+                                    ->schema([
+                                        Placeholder::make('documents_last_sync')
+                                            ->label('Última sincronización')
+                                            ->content(function () {
+                                                $fecha = SiteSetting::get('documents_last_sync');
+
+                                                return $fecha
+                                                    ? $fecha
+                                                    : 'Todavía no se ha ejecutado ninguna vez.';
+                                            })
+                                            ->columnSpanFull(),
+
+                                        FormActions::make([
+                                            FormAction::make('sincronizarLotaip')
+                                                ->label('Publicar documentos de Transparencia')
+                                                ->icon('heroicon-o-arrow-path')
+                                                ->color('primary')
+                                                ->requiresConfirmation()
+                                                ->modalHeading('Publicar los documentos de Transparencia (LOTAIP)')
+                                                ->modalDescription(
+                                                    'Se recorrerá el subdominio y se registrarán en el portal todos los documentos '
+                                                    . 'encontrados. Puede tardar varios minutos: no cierres la página hasta que '
+                                                    . 'aparezca el aviso de resultado.'
+                                                )
+                                                ->modalSubmitActionLabel('Publicar ahora')
+                                                ->action(fn (Get $get) => $this->sincronizarDocumentos('lotaip', $get('documents_base_url'))),
+
+                                            FormAction::make('sincronizarRendicion')
+                                                ->label('Publicar Rendición de Cuentas')
+                                                ->icon('heroicon-o-arrow-path')
+                                                ->color('gray')
+                                                ->requiresConfirmation()
+                                                ->modalHeading('Publicar los documentos de Rendición de Cuentas')
+                                                ->modalDescription(
+                                                    'Igual que el anterior, pero para la sección de Rendición de Cuentas. '
+                                                    . 'Puede tardar varios minutos.'
+                                                )
+                                                ->modalSubmitActionLabel('Publicar ahora')
+                                                ->action(fn (Get $get) => $this->sincronizarDocumentos('rendicion', $get('documents_base_url'))),
+
+                                            FormAction::make('simularSincronizacion')
+                                                ->label('Ver qué haría (sin publicar)')
+                                                ->icon('heroicon-o-eye')
+                                                ->color('gray')
+                                                ->link()
+                                                ->action(fn (Get $get) => $this->sincronizarDocumentos('lotaip', $get('documents_base_url'), simulacion: true)),
+                                        ])->columnSpanFull(),
+
+                                        Placeholder::make('documents_sync_ayuda')
+                                            ->label('Si no aparece nada')
+                                            ->content(
+                                                'Comprueba que la dirección del subdominio esté guardada y que se abra en el navegador. '
+                                                . 'Los meses que no tengan ni archivos ni enlace en el servidor se ocultan '
+                                                . 'automáticamente, para que el portal no anuncie meses vacíos.'
                                             )
                                             ->columnSpanFull(),
                                     ]),
@@ -485,6 +552,135 @@ class SiteSettingsPage extends Page implements HasForms
             str_starts_with($key, 'footer_') || str_starts_with($key, 'seo_') => 'Footer y SEO',
             default => 'General',
         };
+    }
+
+    /**
+     * Lanza la sincronizacion de documentos desde el panel.
+     *
+     * Existe porque indicar el subdominio no publica nada por si solo: hace
+     * falta recorrerlo y registrar cada archivo. Antes eso solo se podia hacer
+     * por terminal, de modo que quien sube los documentos por FTP dependia de
+     * que alguien con acceso al servidor ejecutara el comando, o de esperar a
+     * la ejecucion automatica de la madrugada.
+     *
+     * @param  string|null  $enFormulario  Valor del campo tal y como esta en pantalla,
+     *                                     para avisar si difiere del guardado.
+     */
+    public function sincronizarDocumentos(string $seccion, ?string $enFormulario = null, bool $simulacion = false): void
+    {
+        $guardada = rtrim(trim((string) SiteSetting::get('documents_base_url', '')), '/');
+        $enPantalla = rtrim(trim((string) $enFormulario), '/');
+
+        if ($guardada === '') {
+            Notification::make()
+                ->title('Falta la direccion del subdominio')
+                ->body('Escribe la direccion de los documentos y pulsa "Guardar cambios" antes de publicar.')
+                ->warning()
+                ->send();
+
+            return;
+        }
+
+        // El comando lee la direccion de la base de datos, no de la pantalla:
+        // si se acaba de teclear otra y no se ha guardado, sincronizaria la
+        // anterior sin que se note. Mejor detenerse y decirlo.
+        if ($enPantalla !== '' && $enPantalla !== $guardada) {
+            Notification::make()
+                ->title('Hay cambios sin guardar')
+                ->body("La publicacion usaria la direccion guardada ({$guardada}), no la que acabas de escribir. Pulsa \"Guardar cambios\" primero.")
+                ->warning()
+                ->send();
+
+            return;
+        }
+
+        // Recorrer el subdominio lleva su tiempo: hay años con cientos de
+        // archivos y cada carpeta es una peticion HTTP.
+        @set_time_limit(0);
+        @ignore_user_abort(true);
+
+        try {
+            Artisan::call('lotaip:sincronizar', array_filter([
+                '--seccion' => $seccion,
+                '--dry-run' => $simulacion,
+            ]));
+
+            $salida = trim(Artisan::output());
+        } catch (\Throwable $e) {
+            activity()
+                ->causedBy(auth()->user())
+                ->withProperties(['seccion' => $seccion, 'error' => $e->getMessage()])
+                ->event('lotaip_sync_failed')
+                ->log("Error al publicar documentos de {$seccion}: " . $e->getMessage());
+
+            Notification::make()
+                ->title('No se pudo completar la publicacion')
+                ->body($e->getMessage())
+                ->danger()
+                ->persistent()
+                ->send();
+
+            return;
+        }
+
+        $resumen = $this->resumenDeSalida($salida);
+
+        // "No se encontro ninguna carpeta de año" y similares salen por la via
+        // de error del comando, no como excepcion: hay que mirar el texto.
+        $huboError = str_contains($salida, 'No hay subdominio configurado')
+            || str_contains($salida, 'No se encontro ninguna carpeta');
+
+        if ($huboError) {
+            Notification::make()
+                ->title('No se encontraron documentos')
+                ->body($resumen)
+                ->warning()
+                ->persistent()
+                ->send();
+
+            return;
+        }
+
+        if (! $simulacion) {
+            SiteSetting::updateOrCreate(
+                ['key' => 'documents_last_sync'],
+                ['value' => now()->format('d/m/Y H:i'), 'type' => 'string']
+            );
+
+            Cache::forget('site_settings');
+
+            activity()
+                ->causedBy(auth()->user())
+                ->withProperties(['seccion' => $seccion, 'resultado' => $resumen])
+                ->event('lotaip_sync')
+                ->log("Documentos publicados desde el subdominio ({$seccion})");
+        }
+
+        Notification::make()
+            ->title($simulacion ? 'Simulacion terminada (no se publico nada)' : 'Documentos publicados')
+            ->body($resumen)
+            ->success()
+            ->persistent()
+            ->send();
+    }
+
+    /**
+     * Se queda con las lineas de conclusion del comando, que son las utiles
+     * para quien mira el panel. El listado completo de meses y documentos se
+     * consulta en el Registro de actividad o en la propia seccion publica.
+     */
+    protected function resumenDeSalida(string $salida): string
+    {
+        $lineas = array_values(array_filter(
+            array_map('trim', explode("\n", $salida)),
+            fn ($l) => $l !== ''
+        ));
+
+        if (empty($lineas)) {
+            return 'El proceso termino sin devolver detalle.';
+        }
+
+        return implode(' ', array_slice($lineas, -3));
     }
 
     public function save(): void

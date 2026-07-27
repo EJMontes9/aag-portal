@@ -99,7 +99,10 @@
             <div class="flex flex-wrap gap-5">
                 <a href="/politica-privacidad" class="rounded-pill hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent">Política de privacidad</a>
                 <a href="/terminos" class="rounded-pill hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent">Términos de uso</a>
-                <a href="/sitemap" class="rounded-pill hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent">Mapa del sitio</a>
+                {{-- El mapa del sitio se publica en /sitemap.xml (SitemapController).
+                     Este enlace apuntaba a /sitemap, que no existe como ruta y devolvia
+                     404. En produccion quedo cubierto ademas con una redireccion 301. --}}
+                <a href="/sitemap.xml" class="rounded-pill hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent">Mapa del sitio</a>
             </div>
         </div>
     </div>

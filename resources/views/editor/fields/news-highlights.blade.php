@@ -6,11 +6,11 @@
             <input type="text" wire:model="editingBlockSettings.kicker" class="ve-input" maxlength="60">
         </div>
         <div class="ve-field">
-            <label class="ve-label">Titulo</label>
+            <label class="ve-label">Título</label>
             <input type="text" wire:model="editingBlockSettings.title" class="ve-input" maxlength="120">
         </div>
         <div class="ve-field">
-            <label class="ve-label">Subtitulo</label>
+            <label class="ve-label">Subtítulo</label>
             <textarea wire:model="editingBlockSettings.subtitle" class="ve-input" rows="2" maxlength="240"></textarea>
         </div>
     </div>
@@ -19,10 +19,10 @@
         <h3 class="ve-section-title">Fuente y cantidad</h3>
         <div class="ve-grid-2">
             <div class="ve-field">
-                <label class="ve-label">Que mostrar</label>
+                <label class="ve-label">Qué mostrar</label>
                 <select wire:model="editingBlockSettings.source" class="ve-input">
                     <option value="featured">Solo destacadas</option>
-                    <option value="latest">Mas recientes</option>
+                    <option value="latest">Más recientes</option>
                 </select>
             </div>
             <div class="ve-field">
@@ -37,7 +37,7 @@
         </div>
         <p class="ve-hint">
             Las noticias se gestionan en <a href="/admin/news" target="_blank" class="ve-link">Noticias</a>.
-            Marca como "destacada en home" las que quieras aqui.
+            Marca como "destacada en home" las que quieras aquí.
         </p>
     </div>
 

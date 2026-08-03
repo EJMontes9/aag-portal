@@ -8,11 +8,11 @@
             <input type="text" wire:model="editingBlockSettings.kicker" class="ve-input">
         </div>
         <div class="ve-field">
-            <label class="ve-label">Titulo</label>
+            <label class="ve-label">Título</label>
             <input type="text" wire:model="editingBlockSettings.title" class="ve-input">
         </div>
         <div class="ve-field">
-            <label class="ve-label">Descripcion</label>
+            <label class="ve-label">Descripción</label>
             <textarea wire:model="editingBlockSettings.subtitle" class="ve-input" rows="3"></textarea>
         </div>
         <div class="ve-field">

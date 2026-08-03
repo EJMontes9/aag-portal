@@ -5,11 +5,11 @@
             <input type="text" wire:model="editingBlockSettings.kicker" class="ve-input">
         </div>
         <div class="ve-field">
-            <label class="ve-label">Titulo</label>
+            <label class="ve-label">Título</label>
             <input type="text" wire:model="editingBlockSettings.title" class="ve-input">
         </div>
         <div class="ve-field">
-            <label class="ve-label">Descripcion</label>
+            <label class="ve-label">Descripción</label>
             <textarea wire:model="editingBlockSettings.subtitle" class="ve-input" rows="3"></textarea>
         </div>
         <div class="ve-field">
@@ -22,7 +22,7 @@
         </div>
     </div>
     <div class="ve-section">
-        <h3 class="ve-section-title">Estadisticas</h3>
+        <h3 class="ve-section-title">Estadísticas</h3>
         @foreach(($editingBlockSettings['items'] ?? []) as $i => $item)
             <div class="ve-grid-2 ve-mb-2">
                 <div class="ve-field">

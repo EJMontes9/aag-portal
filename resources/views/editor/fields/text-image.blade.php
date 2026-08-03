@@ -5,7 +5,7 @@
             <input type="text" wire:model="editingBlockSettings.kicker" class="ve-input">
         </div>
         <div class="ve-field">
-            <label class="ve-label">Titulo</label>
+            <label class="ve-label">Título</label>
             <input type="text" wire:model="editingBlockSettings.title" class="ve-input">
         </div>
         <div class="ve-field">
@@ -31,11 +31,11 @@
         </div>
         <div class="ve-grid-2">
             <div class="ve-field">
-                <label class="ve-label">Boton · etiqueta</label>
+                <label class="ve-label">Botón · etiqueta</label>
                 <input type="text" wire:model="editingBlockSettings.cta_label" class="ve-input">
             </div>
             <div class="ve-field">
-                <label class="ve-label">Boton · URL</label>
+                <label class="ve-label">Botón · URL</label>
                 <input type="text" wire:model="editingBlockSettings.cta_url" class="ve-input">
             </div>
         </div>

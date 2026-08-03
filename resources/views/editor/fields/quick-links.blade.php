@@ -6,7 +6,7 @@
             <input type="text" wire:model="editingBlockSettings.kicker" class="ve-input">
         </div>
         <div class="ve-field">
-            <label class="ve-label">Titulo</label>
+            <label class="ve-label">Título</label>
             <input type="text" wire:model="editingBlockSettings.title" class="ve-input">
         </div>
         <div class="ve-grid-2">
@@ -30,16 +30,16 @@
                     <div class="ve-field">
                         <label class="ve-label">Icono</label>
                         <select wire:model="editingBlockSettings.links.{{ $i }}.icon" class="ve-input">
-                            <option value="plane">Avion</option>
+                            <option value="plane">Avión</option>
                             <option value="doc">Documento</option>
                             <option value="check">Check</option>
                             <option value="building">Edificio</option>
                             <option value="download">Descarga</option>
-                            <option value="phone">Telefono</option>
+                            <option value="phone">Teléfono</option>
                             <option value="envelope">Sobre</option>
                             <option value="user">Usuario</option>
                             <option value="globe">Globo</option>
-                            <option value="search">Busqueda</option>
+                            <option value="search">Búsqueda</option>
                         </select>
                     </div>
                     <div class="ve-field">
@@ -48,7 +48,7 @@
                     </div>
                 </div>
                 <div class="ve-field">
-                    <label class="ve-label">Descripcion</label>
+                    <label class="ve-label">Descripción</label>
                     <input type="text" wire:model="editingBlockSettings.links.{{ $i }}.description" class="ve-input">
                 </div>
                 <div class="ve-field">

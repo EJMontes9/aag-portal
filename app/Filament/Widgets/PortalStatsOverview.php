@@ -29,7 +29,7 @@ class PortalStatsOverview extends BaseWidget
         $usersCount = User::count();
 
         return [
-            Stat::make('Paginas publicadas', $pagesCount)
+            Stat::make('Páginas publicadas', $pagesCount)
                 ->description($blocksCount . ' bloques en total')
                 ->descriptionIcon('heroicon-m-squares-2x2')
                 ->color('primary')

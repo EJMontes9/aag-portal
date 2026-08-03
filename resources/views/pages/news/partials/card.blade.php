@@ -1,16 +1,16 @@
 {{-- Tarjeta de noticia — ".b-card" de la Propuesta B.
 
      Caja blanca de borde marcado y esquinas de 4px, SIN sombra: en B la
-     elevacion se expresa con el borde. El unico efecto de hover es el cambio
-     de color del borde y del titulo; nada de escalados ni desplazamientos.
+     elevación se expresa con el borde. El único efecto de hover es el cambio
+     de color del borde y del título; nada de escalados ni desplazamientos.
 
      El contenedor de imagen lleva el gradiente navy->celeste de fondo, que
      queda a la vista como placeholder cuando la noticia no tiene portada. --}}
 <article class="group flex flex-col card-surface overflow-hidden transition-colors duration-200 hover:border-brand-primary">
-    {{-- La imagen apunta al mismo destino que el titulo: se saca del recorrido de
+    {{-- La imagen apunta al mismo destino que el título: se saca del recorrido de
          teclado (tabindex -1 + aria-hidden) para no duplicar la parada, igual
          que hace .b-list-thumb en el listado de noticias. --}}
-    <a href="{{ route('news.show', $item->slug) }}" class="block aspect-[16/10] overflow-hidden bg-cloud-gradient"
+    <a href="{{ route('news.show', $item->slug) }}" wire:navigate class="block aspect-[16/10] overflow-hidden bg-cloud-gradient"
        tabindex="-1" aria-hidden="true">
         @if($item->cover_url)
             <img src="{{ $item->cover_url }}"
@@ -26,10 +26,10 @@
         @endif
     </a>
     {{-- Padding a 18px: con el cuerpo a 15px el aire interior de 16px dejaba el
-         titulo pegado al borde de la caja. --}}
+         título pegado al borde de la caja. --}}
     <div class="p-[18px] flex flex-col flex-1">
         @if($item->category)
-            {{-- Chip rectangular sobre tinte celeste. Si la categoria trae color
+            {{-- Chip rectangular sobre tinte celeste. Si la categoría trae color
                  propio del admin, se respeta como color de texto. --}}
             <span class="pill self-start mb-2"
                   @if($item->category->color) style="color: {{ $item->category->color }};" @endif>
@@ -37,7 +37,7 @@
             </span>
         @endif
         <h3 class="font-sans font-semibold text-[15px] text-fg leading-[1.3] flex-1">
-            <a href="{{ route('news.show', $item->slug) }}"
+            <a href="{{ route('news.show', $item->slug) }}" wire:navigate
                class="rounded-pill transition-colors group-hover:text-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card">
                 {{ $item->title }}
             </a>

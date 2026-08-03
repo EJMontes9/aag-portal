@@ -27,9 +27,9 @@
 
 {{-- Mapa a ancho completo.
 
-     El titulo pasa de centrado a alineado a la izquierda: B alinea a la
-     izquierda todos los rotulos de seccion, y el centrado rompia la columna
-     comun con el resto de bloques de la pagina. --}}
+     El título pasa de centrado a alineado a la izquierda: B alinea a la
+     izquierda todos los rótulos de sección, y el centrado rompía la columna
+     común con el resto de bloques de la página. --}}
 <section class="{{ $bgClass }}">
     <div class="section-wrap">
         @if($title)
@@ -39,13 +39,13 @@
 
         @if($embedUrl)
             {{-- .card-surface = caja blanca, borde 1px marcado, radio 4px y cero
-                 sombra; es el unico envoltorio permitido en B. --}}
+                 sombra; es el único envoltorio permitido en B. --}}
             <div class="map-embed-wrap w-full card-surface overflow-hidden"
                  style="{{ $heightStyle }}">
-                {{-- El iframe se construye aqui, con la URL ya validada.
+                {{-- El iframe se construye aquí, con la URL ya validada.
                      sandbox limita lo que puede hacer el contenido incrustado:
                      se le permite ejecutar scripts (el mapa los necesita) pero
-                     no acceder a nuestra pagina ni abrir ventanas. --}}
+                     no acceder a nuestra página ni abrir ventanas. --}}
                 <iframe src="{{ $embedUrl }}"
                         title="{{ $title ?: 'Mapa' }}"
                         style="width:100%;height:100%;border:0;display:block;"
@@ -55,8 +55,8 @@
                         allowfullscreen></iframe>
             </div>
         @else
-            {{-- Estado vacio: caja de la misma forma que el mapa real, en gris
-                 de fondo, sin gradiente decorativo (B no decora los vacios). --}}
+            {{-- Estado vacío: caja de la misma forma que el mapa real, en gris
+                 de fondo, sin gradiente decorativo (B no decora los vacíos). --}}
             <div class="w-full card-surface bg-bg
                         flex flex-col items-center justify-center gap-3"
                  style="{{ $heightStyle }}">

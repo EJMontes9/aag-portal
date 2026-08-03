@@ -53,9 +53,9 @@ class News extends Model
                 $m->published_at = now();
             }
 
-            // SEGURIDAD -- El cuerpo se pinta sin escapar ({!! !!}), asi que se
+            // SEGURIDAD -- El cuerpo se pinta sin escapar ({!! !!}), así que se
             // limpia ANTES de guardar. La barra del editor limita lo que se
-            // puede hacer con el raton, no lo que llega al servidor: sin esto,
+            // puede hacer con el ratón, no lo que llega al servidor: sin esto,
             // quien tenga acceso al panel puede inyectar JavaScript que se
             // ejecuta en el navegador de cada visitante.
             if ($m->isDirty('content')) {
@@ -63,7 +63,7 @@ class News extends Model
             }
 
             // Los bloques de contenido de la noticia guardan su HTML dentro de
-            // un JSON. El bloque "texto" tambien se pinta sin escapar, asi que
+            // un JSON. El bloque "texto" también se pinta sin escapar, así que
             // se limpia igual, recorriendo la estructura.
             if ($m->isDirty('content_blocks') && is_array($m->content_blocks)) {
                 $bloques = $m->content_blocks;

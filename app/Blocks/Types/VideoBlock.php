@@ -20,6 +20,7 @@ class VideoBlock extends BlockType
             'title'          => '',
             'subtitle'       => '',
             'video_url'      => '',
+            'width'          => 'lg',
             'background'     => 'bg',
             'autoplay'       => false,
             'mute'           => false,
@@ -40,7 +41,7 @@ class VideoBlock extends BlockType
             ->schema([
                 Forms\Components\TextInput::make('kicker')->label('Kicker (opcional)'),
                 Forms\Components\TextInput::make('title')->label('Titulo')->required(),
-                Forms\Components\Textarea::make('subtitle')->label('Descripcion')->rows(2)->columnSpanFull(),
+                Forms\Components\Textarea::make('subtitle')->label('Descripción')->rows(2)->columnSpanFull(),
 
                 Forms\Components\TextInput::make('video_url')
                     ->label('URL del video')
@@ -91,6 +92,16 @@ class VideoBlock extends BlockType
                             ->label('Ocultar logo de YouTube en la barra de controles')
                             ->default(true),
                     ])->columns(2)->columnSpanFull(),
+
+                Forms\Components\Select::make('width')
+                    ->label('Ancho del video')
+                    ->options([
+                        'sm'   => 'Pequeño',
+                        'md'   => 'Mediano',
+                        'lg'   => 'Grande (por defecto)',
+                        'full' => 'Ancho completo',
+                    ])
+                    ->default('lg'),
 
                 Forms\Components\Select::make('background')
                     ->label('Fondo de la sección')

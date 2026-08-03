@@ -1,9 +1,9 @@
-{{-- Pagina no encontrada.
+{{-- Página no encontrada.
 
-     NO redirige automaticamente al inicio a proposito. Una redireccion
-     silenciosa deja a la persona en otra pagina sin entender que paso, hace
+     NO redirige automáticamente al inicio a propósito. Una redirección
+     silenciosa deja a la persona en otra página sin entender qué pasó, hace
      imposible corregir un enlace mal escrito, y ante los buscadores convierte
-     un 404 legitimo en una redireccion, lo que ensucia el indexado del sitio.
+     un 404 legítimo en una redirección, lo que ensucia el indexado del sitio.
      En su lugar se explica el error y se ofrecen salidas. --}}
 @include('errors._layout', [
     'code'    => 404,

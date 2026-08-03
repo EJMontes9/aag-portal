@@ -1,6 +1,6 @@
 @props(['data'])
 @php
-    $kicker = $data['kicker'] ?? 'BOLETIN';
+    $kicker = $data['kicker'] ?? 'BOLETÍN';
     $title = $data['title'] ?? 'Recibe nuestras noticias';
     $subtitle = $data['subtitle'] ?? null;
     $buttonLabel = $data['button_label'] ?? 'Suscribirme';
@@ -43,8 +43,8 @@
             }
         }
      }">
-    {{-- 12px: el rotulo va en mayusculas sobre navy, y a 10px el contraste
-         percibido de la condensada lo volvia casi decorativo. --}}
+    {{-- 12px: el rótulo va en mayúsculas sobre navy, y a 10px el contraste
+         percibido de la condensada lo volvía casi decorativo. --}}
     <p class="text-[12px] tracking-[0.16em] uppercase text-on-navy/70 font-semibold">
         {{ $kicker }}
     </p>
@@ -73,7 +73,7 @@
 
         <button type="submit"
                 :disabled="loading || !email"
-                {{-- Amarillo institucional = color de accion sobre fondo oscuro, con texto oscuro (token on-accent) --}}
+                {{-- Amarillo institucional = color de acción sobre fondo oscuro, con texto oscuro (token on-accent) --}}
                 class="w-full px-4 py-3 rounded-pill bg-brand-accent text-on-accent font-bold text-[13px] uppercase tracking-[0.07em] hover:bg-brand-accent/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy">
             <span x-show="!loading">{{ $buttonLabel }}</span>
             <span x-show="loading" x-cloak>Enviando...</span>

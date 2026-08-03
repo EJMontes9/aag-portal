@@ -17,29 +17,29 @@ class QuickLinksBlock extends BlockType
     {
         return [
             'kicker' => 'ACCESOS DIRECTOS',
-            'title' => 'Lo que mas se consulta',
+            'title' => 'Lo que más se consulta',
             'link_all_label' => 'Ver todos los servicios →',
             'link_all_url' => '/servicios',
             'links' => [
                 ['icon' => 'plane', 'label' => 'Vuelos', 'description' => 'Llegadas y salidas en tiempo real', 'url' => '/vuelos'],
-                ['icon' => 'doc', 'label' => 'Tramites', 'description' => 'Formularios y solicitudes', 'url' => '/tramites'],
+                ['icon' => 'doc', 'label' => 'Trámites', 'description' => 'Formularios y solicitudes', 'url' => '/tramites'],
                 ['icon' => 'building', 'label' => 'Nosotros', 'description' => 'Conoce la AAG', 'url' => '/nosotros'],
-                ['icon' => 'phone', 'label' => 'Contacto', 'description' => 'Comunicate con nosotros', 'url' => '/contacto'],
+                ['icon' => 'phone', 'label' => 'Contacto', 'description' => 'Comunícate con nosotros', 'url' => '/contacto'],
             ],
         ];
     }
 
     public const ICONS = [
-        'plane' => 'Avion',
+        'plane' => 'Avión',
         'doc' => 'Documento',
         'check' => 'Check',
         'building' => 'Edificio',
         'download' => 'Descarga',
-        'phone' => 'Telefono',
+        'phone' => 'Teléfono',
         'envelope' => 'Sobre',
         'user' => 'Usuario',
         'globe' => 'Globo',
-        'search' => 'Busqueda',
+        'search' => 'Búsqueda',
     ];
 
     public static function filamentBlock(): Block
@@ -49,7 +49,7 @@ class QuickLinksBlock extends BlockType
             ->icon(self::icon())
             ->schema([
                 Forms\Components\TextInput::make('kicker')->label('Kicker')->default('ACCESOS DIRECTOS'),
-                Forms\Components\TextInput::make('title')->label('Titulo')->default('Lo que mas se consulta'),
+                Forms\Components\TextInput::make('title')->label('Título')->default('Lo que más se consulta'),
                 Forms\Components\TextInput::make('link_all_label')->label('Enlace "Ver todos"')->default('Ver todos los servicios →'),
                 Forms\Components\TextInput::make('link_all_url')->label('URL "Ver todos"')->default('/servicios'),
                 Forms\Components\Repeater::make('links')
@@ -57,7 +57,7 @@ class QuickLinksBlock extends BlockType
                     ->schema([
                         Forms\Components\Select::make('icon')->label('Icono')->options(self::ICONS)->default('plane')->required(),
                         Forms\Components\TextInput::make('label')->label('Etiqueta')->required(),
-                        Forms\Components\TextInput::make('description')->label('Descripcion corta'),
+                        Forms\Components\TextInput::make('description')->label('Descripción corta'),
                         Forms\Components\TextInput::make('url')->label('URL')->required(),
                     ])
                     ->columns(2)

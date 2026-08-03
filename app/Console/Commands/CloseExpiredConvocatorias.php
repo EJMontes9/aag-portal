@@ -10,7 +10,7 @@ class CloseExpiredConvocatorias extends Command
 {
     protected $signature = 'convocatorias:close-expired {--dry-run : Mostrar sin aplicar cambios}';
 
-    protected $description = 'Marca como cerradas las convocatorias cuya fecha de cierre ya paso.';
+    protected $description = 'Marca como cerradas las convocatorias cuya fecha de cierre ya pasó.';
 
     public function handle(): int
     {
@@ -27,7 +27,7 @@ class CloseExpiredConvocatorias extends Command
 
         $this->info("Convocatorias vencidas detectadas: {$expired->count()}");
         foreach ($expired as $c) {
-            $this->line("  - #{$c->id} \"{$c->title}\" (cerro {$c->closes_at->diffForHumans()})");
+            $this->line("  - #{$c->id} \"{$c->title}\" (cerró {$c->closes_at->diffForHumans()})");
         }
 
         if ($this->option('dry-run')) {

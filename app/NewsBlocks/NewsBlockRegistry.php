@@ -10,7 +10,7 @@ use Filament\Forms\Components\Builder\Block;
  * Independiente del BlockRegistry del editor visual del home (otra cosa).
  *
  * Cada bloque define:
- *   - key()   identificador unico
+ *   - key()   identificador único
  *   - block() schema Filament Builder
  *   - view()  Blade para renderizar en frontend
  */
@@ -63,12 +63,12 @@ class NewsBlockRegistry
             ],
 
             'gallery' => [
-                'label' => 'Galeria de imagenes',
+                'label' => 'Galería de imágenes',
                 'icon' => 'heroicon-o-rectangle-stack',
                 'view' => 'news-blocks.gallery',
                 'schema' => fn () => [
                     Forms\Components\Repeater::make('images')
-                        ->label('Imagenes')
+                        ->label('Imágenes')
                         ->schema([
                             Forms\Components\FileUpload::make('image')
                                 ->label('Imagen')
@@ -111,7 +111,7 @@ class NewsBlockRegistry
                         ->required()
                         ->url(),
                     Forms\Components\TextInput::make('caption')
-                        ->label('Descripcion (opcional)')
+                        ->label('Descripción (opcional)')
                         ->maxLength(280),
                 ],
             ],
@@ -128,7 +128,7 @@ class NewsBlockRegistry
                         ->disk('public')
                         ->maxSize(102400) // 100 MB
                         ->required()
-                        ->helperText('Maximo 100 MB. Formatos: MP4, WebM, Ogg.'),
+                        ->helperText('Máximo 100 MB. Formatos: MP4, WebM, Ogg.'),
                     Forms\Components\FileUpload::make('poster')
                         ->label('Imagen de portada (opcional)')
                         ->image()
@@ -137,7 +137,7 @@ class NewsBlockRegistry
                         ->directory('news/videos/posters')
                         ->disk('public'),
                     Forms\Components\TextInput::make('caption')
-                        ->label('Descripcion (opcional)')
+                        ->label('Descripción (opcional)')
                         ->maxLength(280),
                 ],
             ],
@@ -148,12 +148,12 @@ class NewsBlockRegistry
                 'view' => 'news-blocks.map',
                 'schema' => fn () => [
                     Forms\Components\Textarea::make('embed_url')
-                        ->label('URL de embed o codigo iframe')
+                        ->label('URL de embed o código iframe')
                         ->rows(3)
                         ->required()
-                        ->helperText('Pega la URL "src" del iframe de Google Maps (Compartir > Insertar mapa) o el codigo iframe completo.'),
+                        ->helperText('Pega la URL "src" del iframe de Google Maps (Compartir > Insertar mapa) o el código iframe completo.'),
                     Forms\Components\TextInput::make('caption')
-                        ->label('Descripcion del lugar (opcional)')
+                        ->label('Descripción del lugar (opcional)')
                         ->maxLength(280),
                     Forms\Components\Select::make('height')
                         ->label('Altura')
@@ -206,11 +206,11 @@ class NewsBlockRegistry
                         ->maxSize(20480) // 20 MB
                         ->required(),
                     Forms\Components\TextInput::make('label')
-                        ->label('Titulo del documento')
+                        ->label('Título del documento')
                         ->required()
                         ->maxLength(120),
                     Forms\Components\Textarea::make('description')
-                        ->label('Descripcion (opcional)')
+                        ->label('Descripción (opcional)')
                         ->rows(2)
                         ->maxLength(240),
                 ],
@@ -224,7 +224,7 @@ class NewsBlockRegistry
                     Forms\Components\Select::make('style')
                         ->label('Estilo')
                         ->options([
-                            'line' => 'Linea simple',
+                            'line' => 'Línea simple',
                             'dots' => 'Tres puntos',
                             'space' => 'Solo espacio',
                         ])
@@ -252,7 +252,7 @@ class NewsBlockRegistry
                                 ->label('Etiqueta')
                                 ->required()
                                 ->maxLength(80)
-                                ->placeholder('Inversion estimada'),
+                                ->placeholder('Inversión estimada'),
                             Forms\Components\TextInput::make('value')
                                 ->label('Valor')
                                 ->required()
@@ -270,24 +270,24 @@ class NewsBlockRegistry
             ],
 
             'newsletter_card' => [
-                'label' => 'Suscripcion al boletin (sidebar)',
+                'label' => 'Suscripción al boletín (sidebar)',
                 'icon' => 'heroicon-o-envelope',
                 'view' => 'news-blocks.newsletter-card',
                 'sidebar' => true,
                 'schema' => fn () => [
                     Forms\Components\TextInput::make('kicker')
                         ->label('Etiqueta')
-                        ->default('BOLETIN')
+                        ->default('BOLETÍN')
                         ->maxLength(60),
                     Forms\Components\TextInput::make('title')
-                        ->label('Titulo')
+                        ->label('Título')
                         ->default('Recibe nuestras noticias')
                         ->maxLength(120),
                     Forms\Components\Textarea::make('subtitle')
-                        ->label('Descripcion')
+                        ->label('Descripción')
                         ->rows(2)
                         ->maxLength(280)
-                        ->default('Cada miercoles, una seleccion curada de las noticias del aeropuerto y la AAG.'),
+                        ->default('Cada miércoles, una selección curada de las noticias del aeropuerto y la AAG.'),
                     Forms\Components\TextInput::make('button_label')
                         ->label('Texto del boton')
                         ->default('Suscribirme')

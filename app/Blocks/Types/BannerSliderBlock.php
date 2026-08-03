@@ -23,17 +23,17 @@ class BannerSliderBlock extends BlockType
             'height' => 'medium',
             'slides' => [
                 [
-                    'title' => 'Bienvenido al Aeropuerto Jose Joaquin de Olmedo',
+                    'title' => 'Bienvenido al Aeropuerto José Joaquín de Olmedo',
                     'subtitle' => 'Conectando Guayaquil con el mundo desde 1962.',
-                    'cta_label' => 'Conoce mas',
+                    'cta_label' => 'Conoce más',
                     'cta_url' => '/nosotros',
                     'image' => null,
                     'overlay' => 'medium',
                     'align' => 'left',
                 ],
                 [
-                    'title' => 'Transparencia y rendicion de cuentas',
-                    'subtitle' => 'Informacion publica abierta y verificable.',
+                    'title' => 'Transparencia y rendición de cuentas',
+                    'subtitle' => 'Información pública abierta y verificable.',
                     'cta_label' => 'Ver portal de transparencia',
                     'cta_url' => '/transparencia',
                     'image' => null,
@@ -42,7 +42,7 @@ class BannerSliderBlock extends BlockType
                 ],
                 [
                     'title' => 'Convocatorias abiertas',
-                    'subtitle' => 'Postula a los procesos de seleccion vigentes.',
+                    'subtitle' => 'Postula a los procesos de selección vigentes.',
                     'cta_label' => 'Ver convocatorias',
                     'cta_url' => '/convocatorias',
                     'image' => null,
@@ -62,7 +62,7 @@ class BannerSliderBlock extends BlockType
                 Forms\Components\Section::make('Comportamiento')
                     ->schema([
                         Forms\Components\Toggle::make('autoplay')
-                            ->label('Rotacion automatica')
+                            ->label('Rotación automática')
                             ->default(true),
                         Forms\Components\TextInput::make('interval')
                             ->label('Intervalo entre slides (segundos)')
@@ -74,7 +74,7 @@ class BannerSliderBlock extends BlockType
                             ->label('Mostrar indicadores (puntos)')
                             ->default(true),
                         Forms\Components\Toggle::make('show_arrows')
-                            ->label('Mostrar flechas de navegacion')
+                            ->label('Mostrar flechas de navegación')
                             ->default(true),
                         Forms\Components\Select::make('height')
                             ->label('Altura')
@@ -88,7 +88,7 @@ class BannerSliderBlock extends BlockType
                     ])->columns(2)->collapsed(),
 
                 Forms\Components\Section::make('Slides')
-                    ->description('Imagenes y textos que rotan. Recomendado: 3-5 slides. Resolucion ideal 1920x1080px.')
+                    ->description('Imágenes y textos que rotan. Recomendado: 3-5 slides. Resolución ideal 1920x1080px.')
                     ->schema([
                         Forms\Components\Repeater::make('slides')
                             ->label('Slides')
@@ -101,20 +101,20 @@ class BannerSliderBlock extends BlockType
                                     ->directory('banners')
                                     ->disk('public')
                                     ->maxSize(4096)
-                                    ->helperText('JPG/PNG, maximo 4MB. Recomendado 1920x1080.'),
+                                    ->helperText('JPG/PNG, máximo 4MB. Recomendado 1920x1080.'),
                                 Forms\Components\TextInput::make('title')
-                                    ->label('Titulo principal')
+                                    ->label('Título principal')
                                     ->required()
                                     ->maxLength(120),
                                 Forms\Components\Textarea::make('subtitle')
-                                    ->label('Subtitulo / descripcion corta')
+                                    ->label('Subtítulo / descripción corta')
                                     ->rows(2)
                                     ->maxLength(240),
                                 Forms\Components\TextInput::make('cta_label')
-                                    ->label('Boton - etiqueta')
+                                    ->label('Botón - etiqueta')
                                     ->maxLength(40),
                                 Forms\Components\TextInput::make('cta_url')
-                                    ->label('Boton - URL')
+                                    ->label('Botón - URL')
                                     ->maxLength(255),
                                 Forms\Components\Select::make('overlay')
                                     ->label('Overlay oscuro')
@@ -127,7 +127,7 @@ class BannerSliderBlock extends BlockType
                                     ->default('medium')
                                     ->helperText('Mejora legibilidad del texto sobre la imagen.'),
                                 Forms\Components\Select::make('align')
-                                    ->label('Alineacion del texto')
+                                    ->label('Alineación del texto')
                                     ->options([
                                         'left' => 'Izquierda',
                                         'center' => 'Centro',

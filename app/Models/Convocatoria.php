@@ -62,7 +62,10 @@ class Convocatoria extends Model
             }
         });
 
-        $bust = fn () => Cache::forget('home_convocatoria');
+        $bust = function (self $m) {
+            Cache::forget('home_convocatoria');
+            Cache::forget("convocatoria_{$m->id}");
+        };
         static::saved($bust);
         static::deleted($bust);
     }
@@ -127,20 +130,30 @@ class Convocatoria extends Model
         });
     }
 
+    /**
+     * Igual que find(), pero cacheado -- para el bloque de home que fija una
+     * convocatoria específica en vez de usar featured(). Se invalida con el
+     * mismo hook saved/deleted de arriba.
+     */
+    public static function cached(int $id): ?self
+    {
+        return Cache::rememberForever("convocatoria_{$id}", fn () => static::find($id));
+    }
+
     public function isAlertActive(): bool
     {
         return $this->alert_mode !== 'none' && $this->effective_status === 'vigente';
     }
 
     /**
-     * Devuelve la etiqueta legible del tipo de archivo segun su extension.
+     * Devuelve la etiqueta legible del tipo de archivo según su extensión.
      *
-     * Antes devolvia ademas clases de Tailwind ('bg' y 'text') con un color
-     * pastel por extension. Se eliminaron por dos motivos: no pertenecen a la
-     * paleta institucional, y ademas NUNCA llegaban a aplicarse — Tailwind
+     * Antes devolvía además clases de Tailwind ('bg' y 'text') con un color
+     * pastel por extensión. Se eliminaron por dos motivos: no pertenecen a la
+     * paleta institucional, y además NUNCA llegaban a aplicarse — Tailwind
      * escanea las rutas de `content` en tailwind.config.js, donde app/Models
-     * no esta incluido, asi que esas clases jamas se compilaban y el badge
-     * salia sin estilo. Las vistas ahora usan clases literales propias.
+     * no está incluido, así que esas clases jamás se compilaban y el badge
+     * salía sin estilo. Las vistas ahora usan clases literales propias.
      */
     public static function fileTypeInfo(string $path): array
     {

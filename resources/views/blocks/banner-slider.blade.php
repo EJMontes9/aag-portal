@@ -19,7 +19,7 @@
 
 {{-- Carrusel de banners -- Propuesta B.
      Solo cambia la apariencia: la maquinaria Alpine (autoplay, swipe, teclado,
-     indicadores) es identica. En B no hay circulos: las flechas son cuadradas
+     indicadores) es idéntica. En B no hay círculos: las flechas son cuadradas
      y los indicadores son barras rectangulares de 3px, no puntos. --}}
 <section class="relative bg-brand-navy text-on-navy overflow-hidden {{ $heightClass }}"
          x-data="{
@@ -98,8 +98,8 @@
                      fetchpriority="{{ $i === 0 ? 'high' : 'auto' }}">
             @else
                 {{-- .bg-cloud-gradient es el placeholder de imagen oficial de B
-                     (navy->celeste); antes se mezclaba ademas el amarillo, que
-                     en B esta reservado a acciones y filetes. --}}
+                     (navy->celeste); antes se mezclaba además el amarillo, que
+                     en B está reservado a acciones y filetes. --}}
                 <div class="absolute inset-0 bg-cloud-gradient"></div>
             @endif
 
@@ -112,10 +112,10 @@
             <div class="relative h-full flex flex-col justify-center {{ $alignClass }} max-w-[1440px] mx-auto px-5 md:px-10 lg:px-14">
                 <div class="max-w-3xl">
                     {{-- Filete amarillo de 3px: es el separador estructural de B y
-                         aqui sustituye al kicker, que este bloque no tiene. --}}
+                         aquí sustituye al kicker, que este bloque no tiene. --}}
                     <span class="block w-14 rule-accent mb-5"></span>
                     {{-- text-shadow (no box-shadow): la regla de "cero sombras" es
-                         sobre cajas; aqui es legibilidad del texto blanco cuando el
+                         sobre cajas; aquí es legibilidad del texto blanco cuando el
                          editor elige overlay "none" sobre una foto clara. --}}
                     <h2 class="font-serif text-display text-white"
                         style="text-shadow: 0 2px 16px rgba(0,0,0,0.45);">
@@ -128,9 +128,11 @@
                         </p>
                     @endif
                     @if(!empty($slide['cta_label']) && !empty($slide['cta_url']))
-                        {{-- Sobre fondo oscuro/foto la accion principal de B es el
+                        {{-- Sobre fondo oscuro/foto la acción principal de B es el
                              amarillo institucional: eso es exactamente .btn-white. --}}
-                        <a href="{{ $slide['cta_url'] }}" class="btn-white mt-6">
+                        <a href="{{ $slide['cta_url'] }}"
+                           @if(is_internal_link($slide['cta_url'])) wire:navigate @endif
+                           class="btn-white mt-6">
                             {{ $slide['cta_label'] }}
                         </a>
                     @endif
@@ -166,8 +168,8 @@
              aria-label="Selector de slide">
             @foreach($slides as $i => $_)
                 {{-- El indicador visible sigue siendo la barra de 3px de B, pero el
-                     area clicable se amplia con padding vertical: 3px de alto es un
-                     objetivo tactil inaceptable en movil. --}}
+                     área clicable se amplía con padding vertical: 3px de alto es un
+                     objetivo táctil inaceptable en móvil. --}}
                 <button type="button"
                         @click="go({{ $i }})"
                         :aria-selected="current === {{ $i }}"

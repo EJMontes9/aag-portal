@@ -2,6 +2,9 @@
     $darkAllowed = (bool) settings('dark_mode_enabled', true);
     $defaultTheme = settings('default_theme', 'light');
 
+    $textSizeAllowed = (bool) settings('text_size_control_enabled', true);
+    $defaultTextSize = settings('default_text_size', 'normal');
+
     $animEnabled = (bool) settings('animations_enabled', true);
     $animSpeed = settings('animations_speed', 'normal');
     $animOnMobile = (bool) settings('animations_on_mobile', true);
@@ -103,6 +106,8 @@
       data-anim-enabled="{{ $animEnabled ? 'true' : 'false' }}"
       data-anim-speed="{{ $animSpeed }}"
       data-anim-mobile="{{ $animOnMobile ? 'true' : 'false' }}"
+      data-textsize-allowed="{{ $textSizeAllowed ? 'true' : 'false' }}"
+      data-textsize-default="{{ $defaultTextSize }}"
       class="{{ $defaultTheme === 'dark' && $darkAllowed ? 'dark' : '' }}">
 <head>
     <meta charset="UTF-8">
@@ -172,15 +177,15 @@
           href="{{ route('news.index') }}?format=rss">
 
     {{-- ══ FUENTES ══════════════════════════════════════════════════════════════
-         Se deduplican familias repetidas (ej. serif=sans=Inter, tipografia
+         Se deduplican familias repetidas (ej. serif=sans=Inter, tipografía
          "uniforme" tipo Propuesta B) para no pedirle a Google Fonts la misma
          familia dos veces -- menos peso, menos requests.
-         Las fuentes propias de marca (no estan en Google Fonts) se sirven
-         locales via @font-face en app.css y se excluyen de esta peticion. --}}
+         Las fuentes propias de marca (no están en Google Fonts) se sirven
+         locales vía @font-face en app.css y se excluyen de esta petición. --}}
     @php
         // Fuentes de marca AAG auto-hospedadas (ver @font-face en resources/css/app.css).
-        // Barlow Condensed SI existe en Google Fonts, pero se sirve local para que
-        // el diseno no dependa de una peticion externa: si no carga, el fallback
+        // Barlow Condensed SÍ existe en Google Fonts, pero se sirve local para que
+        // el diseño no dependa de una petición externa: si no carga, el fallback
         // no es condensado y descuadra todo el ritmo horizontal de la Propuesta B.
         $selfHostedFonts = ['Neulis Black', 'Barlow Condensed'];
 
@@ -200,11 +205,11 @@
             $fontFamilies[$fontSans] = $sansSpec;
         }
 
-        // La mono NO se pide a Google: ninguna plantilla del front publico usa
+        // La mono NO se pide a Google: ninguna plantilla del front público usa
         // ya la clase font-mono (las cifras van con .num-tabular sobre la
-        // familia de marca). Cargarla era una peticion externa por nada, con
+        // familia de marca). Cargarla era una petición externa por nada, con
         // su coste de red y de privacidad. La variable CSS se sigue definiendo
-        // mas abajo y cae a la monoespaciada del sistema si algo la usara.
+        // más abajo y cae a la monoespaciada del sistema si algo la usara.
 
         // Quitar las que se auto-hospedan -- no existen en Google Fonts.
         $googleFontFamilies = collect($fontFamilies)->except($selfHostedFonts);
@@ -259,6 +264,13 @@
 
     @stack('head')
 
+    {{-- Runtime de Livewire: necesario para wire:navigate (transiciones SPA
+         entre páginas sin recargar head/header/footer) aunque la página no
+         tenga ningún componente Livewire propio. Ver app.js: la detección
+         `hasLivewire` evita cargar una segunda instancia de Alpine cuando
+         esto ya está presente. --}}
+    @livewireStyles
+
     {{-- ══ STRUCTURED DATA JSON-LD ══════════════════════════════════════════════
          Google usa esto para: Knowledge Panel, Rich Results, Breadcrumbs en SERPs
     ─────────────────────────────────────────────────────────────────────────── --}}
@@ -298,13 +310,13 @@
 <body class="min-h-screen bg-bg text-fg antialiased">
     {{-- ══ SALTAR AL CONTENIDO ═══════════════════════════════════════════════════
          Requisito WCAG 2.1 AA (2.4.1 Evitar bloques). Quien navega con teclado o
-         lector de pantalla tendria que pasar por todo el menu en CADA pagina
+         lector de pantalla tendría que pasar por todo el menú en CADA página
          antes de llegar al contenido; esto lo salta de un tabulador.
 
          Permanece oculto hasta que recibe el foco: es el primer elemento
-         enfocable del documento, asi que basta pulsar Tab nada mas cargar.
-         No se usa 'hidden' ni display:none porque eso lo sacaria del orden de
-         tabulacion y dejaria de cumplir su funcion. --}}
+         enfocable del documento, así que basta pulsar Tab nada más cargar.
+         No se usa 'hidden' ni display:none porque eso lo sacaría del orden de
+         tabulación y dejaría de cumplir su función. --}}
     <a href="#contenido"
        class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100]
               focus:bg-brand focus:text-white focus:px-4 focus:py-2 focus:rounded
@@ -313,14 +325,25 @@
     </a>
 
     <x-alerts.convocatoria-alert />
-    <x-layout.header />
+
+    {{-- @persist: con wire:navigate, Livewire NO destruye ni vuelve a montar
+         estos nodos entre páginas -- los saca del DOM viejo y los reinserta
+         en el nuevo tal cual estaban (con su estado de Alpine intacto: menú
+         móvil abierto/cerrado, reloj de Guayaquil sin reiniciarse, etc). Es
+         justo lo que hace que solo se sienta "recargar" el contenido de
+         adentro, no la página completa. --}}
+    @persist('header')
+        <x-layout.header />
+    @endpersist
 
     <main id="contenido" tabindex="-1">
         {{ $slot ?? '' }}
         @yield('content')
     </main>
 
-    <x-layout.footer />
+    @persist('footer')
+        <x-layout.footer />
+    @endpersist
 
     {{-- Barra de edición flotante — solo visible para editores autenticados --}}
     <x-editor-toolbar :editablePage="$editablePage ?? null" />
@@ -335,5 +358,7 @@
             gtag('config', '{{ settings('seo_google_analytics') }}', { anonymize_ip: true });
         </script>
     @endif
+
+    @livewireScripts
 </body>
 </html>

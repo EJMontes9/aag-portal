@@ -3,7 +3,7 @@
         <h3 class="ve-section-title">Comportamiento</h3>
         <div class="ve-grid-2">
             <div class="ve-field">
-                <label class="ve-label">Rotacion automatica</label>
+                <label class="ve-label">Rotación automática</label>
                 <label class="ve-toggle">
                     <input type="checkbox" wire:model.live="editingBlockSettings.autoplay">
                     <span>Activar autoplay</span>
@@ -112,7 +112,7 @@
                 </div>
 
                 <div class="ve-field">
-                    <label class="ve-label">Titulo</label>
+                    <label class="ve-label">Título</label>
                     <input type="text"
                            wire:model="editingBlockSettings.slides.{{ $i }}.title"
                            class="ve-input"
@@ -120,7 +120,7 @@
                 </div>
 
                 <div class="ve-field">
-                    <label class="ve-label">Subtitulo</label>
+                    <label class="ve-label">Subtítulo</label>
                     <textarea wire:model="editingBlockSettings.slides.{{ $i }}.subtitle"
                               class="ve-input"
                               rows="2"
@@ -129,13 +129,13 @@
 
                 <div class="ve-grid-2">
                     <div class="ve-field">
-                        <label class="ve-label">Boton - etiqueta</label>
+                        <label class="ve-label">Botón - etiqueta</label>
                         <input type="text"
                                wire:model="editingBlockSettings.slides.{{ $i }}.cta_label"
                                class="ve-input">
                     </div>
                     <div class="ve-field">
-                        <label class="ve-label">Boton - URL</label>
+                        <label class="ve-label">Botón - URL</label>
                         <input type="text"
                                wire:model="editingBlockSettings.slides.{{ $i }}.cta_url"
                                class="ve-input">
@@ -153,7 +153,7 @@
                         </select>
                     </div>
                     <div class="ve-field">
-                        <label class="ve-label">Alineacion</label>
+                        <label class="ve-label">Alineación</label>
                         <select wire:model="editingBlockSettings.slides.{{ $i }}.align" class="ve-input">
                             <option value="left">Izquierda</option>
                             <option value="center">Centro</option>

@@ -1,10 +1,10 @@
 {{--
-    Imagen con buenas practicas de rendimiento por defecto:
-    - loading="lazy" + decoding="async" salvo que se pida "eager" (imagenes
+    Imagen con buenas prácticas de rendimiento por defecto:
+    - loading="lazy" + decoding="async" salvo que se pida "eager" (imágenes
       above-the-fold / candidatas a LCP como el hero o el logo).
     - width/height obligatorios quedan como atributos para reservar espacio
       y evitar Cumulative Layout Shift (CLS) mientras carga.
-    - fetchpriority="high" opcional para el elemento LCP de la pagina.
+    - fetchpriority="high" opcional para el elemento LCP de la página.
 
     Uso:
       <x-ui.img :src="$url" alt="..." width="800" height="450" />

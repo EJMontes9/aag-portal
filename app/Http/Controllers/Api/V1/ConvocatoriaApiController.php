@@ -10,22 +10,22 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
- * Convocatorias publicas, en solo lectura.
+ * Convocatorias públicas, en solo lectura.
  *
  * Se sirven los mismos estados que la web: 'vigente' y 'cerrada'. Los
- * borradores quedan fuera — no tienen ficha publica, y su titulo o su resumen
- * pueden anticipar un proceso que aun no se ha anunciado. Es el mismo criterio
+ * borradores quedan fuera — no tienen ficha pública, y su título o su resumen
+ * pueden anticipar un proceso que aún no se ha anunciado. Es el mismo criterio
  * que ConvocatoriaController::show() y SearchController.
  */
 class ConvocatoriaApiController extends Controller
 {
     /**
-     * Estados con ficha publica. Se declara una sola vez para que el listado y
+     * Estados con ficha pública. Se declara una sola vez para que el listado y
      * el detalle no puedan divergir.
      */
     private const ESTADOS_PUBLICOS = ['vigente', 'cerrada'];
 
-    /** Listado paginado, de cierre mas proximo a mas lejano en el pasado. */
+    /** Listado paginado, de cierre más próximo a más lejano en el pasado. */
     public function index(Request $request): AnonymousResourceCollection
     {
         $convocatorias = Convocatoria::query()
@@ -44,7 +44,7 @@ class ConvocatoriaApiController extends Controller
             ->where('slug', $slug)
             ->first();
 
-        // Mismo criterio que en las noticias: el 404 de Eloquent revelaria el
+        // Mismo criterio que en las noticias: el 404 de Eloquent revelaría el
         // nombre interno del modelo.
         abort_unless($convocatoria, 404, 'Convocatoria no encontrada.');
 

@@ -40,7 +40,7 @@ class AdminPanelProvider extends PanelProvider
         // suscriptores y envios de formularios de contacto.
         //
         // Con esto, la ausencia de policy DENIEGA en lugar de permitir. Es la
-        // configuracion segura, y ademas hace que falte cualquier permiso se
+        // configuración segura, y además hace que falte cualquier permiso se
         // note de inmediato en vez de pasar inadvertido.
         //
         // Requiere que existan las policies: se generan con
@@ -90,8 +90,14 @@ class AdminPanelProvider extends PanelProvider
             ->font('Inter')
             ->sidebarCollapsibleOnDesktop()
             ->maxContentWidth('full')
+            // SPA: navegar entre recursos del panel via Livewire (sin recargar
+            // toda la pagina). Es la causa de que saltar de Noticias a
+            // Categorias de Noticias se sintiera mas lento que en el sitio
+            // publico: cada clic disparaba un request HTML completo (layout,
+            // CSS, JS) en vez de solo pedir el contenido nuevo.
+            ->spa()
             ->navigationGroups([
-                NavigationGroup::make()->label('Configuracion')->icon('heroicon-o-cog-6-tooth')->collapsed(false),
+                NavigationGroup::make()->label('Configuración')->icon('heroicon-o-cog-6-tooth')->collapsed(false),
                 NavigationGroup::make()->label('Contenido')->icon('heroicon-o-document-text')->collapsed(false),
                 NavigationGroup::make()->label('Transparencia')->icon('heroicon-o-archive-box')->collapsed(false),
                 NavigationGroup::make()->label('Usuarios y Roles')->icon('heroicon-o-shield-check')->collapsed(true),

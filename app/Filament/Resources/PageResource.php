@@ -17,9 +17,9 @@ class PageResource extends Resource
     protected static ?string $model = Page::class;
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static ?string $navigationGroup = 'Contenido';
-    protected static ?string $navigationLabel = 'Paginas';
-    protected static ?string $modelLabel = 'pagina';
-    protected static ?string $pluralModelLabel = 'paginas';
+    protected static ?string $navigationLabel = 'Páginas';
+    protected static ?string $modelLabel = 'página';
+    protected static ?string $pluralModelLabel = 'páginas';
     protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
@@ -29,7 +29,7 @@ class PageResource extends Resource
 
                 // === COLUMNA IZQUIERDA: Builder de bloques ===
                 Forms\Components\Group::make()->schema([
-                    Forms\Components\Section::make('Bloques de la pagina')
+                    Forms\Components\Section::make('Bloques de la página')
                         ->description('Agrega, reordena y edita los bloques. Los cambios se guardan al hacer clic en "Guardar cambios".')
                         ->icon('heroicon-o-squares-2x2')
                         ->schema([
@@ -47,10 +47,10 @@ class PageResource extends Resource
 
                 // === COLUMNA DERECHA: Ajustes de la pagina ===
                 Forms\Components\Group::make()->schema([
-                    Forms\Components\Section::make('Ajustes de la pagina')
+                    Forms\Components\Section::make('Ajustes de la página')
                         ->icon('heroicon-o-cog-6-tooth')
                         ->schema([
-                            Forms\Components\TextInput::make('title')->label('Titulo')->required()->maxLength(255),
+                            Forms\Components\TextInput::make('title')->label('Título')->required()->maxLength(255),
                             Forms\Components\TextInput::make('slug')->label('Slug / URL')->required()->prefix('/')->helperText('Ej: nosotros, contacto'),
                             Forms\Components\Select::make('status')
                                 ->label('Estado')
@@ -75,7 +75,7 @@ class PageResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')->label('Pagina')->searchable()->sortable()
+                Tables\Columns\TextColumn::make('title')->label('Página')->searchable()->sortable()
                     ->icon(fn (Page $r) => $r->key === 'home' ? 'heroicon-o-home' : 'heroicon-o-document'),
                 Tables\Columns\TextColumn::make('slug')->label('URL')->prefix('/')->badge()->color('gray'),
                 Tables\Columns\TextColumn::make('blocks_count')->label('Bloques')->counts('blocks'),
@@ -91,7 +91,7 @@ class PageResource extends Resource
                     ->color('success')
                     ->url(fn (Page $r) => url('/admin/visual-editor/'.$r->id)),
                 Tables\Actions\Action::make('view')
-                    ->label('Ver publico')
+                    ->label('Ver público')
                     ->icon('heroicon-o-arrow-top-right-on-square')
                     ->url(fn (Page $r) => $r->key === 'home' ? url('/') : url('/'.$r->slug))
                     ->openUrlInNewTab(),

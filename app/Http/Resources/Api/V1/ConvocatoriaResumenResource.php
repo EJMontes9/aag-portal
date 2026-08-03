@@ -13,8 +13,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * columna nueva en la tabla no acabe publicada sin que nadie lo haya decidido.
  *
  * El estado que se devuelve es `effective_status`, no la columna `status`: una
- * convocatoria marcada como vigente cuya fecha de cierre ya paso esta cerrada
- * en la practica, y la web la presenta asi. Devolver el valor crudo haria que
+ * convocatoria marcada como vigente cuya fecha de cierre ya pasó está cerrada
+ * en la práctica, y la web la presenta así. Devolver el valor crudo haría que
  * un consumidor anunciase como abierto un proceso que no admite nada.
  */
 class ConvocatoriaResumenResource extends JsonResource

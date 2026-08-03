@@ -17,7 +17,7 @@ class NewsHighlightsBlock extends BlockType
     {
         return [
             'kicker' => 'SALA DE PRENSA',
-            'title' => 'Ultimas noticias',
+            'title' => 'Últimas noticias',
             'subtitle' => 'Comunicados oficiales y novedades del aeropuerto.',
             'limit' => 3,
             'source' => 'featured', // featured | latest
@@ -33,13 +33,13 @@ class NewsHighlightsBlock extends BlockType
             ->icon(self::icon())
             ->schema([
                 Forms\Components\TextInput::make('kicker')->label('Kicker')->maxLength(60),
-                Forms\Components\TextInput::make('title')->label('Titulo')->maxLength(120),
-                Forms\Components\Textarea::make('subtitle')->label('Subtitulo')->rows(2)->maxLength(240),
+                Forms\Components\TextInput::make('title')->label('Título')->maxLength(120),
+                Forms\Components\Textarea::make('subtitle')->label('Subtítulo')->rows(2)->maxLength(240),
                 Forms\Components\Select::make('source')
-                    ->label('Que noticias mostrar')
+                    ->label('Qué noticias mostrar')
                     ->options([
                         'featured' => 'Solo destacadas (marcadas en el panel)',
-                        'latest' => 'Las mas recientes',
+                        'latest' => 'Las más recientes',
                     ])
                     ->default('featured')
                     ->required(),

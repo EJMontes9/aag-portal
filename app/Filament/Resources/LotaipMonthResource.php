@@ -15,7 +15,7 @@ class LotaipMonthResource extends Resource
     protected static ?string $model = LotaipMonth::class;
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
     protected static ?string $navigationGroup = 'Transparencia';
-    protected static ?string $navigationLabel = 'Meses (LOTAIP / Rendicion)';
+    protected static ?string $navigationLabel = 'Meses (LOTAIP / Rendición)';
     protected static ?string $modelLabel = 'mes';
     protected static ?string $pluralModelLabel = 'meses';
     protected static ?int $navigationSort = 2;
@@ -23,12 +23,12 @@ class LotaipMonthResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Section::make('Periodo')
+            Forms\Components\Section::make('Período')
                 ->schema([
                     Forms\Components\Select::make('year_id')
                         ->label('Año')
                         ->relationship('year', 'year', fn ($q) => $q->orderBy('year', 'desc'))
-                        ->getOptionLabelFromRecordUsing(fn ($r) => "{$r->year} (" . ($r->section === 'lotaip' ? 'LOTAIP' : 'Rendicion') . ")")
+                        ->getOptionLabelFromRecordUsing(fn ($r) => "{$r->year} (" . ($r->section === 'lotaip' ? 'LOTAIP' : 'Rendición') . ")")
                         ->required()
                         ->searchable()
                         ->preload(),
@@ -39,10 +39,10 @@ class LotaipMonthResource extends Resource
                     Forms\Components\Toggle::make('is_active')->label('Activo')->default(true),
                 ])->columns(3),
 
-            Forms\Components\Section::make('Modo de presentacion')
+            Forms\Components\Section::make('Modo de presentación')
                 ->schema([
                     Forms\Components\Select::make('mode')
-                        ->label('Que mostrar al visitante?')
+                        ->label('¿Qué mostrar al visitante?')
                         ->options([
                             'files' => 'Archivos subidos al sistema',
                             'redirect' => 'Redirigir a URL externa (ej. transparencia activa)',
@@ -70,7 +70,7 @@ class LotaipMonthResource extends Resource
                             'docx' => 'Word (docx)',
                         ])
                         ->columns(3)
-                        ->helperText('Si dejas vacio, hereda del año. Util para meses con regla diferente.')
+                        ->helperText('Si dejas vacío, hereda del año. Útil para meses con regla diferente.')
                         ->visible(fn ($get) => $get('mode') === 'files'),
                 ]),
         ]);
@@ -86,9 +86,9 @@ class LotaipMonthResource extends Resource
                     ->formatStateUsing(fn ($state) => LotaipMonth::MONTH_NAMES[$state] ?? "Mes $state")
                     ->sortable(),
                 Tables\Columns\TextColumn::make('year.section')
-                    ->label('Seccion')
+                    ->label('Sección')
                     ->badge()
-                    ->formatStateUsing(fn ($state) => $state === 'lotaip' ? 'LOTAIP' : 'Rendicion'),
+                    ->formatStateUsing(fn ($state) => $state === 'lotaip' ? 'LOTAIP' : 'Rendición'),
                 Tables\Columns\TextColumn::make('mode')
                     ->label('Modo')
                     ->badge()

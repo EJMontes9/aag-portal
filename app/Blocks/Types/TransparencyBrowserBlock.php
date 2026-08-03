@@ -9,7 +9,7 @@ use Filament\Forms\Components\Builder\Block;
 class TransparencyBrowserBlock extends BlockType
 {
     public static function key(): string { return 'transparency_browser'; }
-    public static function label(): string { return 'Navegador de Transparencia (LOTAIP / Rendicion)'; }
+    public static function label(): string { return 'Navegador de Transparencia (LOTAIP / Rendición)'; }
     public static function icon(): string { return 'heroicon-o-archive-box'; }
     public static function view(): string { return 'blocks.transparency-browser'; }
 
@@ -18,8 +18,8 @@ class TransparencyBrowserBlock extends BlockType
         return [
             'section' => 'lotaip',
             'kicker' => 'TRANSPARENCIA',
-            'title' => 'Informacion publica · LOTAIP',
-            'intro' => 'En cumplimiento de la Ley Organica de Transparencia y Acceso a la Informacion Publica (LOTAIP), publicamos la informacion institucional minima conforme al Art. 7.',
+            'title' => 'Información pública · LOTAIP',
+            'intro' => 'En cumplimiento de la Ley Orgánica de Transparencia y Acceso a la Información Pública (LOTAIP), publicamos la información institucional mínima conforme al Art. 7.',
         ];
     }
 
@@ -30,20 +30,20 @@ class TransparencyBrowserBlock extends BlockType
             ->icon(self::icon())
             ->schema([
                 Forms\Components\Select::make('section')
-                    ->label('Seccion a mostrar')
+                    ->label('Sección a mostrar')
                     ->options([
                         'lotaip' => 'LOTAIP / Transparencia',
-                        'rendicion' => 'Rendicion de cuentas',
+                        'rendicion' => 'Rendición de cuentas',
                     ])
                     ->default('lotaip')
                     ->required(),
                 Forms\Components\TextInput::make('kicker')->label('Kicker')->maxLength(60),
-                Forms\Components\TextInput::make('title')->label('Titulo')->maxLength(160),
+                Forms\Components\TextInput::make('title')->label('Título')->maxLength(160),
                 Forms\Components\Textarea::make('intro')
                     ->label('Texto introductorio')
                     ->rows(4)
                     ->maxLength(1000)
-                    ->helperText('Se muestra arriba del navegador de años/meses. Soporta saltos de linea.'),
+                    ->helperText('Se muestra arriba del navegador de años/meses. Soporta saltos de línea.'),
             ])->columns(2);
     }
 }

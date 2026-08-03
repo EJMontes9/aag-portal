@@ -94,6 +94,15 @@
     // 4px, sin sombra); sobre navy el borde gris no se ve, se aclara.
     $frameClass    = $onNavy ? 'border border-white/20' : 'card-surface';
 
+    // Ancho del reproductor, configurable desde el editor de bloques.
+    $width      = $block->get('width', 'lg');
+    $widthClass = match($width) {
+        'sm'    => 'max-w-lg',
+        'md'    => 'max-w-3xl',
+        'full'  => 'max-w-none',
+        default => 'max-w-5xl',
+    };
+
     // ── Permisos del iframe ───────────────────────────────────────────────────
     $allow = implode('; ', array_filter([
         'accelerometer',
@@ -113,7 +122,7 @@
         @if($block->get('kicker') || $block->get('title') || $block->get('subtitle'))
             <div class="max-w-3xl mb-8">
                 @if($block->get('kicker'))
-                    {{-- .kicker centraliza familia, 11px, mayusculas y tracking. --}}
+                    {{-- .kicker centraliza familia, 11px, mayúsculas y tracking. --}}
                     <span class="kicker {{ $kickerClass }}">
                         {{ $block->get('kicker') }}
                     </span>
@@ -135,7 +144,7 @@
              Sin mx-auto: el video se alinea a la izquierda con el encabezado,
              que es la columna de lectura del resto de bloques. --}}
         @if($embed)
-            <div class="{{ $frameClass }} overflow-hidden aspect-video max-w-5xl">
+            <div class="{{ $frameClass }} overflow-hidden aspect-video {{ $widthClass }}">
                 <iframe
                     src="{{ $embed }}"
                     class="w-full h-full"

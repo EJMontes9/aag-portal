@@ -15,29 +15,29 @@ class MenuResource extends Resource
 {
     protected static ?string $model = Menu::class;
     protected static ?string $navigationIcon = 'heroicon-o-bars-3';
-    protected static ?string $navigationGroup = 'Configuracion';
-    protected static ?string $navigationLabel = 'Menus';
-    protected static ?string $modelLabel = 'Menu';
-    protected static ?string $pluralModelLabel = 'Menus';
+    protected static ?string $navigationGroup = 'Configuración';
+    protected static ?string $navigationLabel = 'Menús';
+    protected static ?string $modelLabel = 'Menú';
+    protected static ?string $pluralModelLabel = 'Menús';
     protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
         return $form->schema([
             Forms\Components\TextInput::make('name')->label('Nombre')->required()->maxLength(255),
-            Forms\Components\TextInput::make('slug')->label('Slug (opcional)')->maxLength(255)->helperText('Se genera automaticamente si se deja vacio'),
+            Forms\Components\TextInput::make('slug')->label('Slug (opcional)')->maxLength(255)->helperText('Se genera automáticamente si se deja vacío'),
             Forms\Components\Select::make('location')
-                ->label('Ubicacion')
+                ->label('Ubicación')
                 ->options([
                     'topbar' => 'Topbar (barra azul superior)',
-                    'header' => 'Header (menu principal)',
+                    'header' => 'Header (menú principal)',
                     'footer' => 'Footer',
                     'footer_secondary' => 'Footer secundario',
                     'sidebar' => 'Barra lateral',
-                    'quick_links' => 'Enlaces rapidos',
+                    'quick_links' => 'Enlaces rápidos',
                 ])
                 ->required(),
-            Forms\Components\Textarea::make('description')->label('Descripcion')->columnSpanFull(),
+            Forms\Components\Textarea::make('description')->label('Descripción')->columnSpanFull(),
             Forms\Components\Toggle::make('is_active')->label('Activo')->default(true),
         ]);
     }
@@ -47,7 +47,7 @@ class MenuResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')->label('Nombre')->searchable(),
-                Tables\Columns\TextColumn::make('location')->label('Ubicacion')->badge(),
+                Tables\Columns\TextColumn::make('location')->label('Ubicación')->badge(),
                 Tables\Columns\TextColumn::make('all_items_count')->label('Items')->counts('allItems'),
                 Tables\Columns\IconColumn::make('is_active')->label('Activo')->boolean(),
             ])

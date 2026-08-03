@@ -20,14 +20,14 @@ class MediaPicker extends Component
     public        $uploadFile  = null;
 
     /**
-     * SEGURIDAD -- Livewire ejecuta boot() en CADA peticion al componente,
-     * antes que cualquier metodo de accion. Autorizar aqui (y no metodo por
-     * metodo) cierra la clase entera: ningun metodo que se anada en el futuro
+     * SEGURIDAD -- Livewire ejecuta boot() en CADA petición al componente,
+     * antes que cualquier método de acción. Autorizar aquí (y no método por
+     * método) cierra la clase entera: ningún método que se añada en el futuro
      * puede quedar sin proteger por olvido.
      *
-     * Este componente no tenia ninguna comprobacion de rol. No era alcanzable
-     * por un anonimo porque solo se monta dentro del editor visual, que si
-     * exige autenticacion, pero dependia de esa circunstancia y no de un
+     * Este componente no tenía ninguna comprobación de rol. No era alcanzable
+     * por un anónimo porque solo se monta dentro del editor visual, que sí
+     * exige autenticación, pero dependía de esa circunstancia y no de un
      * control propio.
      */
     public function boot(): void
@@ -87,16 +87,16 @@ class MediaPicker extends Component
     {
         // SEGURIDAD -- La regla "mimes" no es decorativa: Laravel solo aplica
         // su bloqueo interno de archivos PHP (shouldBlockPhpUpload) cuando hay
-        // una regla mimes/mimetypes presente. Sin ella, la validacion anterior
+        // una regla mimes/mimetypes presente. Sin ella, la validación anterior
         // ("required|file|max:20480") dejaba pasar cualquier cosa.
         //
         // "mimetypes" comprueba el contenido real del archivo; "mimes" la
-        // extension. Se usan las dos: la primera evita el renombrado, la
+        // extensión. Se usan las dos: la primera evita el renombrado, la
         // segunda activa el bloqueo interno de Laravel.
         //
-        // Esta validacion se solapa a proposito con la allowlist de
-        // MediaService, que es la barrera definitiva. Aqui sirve para dar un
-        // mensaje de error decente al usuario antes de llegar alli.
+        // Esta validación se solapa a propósito con la allowlist de
+        // MediaService, que es la barrera definitiva. Aquí sirve para dar un
+        // mensaje de error decente al usuario antes de llegar allí.
         $this->validate([
             'uploadFile' => [
                 'required',
@@ -112,7 +112,7 @@ class MediaPicker extends Component
         ], [
             'uploadFile.required'  => 'Selecciona un archivo.',
             'uploadFile.max'       => 'El archivo no puede superar 10 MB.',
-            'uploadFile.mimes'     => 'Formato no permitido. Se aceptan imagenes, PDF, documentos de Office y video MP4.',
+            'uploadFile.mimes'     => 'Formato no permitido. Se aceptan imágenes, PDF, documentos de Office y video MP4.',
             'uploadFile.mimetypes' => 'El contenido del archivo no corresponde a un formato permitido.',
         ]);
 
@@ -125,7 +125,7 @@ class MediaPicker extends Component
             $this->selectMedia($media->id);
         } catch (\Throwable $e) {
             // No se expone $e->getMessage() al usuario: puede incluir rutas del
-            // servidor. El detalle va al log; el usuario ve algo generico.
+            // servidor. El detalle va al log; el usuario ve algo genérico.
             report($e);
             $this->addError('uploadFile', 'No se pudo subir el archivo. Verifica que el formato sea válido.');
         }

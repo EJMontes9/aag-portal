@@ -12,17 +12,17 @@ use Illuminate\Support\Facades\Http;
 /**
  * Trae al portal los documentos de transparencia alojados en el subdominio.
  *
- * QUE HACE Y POR QUE
+ * QUÉ HACE Y POR QUÉ
  * ------------------
  * Los archivos se suben por FTP a https://document.aag.org.ec y NO se mueven de
- * ahi: sus direcciones estan publicadas y enlazadas desde documentacion
+ * ahí: sus direcciones están publicadas y enlazadas desde documentación
  * anterior. Este comando no copia nada; solo REGISTRA cada archivo en la base
  * de datos con su ruta, de modo que el portal pueda listarlos con su propio
  * diseño en vez de mandar al ciudadano al explorador del subdominio.
  *
  * La descarga apunta a la URL directa del archivo
  * (https://document.aag.org.ec/2024/01-Enero/.../Metadatos.csv), no al script
- * "?file=" del explorador: es una direccion limpia, no depende de la ruta
+ * "?file=" del explorador: es una dirección limpia, no depende de la ruta
  * interna del servidor (/home/<usuario>/...) y sobrevive a un cambio de
  * hosting.
  *
@@ -34,22 +34,22 @@ use Illuminate\Support\Facades\Http;
  *   2024  ->  AÑO/Mes/Articulo 19/N. Literal/archivo.csv (anidada)
  *
  * Lo que hay entre el mes y el archivo se guarda como "literal", que agrupa los
- * documentos en la pagina igual que estan en el servidor. Si no hay nada
+ * documentos en la página igual que están en el servidor. Si no hay nada
  * intermedio (2023), el documento queda suelto en su mes.
  *
  * USO
  * ---
- *   php artisan lotaip:sincronizar --dry-run   ver que haria
+ *   php artisan lotaip:sincronizar --dry-run   ver qué haría
  *   php artisan lotaip:sincronizar             aplicarlo
  *
- * Es idempotente y se ejecuta cada madrugada desde routes/console.php, asi que
- * subir por FTP es lo unico que hay que hacer: al dia siguiente esta publicado.
+ * Es idempotente y se ejecuta cada madrugada desde routes/console.php, así que
+ * subir por FTP es lo único que hay que hacer: al día siguiente está publicado.
  */
 class SincronizarDocumentosLotaip extends Command
 {
     protected $signature = 'lotaip:sincronizar
-                            {--seccion=lotaip : Seccion a sincronizar (lotaip o rendicion)}
-                            {--dry-run : Muestra lo que haria sin tocar la base de datos}';
+                            {--seccion=lotaip : Sección a sincronizar (lotaip o rendicion)}
+                            {--dry-run : Muestra lo que haría sin tocar la base de datos}';
 
     protected $description = 'Registra en el portal los documentos alojados en el subdominio';
 
@@ -89,8 +89,8 @@ class SincronizarDocumentosLotaip extends Command
      * Es el mecanismo del propio explorador: si una carpeta contiene un
      * archivo config_link.txt, en vez de listar su contenido muestra un enlace.
      * La AAG lo usa desde 2025 para remitir al portal nacional de transparencia
-     * de la Defensoria del Pueblo, donde se publica ahora la informacion; los
-     * archivos se siguen subiendo por detras pero no se muestran.
+     * de la Defensoría del Pueblo, donde se publica ahora la información; los
+     * archivos se siguen subiendo por detrás pero no se muestran.
      *
      * Formato del archivo:  URL|Texto del enlace
      * (el texto es opcional; si falta, se usa la propia URL)
@@ -99,7 +99,7 @@ class SincronizarDocumentosLotaip extends Command
      */
     protected function buscarEnlaceDeMes(string $base, string $anio, int $mes, ?string $carpetaConocida = null): ?array
     {
-        // Si ya se sabe como se llama la carpeta (porque tiene archivos), se
+        // Si ya se sabe cómo se llama la carpeta (porque tiene archivos), se
         // prueba solo esa; si no, se tantean las variantes conocidas.
         $candidatas = $carpetaConocida ? [$carpetaConocida] : $this->variantesDeCarpeta($mes);
 
@@ -151,21 +151,21 @@ class SincronizarDocumentosLotaip extends Command
 
         if ($base === '') {
             $this->error('No hay subdominio configurado.');
-            $this->line('Configuralo en el panel: Ajustes del sitio > Documentos.');
+            $this->line('Configúralo en el panel: Ajustes del sitio > Documentos.');
 
             return self::FAILURE;
         }
 
         $this->info("Subdominio: {$base}");
         if ($dryRun) {
-            $this->warn('Modo simulacion: no se escribe nada.');
+            $this->warn('Modo simulación: no se escribe nada.');
         }
         $this->newLine();
 
         $anios = $this->descubrirAnios($base);
 
         if (empty($anios)) {
-            $this->error('No se encontro ninguna carpeta de año.');
+            $this->error('No se encontró ninguna carpeta de año.');
 
             return self::FAILURE;
         }
@@ -175,7 +175,7 @@ class SincronizarDocumentosLotaip extends Command
         foreach ($anios as $anio) {
             // OJO: un año sin archivos NO se descarta. Desde 2025 hay meses que
             // solo tienen un config_link.txt remitiendo a otro portal, sin
-            // ningun archivo listado; 2026 es asi entero.
+            // ningún archivo listado; 2026 es así entero.
             $archivos = $this->descubrirArchivos($base, $anio);
 
             $totales['anios']++;
@@ -201,7 +201,7 @@ class SincronizarDocumentosLotaip extends Command
 
             // Meses que NO tienen archivos: pueden tener un config_link.txt que
             // remite a otro portal. Es el caso de 2025 y 2026, donde la
-            // informacion pasó a publicarse en el portal de la Defensoria.
+            // información pasó a publicarse en el portal de la Defensoría.
             foreach (range(1, 12) as $m) {
                 if (! isset($porMes[$m])) {
                     $porMes[$m] = [];
@@ -221,13 +221,13 @@ class SincronizarDocumentosLotaip extends Command
                 if (empty($documentos) && ! $enlace) {
                     // El mes no tiene nada en el servidor: ni archivos ni
                     // config_link.txt. Se OCULTA en vez de dejarlo como "Sin
-                    // documentos", que es lo que hacia antes.
+                    // documentos", que es lo que hacía antes.
                     //
-                    // El seeder inicial creo los doce meses de cada año, asi
+                    // El seeder inicial creó los doce meses de cada año, así
                     // que sin esto el portal anuncia meses que ni siquiera
                     // existen como carpeta (Julio a Diciembre de 2026).
                     //
-                    // Solo se ocultan los que estan VACIOS de verdad: si el mes
+                    // Solo se ocultan los que están VACÍOS de verdad: si el mes
                     // tiene documentos cargados a mano desde el panel, se
                     // respeta y no se toca.
                     if (! $dryRun) {
@@ -322,7 +322,7 @@ class SincronizarDocumentosLotaip extends Command
         $this->newLine();
         $this->info(sprintf(
             '%s %d documentos y %d meses con enlace, en %d meses de %d años.%s',
-            $dryRun ? 'Se registrarian' : 'Registrados',
+            $dryRun ? 'Se registrarían' : 'Registrados',
             $totales['docs'],
             $totales['enlaces'],
             $totales['meses'],
@@ -333,7 +333,7 @@ class SincronizarDocumentosLotaip extends Command
         if ($totales['ocultos'] > 0) {
             $this->line(sprintf(
                 '%s %d meses sin contenido en el servidor.',
-                $dryRun ? 'Se ocultarian' : 'Ocultados',
+                $dryRun ? 'Se ocultarían' : 'Ocultados',
                 $totales['ocultos']
             ));
         }
@@ -364,7 +364,7 @@ class SincronizarDocumentosLotaip extends Command
         $archivo = end($partes);
         $intermedias = array_slice($partes, $pos + 2, -1);
 
-        // El agrupador es la ultima carpeta con significado (se descartan los
+        // El agrupador es la última carpeta con significado (se descartan los
         // niveles meramente organizativos, como "Articulo 19").
         $literal = null;
         foreach (array_reverse($intermedias) as $carpeta) {
@@ -382,14 +382,14 @@ class SincronizarDocumentosLotaip extends Command
             'literal'   => $literal ? mb_substr($literal, 0, 255) : null,
             'extension' => strtolower(pathinfo($archivo, PATHINFO_EXTENSION)),
             'mes'       => $mes,
-            // Nombre real de la carpeta ("01-Enero" o "Enero" segun el año),
+            // Nombre real de la carpeta ("01-Enero" o "Enero" según el año),
             // para poder pedir su config_link.txt sin tantear variantes.
             'carpeta'   => $partes[$pos + 1],
         ];
     }
 
     /**
-     * Nombre de archivo -> titulo legible.
+     * Nombre de archivo -> título legible.
      * "Literal_a4_-_Metas y objetivos.pdf" -> "Literal a4 - Metas y objetivos"
      */
     protected function titulo(string $archivo): string
@@ -447,7 +447,7 @@ class SincronizarDocumentosLotaip extends Command
     }
 
     /**
-     * Rutas de todos los archivos de un año, leidas de los enlaces de descarga.
+     * Rutas de todos los archivos de un año, leídas de los enlaces de descarga.
      *
      * @return string[]
      */

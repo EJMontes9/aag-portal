@@ -8,7 +8,7 @@ use App\Models\Project;
 use Illuminate\Console\Command;
 
 /**
- * Retira del portal el contenido de muestra que se cargo durante el desarrollo.
+ * Retira del portal el contenido de muestra que se cargó durante el desarrollo.
  *
  * POR QUE EXISTE
  * --------------
@@ -16,15 +16,15 @@ use Illuminate\Console\Command;
  * cuantas noticias, proyectos y convocatorias inventadas. Sirven mientras se
  * construye, pero no pueden quedar publicadas: describen obras que no existen y
  * cifras que nadie ha aprobado, y el ciudadano no tiene forma de distinguirlas
- * del contenido legitimo.
+ * del contenido legítimo.
  *
  * POR QUE NO BORRA A LA PRIMERA
  * -----------------------------
  * La correspondencia se hace por slug, y un slug puede haberse reutilizado para
- * contenido real (por ejemplo, si la obra de muestra acabo existiendo de
- * verdad). Por eso el comando enseña primero lo que encontro y no borra nada
+ * contenido real (por ejemplo, si la obra de muestra acabó existiendo de
+ * verdad). Por eso el comando enseña primero lo que encontró y no borra nada
  * hasta que se le pasa --confirmar. Borrar es irreversible: los modelos del
- * portal no tienen borrado logico.
+ * portal no tienen borrado lógico.
  *
  * USO
  * ---
@@ -34,14 +34,14 @@ use Illuminate\Console\Command;
 class LimpiarContenidoEjemplo extends Command
 {
     protected $signature = 'contenido:limpiar-ejemplo
-                            {--confirmar : Borra de verdad. Sin esta opcion solo muestra lo que haria}
+                            {--confirmar : Borra de verdad. Sin esta opción solo muestra lo que haría}
                             {--sin-convocatorias : No tocar las convocatorias}';
 
     protected $description = 'Retira las noticias, proyectos y convocatorias de muestra del desarrollo';
 
     /**
      * Contenido sembrado durante el desarrollo, identificado por su slug.
-     * Verificado contra el portal en produccion el 27 de julio de 2026.
+     * Verificado contra el portal en producción el 27 de julio de 2026.
      */
     protected const NOTICIAS = [
         'aag-presenta-su-plan-operativo-anual-2026',
@@ -77,7 +77,7 @@ class LimpiarContenidoEjemplo extends Command
         }
 
         if (! $confirmar) {
-            $this->warn('Modo revision: no se borra nada. Añade --confirmar para aplicarlo.');
+            $this->warn('Modo revisión: no se borra nada. Añade --confirmar para aplicarlo.');
             $this->newLine();
         }
 
@@ -108,7 +108,7 @@ class LimpiarContenidoEjemplo extends Command
 
             $faltantes = array_diff($grupo['slugs'], $registros->pluck('slug')->all());
             foreach ($faltantes as $slug) {
-                $this->line("    <fg=gray>· {$slug} — ya no esta</>");
+                $this->line("    <fg=gray>· {$slug} — ya no está</>");
             }
 
             $this->newLine();
@@ -123,7 +123,7 @@ class LimpiarContenidoEjemplo extends Command
         $this->info("Borrados {$borrados} de {$total} registros de muestra.");
 
         if ($borrados > 0) {
-            $this->line('Revisa la portada: si algun bloque destacaba uno de estos contenidos, quedara vacio.');
+            $this->line('Revisa la portada: si algún bloque destacaba uno de estos contenidos, quedará vacío.');
         }
 
         return self::SUCCESS;

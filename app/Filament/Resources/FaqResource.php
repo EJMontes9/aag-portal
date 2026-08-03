@@ -37,10 +37,10 @@ class FaqResource extends Resource
                         ->disableToolbarButtons(['attachFiles'])
                         ->columnSpanFull(),
                 ]),
-            Forms\Components\Section::make('Clasificacion')
+            Forms\Components\Section::make('Clasificación')
                 ->schema([
                     Forms\Components\Select::make('category_id')
-                        ->label('Categoria')
+                        ->label('Categoría')
                         ->relationship('category', 'name')
                         ->searchable()
                         ->preload()
@@ -57,7 +57,7 @@ class FaqResource extends Resource
                         ->default(true),
                     Forms\Components\Toggle::make('featured')
                         ->label('Destacada')
-                        ->helperText('Aparecera en bloques "FAQ destacadas" en la home u otras paginas.'),
+                        ->helperText('Aparecerá en bloques "FAQ destacadas" en la home u otras páginas.'),
                 ])->columns(2),
         ]);
     }
@@ -73,7 +73,7 @@ class FaqResource extends Resource
                     ->limit(80)
                     ->weight('medium'),
                 Tables\Columns\TextColumn::make('category.name')
-                    ->label('Categoria')
+                    ->label('Categoría')
                     ->badge()
                     ->placeholder('—'),
                 Tables\Columns\IconColumn::make('is_active')

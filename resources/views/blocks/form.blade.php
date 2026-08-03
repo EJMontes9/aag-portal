@@ -15,8 +15,8 @@
     // Clases de campo compartidas por input/textarea/select del preview. Formas de
     // B: borde marcado de 1px, radio 2px y CERO sombra -- el foco se marca con el
     // borde celeste, no con un halo.
-    // El valor que el ciudadano teclea tiene que leerse mas que su etiqueta: 14px
-    // y algo mas de alto de campo (py-2.5) para no dejarlo pegado al borde.
+    // El valor que el ciudadano teclea tiene que leerse más que su etiqueta: 14px
+    // y algo más de alto de campo (py-2.5) para no dejarlo pegado al borde.
     $fieldClass = 'w-full rounded-pill border border-border bg-card px-3 py-2.5 text-[14px] text-fg placeholder-muted/70';
 @endphp
 
@@ -31,8 +31,8 @@
     <div class="section-wrap">
 
         {{-- Cabecera dentro de la MISMA columna que el formulario: si se dejara
-             fuera, con layout 'centered' el titulo quedaria a la izquierda de la
-             pagina y la caja centrada, sin eje comun. En B el texto se alinea a
+             fuera, con layout 'centered' el título quedaría a la izquierda de la
+             página y la caja centrada, sin eje común. En B el texto se alinea a
              la izquierda de su columna, no al centro. --}}
         <div class="{{ $wrapClass }}">
 
@@ -42,7 +42,7 @@
                         <h2 class="font-serif text-section-title text-brand-navy">{{ $title }}</h2>
                     @endif
                     @if($desc)
-                        {{-- La descripcion suele explicar QUE se envia y a quien:
+                        {{-- La descripción suele explicar qué se envía y a quién:
                              es texto de lectura, no un pie de campo. --}}
                         <p class="mt-3 text-[15px] text-muted leading-relaxed">{{ $desc }}</p>
                     @endif
@@ -124,7 +124,7 @@
                     </div>
 
                     {{-- Footer igual al form-renderer, separado por filete gris --}}
-                    {{-- flex-wrap: a 360px la nota y el boton no caben en linea. --}}
+                    {{-- flex-wrap: a 360px la nota y el botón no caben en línea. --}}
                     <div class="px-5 md:px-7 py-4 border-t border-border flex flex-wrap items-center justify-between gap-3">
                         <p class="text-[12px] text-muted">
                             <span class="text-[#B3261E]">*</span> Campos obligatorios
@@ -151,7 +151,7 @@
                         <h2 class="font-serif text-section-title text-brand-navy">{{ $title }}</h2>
                     @endif
                     @if($desc)
-                        {{-- La descripcion suele explicar QUE se envia y a quien:
+                        {{-- La descripción suele explicar qué se envía y a quién:
                              es texto de lectura, no un pie de campo. --}}
                         <p class="mt-3 text-[15px] text-muted leading-relaxed">{{ $desc }}</p>
                     @endif

@@ -6,14 +6,14 @@
 
      NOTA: se usa solo $info['label'] (PDF, Word, XLS...) y NO $info['bg'] /
      $info['text']. Esas dos claves devuelven clases Tailwind escritas dentro de
-     App\Models\Convocatoria::fileTypeInfo(), y app/Models NO esta en el "content"
-     de tailwind.config.js: nunca se compilan y el badge sale sin estilo. Ademas
-     la paleta pastel por extension (rojo/azul/verde/morado) no pertenece a la
+     App\Models\Convocatoria::fileTypeInfo(), y app/Models NO está en el "content"
+     de tailwind.config.js: nunca se compilan y el badge sale sin estilo. Además
+     la paleta pastel por extensión (rojo/azul/verde/morado) no pertenece a la
      Propuesta B, donde el badge va en navy sobre el tinte celeste. --}}
 
 {{-- El x-data envuelve la tarjeta en vez de ir sobre ella porque el modal es
-     hermano de la caja: dentro heredaria su overflow-hidden. x-id genera ids
-     unicos, necesario porque esta vista se incluye dos veces en la ficha (una
+     hermano de la caja: dentro heredaría su overflow-hidden. x-id genera ids
+     únicos, necesario porque esta vista se incluye dos veces en la ficha (una
      para mobile y otra para el sidebar de desktop). --}}
 <div x-data="pdfPreview()" x-id="['pdf-titulo']">
 <div class="card-surface overflow-hidden">
@@ -32,12 +32,12 @@
             $info      = \App\Models\Convocatoria::fileTypeInfo($conv->bases_pdf);
             $basesUrl  = Storage::disk('public')->url($conv->bases_pdf);
             // Solo el PDF se puede previsualizar: el visor nativo del navegador
-            // no abre Word, Excel ni ZIP, asi que para el resto se deja unicamente
-            // la descarga en vez de un boton que abriria un iframe en blanco.
+            // no abre Word, Excel ni ZIP, así que para el resto se deja únicamente
+            // la descarga en vez de un botón que abriría un iframe en blanco.
             $basesEsPdf = strtolower(pathinfo($conv->bases_pdf, PATHINFO_EXTENSION)) === 'pdf';
         @endphp
         {{-- flex-wrap + min-w en el bloque de texto: a 360px el badge, el nombre y
-             el boton no caben en una linea, asi que el boton baja a la segunda
+             el botón no caben en una línea, así que el botón baja a la segunda
              en vez de aplastar el nombre del archivo a tres caracteres. --}}
         <div class="flex flex-wrap items-center gap-3 px-4 py-3.5 transition-colors hover:bg-brand-soft/15">
             <span class="w-10 h-10 shrink-0 flex items-center justify-center rounded-pill border border-border bg-brand-soft text-[11px] font-bold uppercase text-brand-navy">
@@ -127,24 +127,24 @@
             <svg class="w-8 h-8 mx-auto mb-3 text-muted/40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25"/>
             </svg>
-            <p class="text-[15px] font-semibold text-fg">Aun no hay documentos publicados</p>
-            <p class="mt-1.5 text-[14px] leading-[1.55]">Las bases y anexos se publicaran en esta misma ficha.</p>
+            <p class="text-[15px] font-semibold text-fg">Aún no hay documentos publicados</p>
+            <p class="mt-1.5 text-[14px] leading-[1.55]">Las bases y anexos se publicarán en esta misma ficha.</p>
         </div>
         @endif
     </div>
 </div>
 
 {{-- VISOR DE PDF ---------------------------------------------------------
-     Sigue el patron del modal de components/alerts/convocatoria-alert:
+     Sigue el patrón del modal de components/alerts/convocatoria-alert:
      role/aria-modal/aria-labelledby, cierre con Escape y con clic fuera.
-     Anade ademas el atrapado de foco (@keydown.tab), que alli no hacia falta
+     Añade además el atrapado de foco (@keydown.tab), que allí no hacía falta
      porque aquel modal tiene dos botones y este contiene un iframe. --}}
 <div x-show="abierto"
      x-cloak
      x-transition.opacity
      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
      @keydown.escape.window="cerrar()">
-    {{-- Misma excepcion justificada a la regla de "cero sombras" que el modal
+    {{-- Misma excepción justificada a la regla de "cero sombras" que el modal
          de alerta: flota sobre el backdrop y necesita despegarse del fondo. --}}
     <div x-show="abierto"
          x-transition
@@ -158,10 +158,10 @@
 
         <div class="flex items-center justify-between gap-4 px-5 py-3.5 border-b border-border bg-brand-soft/25 shrink-0">
             <div class="min-w-0">
-                <p class="text-[12px] font-bold uppercase tracking-[0.07em] text-muted">Previsualizacion</p>
+                <p class="text-[12px] font-bold uppercase tracking-[0.07em] text-muted">Previsualización</p>
                 <h3 :id="$id('pdf-titulo')" class="font-serif text-[18px] leading-[1.25] text-brand-navy truncate" x-text="nombre"></h3>
             </div>
-            <button type="button" @click="cerrar()" aria-label="Cerrar previsualizacion"
+            <button type="button" @click="cerrar()" aria-label="Cerrar previsualización"
                     class="shrink-0 rounded-pill text-muted hover:text-fg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
@@ -170,8 +170,8 @@
         </div>
 
         {{-- El iframe se pinta solo con el modal abierto (x-if via x-show del
-             padre no bastaria: el navegador descargaria el PDF igualmente al
-             cargar la pagina). El src se enlaza para que solo apunte al
+             padre no bastaría: el navegador descargaría el PDF igualmente al
+             cargar la página). El src se enlaza para que solo apunte al
              documento elegido. --}}
         <div class="flex-1 min-h-0 bg-bg">
             <template x-if="abierto && url">

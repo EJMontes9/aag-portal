@@ -12,9 +12,9 @@
             </div>
         </div>
         <div class="ve-topbar-right">
-            <a href="{{ $page->key === 'home' ? url('/') : url('/'.$page->slug) }}" target="_blank" rel="noopener" class="ve-btn ve-btn-ghost" title="Ver pagina publicada">
+            <a href="{{ $page->key === 'home' ? url('/') : url('/'.$page->slug) }}" target="_blank" rel="noopener" class="ve-btn ve-btn-ghost" title="Ver página publicada">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 3h7v7m0-7L10 14M5 5h4M5 12v7h7"/></svg>
-                Ver publico
+                Ver público
             </a>
             <a href="/admin/pages/{{ $page->id }}/edit" class="ve-btn ve-btn-ghost">Editor avanzado</a>
         </div>
@@ -88,7 +88,7 @@
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
                             <div>
                                 <p class="ve-block-empty-title"><strong>{{ $blockTypeLabel }}</strong> sin contenido</p>
-                                <p class="ve-block-empty-desc">Haz clic en <strong>Editar</strong> para configurar este bloque. No se mostrara en la pagina publica hasta que tenga contenido.</p>
+                                <p class="ve-block-empty-desc">Haz clic en <strong>Editar</strong> para configurar este bloque. No se mostrará en la página pública hasta que tenga contenido.</p>
                             </div>
                         </div>
                     @else
@@ -97,7 +97,7 @@
                 @else
                     <div class="ve-block-hidden-banner">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395"/></svg>
-                        <span><strong>{{ $blockTypeLabel }}</strong> está oculto. No se ve en la pagina publica.</span>
+                        <span><strong>{{ $blockTypeLabel }}</strong> está oculto. No se ve en la página pública.</span>
                     </div>
                 @endif
             </div>
@@ -220,7 +220,7 @@
 
 @script
 <script>
-    // Al agregar un bloque, scroll suave hacia el y destaque visual
+    // Al agregar un bloque, scroll suave hacia él y destaque visual
     Livewire.on('block-added', (event) => {
         const id = Array.isArray(event) ? event[0]?.blockId : event?.blockId;
         if (!id) return;

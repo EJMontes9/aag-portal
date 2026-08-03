@@ -24,7 +24,7 @@
 </script>
 @endpush
 
-{{-- El BreadcrumbList lo emite <x-ui.breadcrumb-bar>, no se duplica aqui. --}}
+{{-- El BreadcrumbList lo emite <x-ui.breadcrumb-bar>, no se duplica aquí. --}}
 
 @section('content')
 <article class="bg-bg">
@@ -70,7 +70,7 @@
                     {{-- Mismos valores de lectura larga que el detalle de noticia
                          (16px / 1.75) y misma medida acotada: la columna del
                          proyecto llega a ~860px en escritorio y sin este tope la
-                         linea se iba muy por encima de los 75 caracteres. --}}
+                         línea se iba muy por encima de los 75 caracteres. --}}
                     <div class="prose max-w-[72ch]
                                 prose-headings:font-serif prose-headings:uppercase prose-headings:text-brand-navy
                                 prose-h2:text-[20px] prose-h2:mt-9 prose-h2:mb-3
@@ -85,11 +85,11 @@
                     </div>
                 @endif
 
-                {{-- Galeria con lightbox Alpine --}}
+                {{-- Galería con lightbox Alpine --}}
                 @php $gallery = collect($project->gallery ?? []); @endphp
                 @if($gallery->isNotEmpty())
                     <section class="mt-10">
-                        <h2 class="font-serif text-lg uppercase text-brand-navy rule-accent pb-2.5 mb-5">Galeria</h2>
+                        <h2 class="font-serif text-lg uppercase text-brand-navy rule-accent pb-2.5 mb-5">Galería</h2>
 
                         <div x-data="{
                                 open: false,
@@ -153,7 +153,7 @@
                         <ol class="relative border-l border-border ml-2 space-y-5 pl-6">
                             @foreach($milestones as $m)
                                 <li class="relative">
-                                    {{-- Marcador cuadrado de 2px: en B no hay circulos.
+                                    {{-- Marcador cuadrado de 2px: en B no hay círculos.
                                          Relleno celeste = hito cumplido. --}}
                                     <span class="absolute -left-[1.8rem] top-1 w-3 h-3 rounded-pill {{ ($m['completed'] ?? false) ? 'bg-brand-primary' : 'bg-card border border-border' }}"></span>
                                     @if(!empty($m['date']))
@@ -183,9 +183,9 @@
                     <h2 class="kicker block pb-3 rule-accent">Ficha del proyecto</h2>
                     <dl class="mt-4 space-y-4 text-[15px]">
                         <div>
-                            {{-- Los rotulos de la ficha suben de 10 a 12px: son
-                                 mayusculas condensadas con tracking, el caso en
-                                 el que 10px mas castiga la lectura. --}}
+                            {{-- Los rótulos de la ficha suben de 10 a 12px: son
+                                 mayúsculas condensadas con tracking, el caso en
+                                 el que 10px más castiga la lectura. --}}
                             <dt class="text-muted text-[12px] tracking-[0.08em] uppercase font-bold">Estado</dt>
                             <dd class="text-fg font-semibold mt-0.5">{{ $project->status_label }}</dd>
                         </div>
@@ -197,7 +197,7 @@
                         @endif
                         @if($project->location)
                             <div>
-                                <dt class="text-muted text-[12px] tracking-[0.08em] uppercase font-bold">Ubicacion</dt>
+                                <dt class="text-muted text-[12px] tracking-[0.08em] uppercase font-bold">Ubicación</dt>
                                 <dd class="text-fg font-semibold mt-0.5">{{ $project->location }}</dd>
                             </div>
                         @endif
@@ -209,7 +209,7 @@
                         @endif
                         @if($project->end_date)
                             <div>
-                                <dt class="text-muted text-[12px] tracking-[0.08em] uppercase font-bold">Finalizacion</dt>
+                                <dt class="text-muted text-[12px] tracking-[0.08em] uppercase font-bold">Finalización</dt>
                                 <dd class="text-fg font-semibold mt-0.5">{{ $project->end_date->translatedFormat('d \\d\\e F \\d\\e Y') }}</dd>
                             </div>
                         @endif
@@ -225,7 +225,7 @@
                 <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-[18px]">
                     @foreach($related as $r)
                         <article class="group flex flex-col card-surface overflow-hidden transition-colors duration-200 hover:border-brand-primary">
-                            <a href="{{ route('projects.show', $r->slug) }}" class="block aspect-[16/10] overflow-hidden bg-cloud-gradient"
+                            <a href="{{ route('projects.show', $r->slug) }}" wire:navigate class="block aspect-[16/10] overflow-hidden bg-cloud-gradient"
                                tabindex="-1" aria-hidden="true">
                                 @if($r->cover_url)
                                     <img src="{{ $r->cover_url }}" alt="{{ $r->title }}" loading="lazy"
@@ -234,6 +234,7 @@
                             </a>
                             <h3 class="p-[18px] font-sans font-semibold text-[15px] text-fg leading-[1.3]">
                                 <a href="{{ route('projects.show', $r->slug) }}"
+                                   wire:navigate
                                    class="rounded-pill transition-colors group-hover:text-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card">
                                     {{ $r->title }}
                                 </a>

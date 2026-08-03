@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
 /**
- * Redireccion de una direccion antigua a su equivalente en el portal nuevo.
+ * Redirección de una dirección antigua a su equivalente en el portal nuevo.
  *
- * Ver la migracion create_redirects_table para el porque.
+ * Ver la migración create_redirects_table para el porqué.
  */
 class Redirect extends Model
 {
@@ -39,10 +39,10 @@ class Redirect extends Model
     /**
      * Todas las redirecciones activas, indexadas por ruta de origen.
      *
-     * Se cargan de una vez y se dejan en cache porque la comprobacion ocurre en
-     * CADA 404: si cada una fuese una consulta, bastaria con que alguien pidiera
+     * Se cargan de una vez y se dejan en caché porque la comprobación ocurre en
+     * CADA 404: si cada una fuese una consulta, bastaría con que alguien pidiera
      * direcciones inexistentes en bucle para castigar la base de datos. Son unos
-     * pocos cientos de filas como mucho, asi que caben de sobra en memoria.
+     * pocos cientos de filas como mucho, así que caben de sobra en memoria.
      */
     public static function activas(): array
     {
@@ -57,12 +57,12 @@ class Redirect extends Model
     /**
      * Normaliza una ruta para poder compararlas sin sorpresas.
      *
-     * "/Quienes-Somos/" y "quienes-somos" son la misma direccion a efectos
-     * practicos, pero como texto no coinciden. Se unifica: siempre con barra
-     * inicial, sin barra final, en minusculas y sin la cadena de consulta.
+     * "/Quienes-Somos/" y "quienes-somos" son la misma dirección a efectos
+     * prácticos, pero como texto no coinciden. Se unifica: siempre con barra
+     * inicial, sin barra final, en minúsculas y sin la cadena de consulta.
      *
-     * La barra final se quita SALVO en la raiz, que es solo "/" y se quedaria
-     * en cadena vacia.
+     * La barra final se quita SALVO en la raíz, que es solo "/" y se quedaría
+     * en cadena vacía.
      */
     public static function normalizar(string $ruta): string
     {
@@ -75,9 +75,9 @@ class Redirect extends Model
     /**
      * Suma una visita. Se llama desde el middleware.
      *
-     * Usa una consulta directa en vez de save() a proposito: no debe disparar
-     * los eventos del modelo, porque saved() limpia la cache de redirecciones y
-     * la estaria tirando en cada visita, justo lo que la cache venia a evitar.
+     * Usa una consulta directa en vez de save() a propósito: no debe disparar
+     * los eventos del modelo, porque saved() limpia la caché de redirecciones y
+     * la estaría tirando en cada visita, justo lo que la caché venía a evitar.
      */
     public function registrarUso(): void
     {

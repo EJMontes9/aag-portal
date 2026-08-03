@@ -32,14 +32,14 @@ class LotaipDocumentResource extends Resource
                             return LotaipMonth::with('year')
                                 ->get()
                                 ->mapWithKeys(function ($m) {
-                                    $section = $m->year?->section === 'lotaip' ? 'LOTAIP' : 'Rendicion';
+                                    $section = $m->year?->section === 'lotaip' ? 'LOTAIP' : 'Rendición';
                                     return [$m->id => "{$m->year?->year} · {$m->name} ({$section})"];
                                 });
                         })
                         ->required()
                         ->searchable(),
                     Forms\Components\TextInput::make('title')
-                        ->label('Titulo del documento')
+                        ->label('Título del documento')
                         ->required()
                         ->maxLength(255)
                         ->placeholder('Ej: Literal b2 - Distributivo del personal')
@@ -48,7 +48,7 @@ class LotaipDocumentResource extends Resource
                         ->label('Literal LOTAIP (opcional)')
                         ->maxLength(10)
                         ->placeholder('a, b1, b2, c, d...')
-                        ->helperText('Util para clasificar por articulo de la LOTAIP.'),
+                        ->helperText('Útil para clasificar por artículo de la LOTAIP.'),
                     Forms\Components\TextInput::make('sort_order')
                         ->label('Orden')
                         ->numeric()
@@ -162,7 +162,7 @@ class LotaipDocumentResource extends Resource
                             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                         ])
                         ->maxSize(51200) // 50 MB
-                        ->helperText('Formatos: PDF, CSV, Excel, Word. Maximo 50 MB.')
+                        ->helperText('Formatos: PDF, CSV, Excel, Word. Máximo 50 MB.')
                         ->visible(fn (Forms\Get $get) => $get('source') === LotaipDocument::SOURCE_LOCAL)
                         ->columnSpanFull(),
                 ]),

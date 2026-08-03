@@ -17,13 +17,13 @@ class ValuesBlock extends BlockType
     {
         return [
             'kicker' => 'NUESTROS VALORES',
-            'title' => 'Un aeropuerto *cercano*, una gestion *institucional.*',
-            'subtitle' => 'Trabajamos para que cada pasajero que pisa el Jose Joaquin de Olmedo se sienta en casa, y para que cada ciudadano pueda verificar como se administra lo publico.',
+            'title' => 'Un aeropuerto *cercano*, una gestión *institucional.*',
+            'subtitle' => 'Trabajamos para que cada pasajero que pisa el José Joaquín de Olmedo se sienta en casa, y para que cada ciudadano pueda verificar cómo se administra lo público.',
             'items' => [
-                ['number' => '01', 'title' => 'Eficiencia', 'description' => 'Procesos agiles que respetan el tiempo del viajero y del ciudadano.'],
-                ['number' => '02', 'title' => 'Empatia', 'description' => 'Un aeropuerto hecho para las personas, no para los procedimientos.'],
-                ['number' => '03', 'title' => 'Calidad', 'description' => 'Estandares internacionales aplicados a la operacion diaria.'],
-                ['number' => '04', 'title' => 'Transparencia', 'description' => 'Informacion publica abierta, actualizada y verificable.'],
+                ['number' => '01', 'title' => 'Eficiencia', 'description' => 'Procesos ágiles que respetan el tiempo del viajero y del ciudadano.'],
+                ['number' => '02', 'title' => 'Empatía', 'description' => 'Un aeropuerto hecho para las personas, no para los procedimientos.'],
+                ['number' => '03', 'title' => 'Calidad', 'description' => 'Estándares internacionales aplicados a la operación diaria.'],
+                ['number' => '04', 'title' => 'Transparencia', 'description' => 'Información pública abierta, actualizada y verificable.'],
             ],
         ];
     }
@@ -35,14 +35,14 @@ class ValuesBlock extends BlockType
             ->icon(self::icon())
             ->schema([
                 Forms\Components\TextInput::make('kicker')->label('Kicker')->default('NUESTROS VALORES'),
-                Forms\Components\Textarea::make('title')->label('Titulo (usa *cursivas*)')->rows(2)->default('Un aeropuerto *cercano*, una gestion *institucional.*'),
-                Forms\Components\Textarea::make('subtitle')->label('Descripcion')->rows(2),
+                Forms\Components\Textarea::make('title')->label('Título (usa *cursivas*)')->rows(2)->default('Un aeropuerto *cercano*, una gestión *institucional.*'),
+                Forms\Components\Textarea::make('subtitle')->label('Descripción')->rows(2),
                 Forms\Components\Repeater::make('items')
                     ->label('Valores')
                     ->schema([
-                        Forms\Components\TextInput::make('number')->label('Numero')->maxLength(4)->default('01')->required(),
-                        Forms\Components\TextInput::make('title')->label('Titulo')->required(),
-                        Forms\Components\Textarea::make('description')->label('Descripcion')->rows(2)->required(),
+                        Forms\Components\TextInput::make('number')->label('Número')->maxLength(4)->default('01')->required(),
+                        Forms\Components\TextInput::make('title')->label('Título')->required(),
+                        Forms\Components\Textarea::make('description')->label('Descripción')->rows(2)->required(),
                     ])
                     ->columns(3)
                     ->defaultItems(4)

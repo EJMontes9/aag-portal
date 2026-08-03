@@ -12,6 +12,6 @@ class ListFaqCategories extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [Actions\CreateAction::make()->label('Nueva categoria')];
+        return [Actions\CreateAction::make()->label('Nueva categoría')];
     }
 }

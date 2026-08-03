@@ -7,7 +7,7 @@ use Filament\Forms\Components\Builder\Block;
 /**
  * Contrato para cada tipo de bloque del Page Builder.
  * Cada clase define:
- *  - key():          identificador unico ('hero', 'video', etc.)
+ *  - key():          identificador único ('hero', 'video', etc.)
  *  - label():        nombre visible en el selector
  *  - icon():         heroicon para el builder
  *  - filamentBlock(): retorna un Block Filament con los campos

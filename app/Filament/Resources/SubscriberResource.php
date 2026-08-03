@@ -15,7 +15,7 @@ class SubscriberResource extends Resource
     protected static ?string $model = Subscriber::class;
     protected static ?string $navigationIcon = 'heroicon-o-envelope';
     protected static ?string $navigationGroup = 'Contenido';
-    protected static ?string $navigationLabel = 'Suscriptores boletin';
+    protected static ?string $navigationLabel = 'Suscriptores boletín';
     protected static ?string $modelLabel = 'suscriptor';
     protected static ?string $pluralModelLabel = 'suscriptores';
     protected static ?int $navigationSort = 11;
@@ -36,9 +36,9 @@ class SubscriberResource extends Resource
             Forms\Components\Select::make('status')
                 ->label('Estado')
                 ->options([
-                    'pending' => 'Pendiente de confirmacion',
+                    'pending' => 'Pendiente de confirmación',
                     'confirmed' => 'Confirmado',
-                    'unsubscribed' => 'Cancelo suscripcion',
+                    'unsubscribed' => 'Canceló suscripción',
                 ])
                 ->required()
                 ->default('confirmed'),

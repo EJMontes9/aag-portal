@@ -1,20 +1,20 @@
 <div class="ve-fields">
     <div class="ve-section">
         <div class="ve-field">
-            <label class="ve-label">Titulo</label>
+            <label class="ve-label">Título</label>
             <input type="text" wire:model="editingBlockSettings.title" class="ve-input">
         </div>
         <div class="ve-field">
-            <label class="ve-label">Descripcion</label>
+            <label class="ve-label">Descripción</label>
             <textarea wire:model="editingBlockSettings.subtitle" class="ve-input" rows="3"></textarea>
         </div>
         <div class="ve-grid-2">
             <div class="ve-field">
-                <label class="ve-label">Boton · etiqueta</label>
+                <label class="ve-label">Botón · etiqueta</label>
                 <input type="text" wire:model="editingBlockSettings.cta_label" class="ve-input">
             </div>
             <div class="ve-field">
-                <label class="ve-label">Boton · URL</label>
+                <label class="ve-label">Botón · URL</label>
                 <input type="text" wire:model="editingBlockSettings.cta_url" class="ve-input">
             </div>
         </div>
@@ -29,7 +29,7 @@
                 </select>
             </div>
             <div class="ve-field">
-                <label class="ve-label">Alineacion</label>
+                <label class="ve-label">Alineación</label>
                 <select wire:model="editingBlockSettings.align" class="ve-input">
                     <option value="left">Izquierda</option>
                     <option value="center">Centrado</option>

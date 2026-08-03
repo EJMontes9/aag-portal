@@ -12,15 +12,15 @@
     <channel>
         <title><![CDATA[{!! $cdataSafe($siteName . ' — Noticias') !!}]]></title>
         <link>{{ route('news.index') }}</link>
-        <description><![CDATA[{!! $cdataSafe('Ultimas noticias de ' . $siteName) !!}]]></description>
+        <description><![CDATA[{!! $cdataSafe('Últimas noticias de ' . $siteName) !!}]]></description>
         <language>es</language>
         <lastBuildDate>{{ now()->toRssString() }}</lastBuildDate>
 
         @foreach($news as $item)
             @php
-                // strip_tags tambien sobre el excerpt: aunque deberia ser texto plano,
-                // no hay garantia de que nadie meta markup ahi, y un <tag> sin cerrar
-                // en la descripcion rompe el render del lector de feeds igual que en XML.
+                // strip_tags también sobre el excerpt: aunque debería ser texto plano,
+                // no hay garantía de que nadie meta markup ahí, y un <tag> sin cerrar
+                // en la descripción rompe el render del lector de feeds igual que en XML.
                 $description = $item->excerpt ?: $item->content;
                 $description = strip_tags($description);
                 $description = \Illuminate\Support\Str::limit(trim($description), 300);

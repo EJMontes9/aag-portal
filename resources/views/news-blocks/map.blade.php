@@ -10,7 +10,7 @@
         $src = $raw;
     }
 
-    // Validacion basica de URL para evitar XSS
+    // Validación básica de URL para evitar XSS
     if (! filter_var($src, FILTER_VALIDATE_URL) || ! str_starts_with($src, 'https://')) return;
     if (! str_contains($src, 'google.com/maps') && ! str_contains($src, 'openstreetmap')) return;
 

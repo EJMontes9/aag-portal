@@ -10,31 +10,31 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
- * Trae al portal el archivo historico de noticias del WordPress anterior.
+ * Trae al portal el archivo histórico de noticias del WordPress anterior.
  *
- * QUE HACE Y POR QUE
+ * QUÉ HACE Y POR QUÉ
  * ------------------
  * El portal anterior publica su contenido en la API REST de WordPress
- * (/wp-json/wp/v2/posts), que devuelve el titulo, el cuerpo, el extracto, la
- * fecha, la categoria y la imagen destacada de cada entrada. Este comando lee
+ * (/wp-json/wp/v2/posts), que devuelve el título, el cuerpo, el extracto, la
+ * fecha, la categoría y la imagen destacada de cada entrada. Este comando lee
  * esa API y crea la noticia equivalente en el portal nuevo.
  *
- * Se lee de la API y no de la base de datos de WordPress a proposito: no hace
+ * Se lee de la API y no de la base de datos de WordPress a propósito: no hace
  * falta credencial alguna, no se toca el sitio anterior y el resultado es el
- * mismo HTML que ya se esta publicando, sin los residuos de la tabla wp_posts
+ * mismo HTML que ya se está publicando, sin los residuos de la tabla wp_posts
  * (revisiones, borradores, autoguardados).
  *
  * IDEMPOTENTE
  * -----------
  * La correspondencia se establece por slug. Volver a ejecutarlo no duplica
  * nada: actualiza lo que ya existe y crea solo lo que falta. Si se interrumpe a
- * mitad, se relanza y continua.
+ * mitad, se relanza y continúa.
  *
- * IMAGENES
+ * IMÁGENES
  * --------
- * La imagen destacada se descarga al disco publico del portal, no se enlaza al
+ * La imagen destacada se descarga al disco público del portal, no se enlaza al
  * dominio anterior. Es deliberado: cuando el WordPress se apague, un enlace
- * remoto dejaria cada noticia sin foto.
+ * remoto dejaría cada noticia sin foto.
  *
  * USO
  * ---
@@ -49,17 +49,17 @@ class ImportarNoticiasWordpress extends Command
     protected $signature = 'noticias:importar-wordpress
                             {--origen=https://www.aag.org.ec : Dominio del portal WordPress}
                             {--desde= : Importar solo lo publicado desde esta fecha (AAAA-MM-DD)}
-                            {--categoria=* : Importar solo estas categorias de WordPress}
-                            {--sin-imagenes : No descargar las imagenes destacadas}
+                            {--categoria=* : Importar solo estas categorías de WordPress}
+                            {--sin-imagenes : No descargar las imágenes destacadas}
                             {--borrador : Crear las noticias como borrador en vez de publicadas}
-                            {--dry-run : Muestra lo que haria sin tocar la base de datos}';
+                            {--dry-run : Muestra lo que haría sin tocar la base de datos}';
 
-    protected $description = 'Importa el archivo historico de noticias desde el WordPress anterior';
+    protected $description = 'Importa el archivo histórico de noticias desde el WordPress anterior';
 
-    /** Paginado de la API de WordPress: es su maximo por peticion. */
+    /** Paginado de la API de WordPress: es su máximo por petición. */
     protected const POR_PAGINA = 100;
 
-    /** Tope de paginas, por si la API devolviera algo inesperado. */
+    /** Tope de páginas, por si la API devolviera algo inesperado. */
     protected const MAX_PAGINAS = 50;
 
     public function handle(): int
@@ -72,7 +72,7 @@ class ImportarNoticiasWordpress extends Command
         $categorias  = array_map(fn ($c) => mb_strtolower(trim($c)), (array) $this->option('categoria'));
 
         if ($this->option('desde') && ! $desde) {
-            $this->error('La fecha de --desde no es valida. Usa el formato AAAA-MM-DD.');
+            $this->error('La fecha de --desde no es válida. Usa el formato AAAA-MM-DD.');
 
             return self::FAILURE;
         }
@@ -90,7 +90,7 @@ class ImportarNoticiasWordpress extends Command
         }
 
         if (empty($entradas)) {
-            $this->error('La API no devolvio ninguna entrada.');
+            $this->error('La API no devolvió ninguna entrada.');
 
             return self::FAILURE;
         }
@@ -193,7 +193,7 @@ class ImportarNoticiasWordpress extends Command
         ));
 
         if (! $dryRun) {
-            $this->line(sprintf('Imagenes de portada descargadas: %d', $totales['imagenes']));
+            $this->line(sprintf('Imágenes de portada descargadas: %d', $totales['imagenes']));
         }
 
         if ($totales['fallos'] > 0) {
@@ -223,14 +223,14 @@ class ImportarNoticiasWordpress extends Command
                 return $pagina === 1 ? null : $entradas;
             }
 
-            // Al pasarse del ultimo indice, WordPress responde 400. Es el final
+            // Al pasarse del último índice, WordPress responde 400. Es el final
             // del recorrido, no un error.
             if ($resp->status() === 400) {
                 break;
             }
 
             if (! $resp->successful()) {
-                $this->error("La API respondio HTTP {$resp->status()} en la pagina {$pagina}.");
+                $this->error("La API respondió HTTP {$resp->status()} en la página {$pagina}.");
 
                 return $pagina === 1 ? null : $entradas;
             }
@@ -242,7 +242,7 @@ class ImportarNoticiasWordpress extends Command
             }
 
             $entradas = array_merge($entradas, $lote);
-            $this->line(sprintf('  pagina %d: %d entradas', $pagina, count($lote)));
+            $this->line(sprintf('  página %d: %d entradas', $pagina, count($lote)));
 
             if (count($lote) < self::POR_PAGINA) {
                 break;
@@ -253,7 +253,7 @@ class ImportarNoticiasWordpress extends Command
     }
 
     /**
-     * Descarga la imagen destacada al disco publico y devuelve su ruta
+     * Descarga la imagen destacada al disco público y devuelve su ruta
      * relativa, que es lo que el modelo espera en cover_image.
      */
     protected function descargarPortada(array $entrada, string $slug): ?string
@@ -267,7 +267,7 @@ class ImportarNoticiasWordpress extends Command
         $extension = strtolower(pathinfo(parse_url($url, PHP_URL_PATH) ?: '', PATHINFO_EXTENSION));
 
         // WordPress sirve .jpg.webp y similares; nos quedamos con algo que el
-        // navegador entienda y descartamos cualquier extension rara.
+        // navegador entienda y descartamos cualquier extensión rara.
         if (! in_array($extension, ['jpg', 'jpeg', 'png', 'webp', 'gif'], true)) {
             $extension = 'jpg';
         }
@@ -312,7 +312,7 @@ class ImportarNoticiasWordpress extends Command
         return 'Noticias';
     }
 
-    /** Cache en memoria para no consultar la misma categoria en cada vuelta. */
+    /** Cache en memoria para no consultar la misma categoría en cada vuelta. */
     protected array $categoriasCache = [];
 
     protected function categoria(string $nombre): ?NewsCategory

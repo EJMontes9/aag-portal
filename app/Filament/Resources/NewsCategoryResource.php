@@ -15,9 +15,9 @@ class NewsCategoryResource extends Resource
     protected static ?string $model = NewsCategory::class;
     protected static ?string $navigationIcon = 'heroicon-o-tag';
     protected static ?string $navigationGroup = 'Contenido';
-    protected static ?string $navigationLabel = 'Categorias de noticias';
-    protected static ?string $modelLabel = 'categoria';
-    protected static ?string $pluralModelLabel = 'categorias de noticias';
+    protected static ?string $navigationLabel = 'Categorías de noticias';
+    protected static ?string $modelLabel = 'categoría';
+    protected static ?string $pluralModelLabel = 'categorías de noticias';
     protected static ?int $navigationSort = 6;
 
     public static function form(Form $form): Form
@@ -31,10 +31,10 @@ class NewsCategoryResource extends Resource
                 ->label('Slug (URL)')
                 ->maxLength(80)
                 ->unique(ignoreRecord: true)
-                ->helperText('Se autogenera del nombre si se deja vacio.'),
+                ->helperText('Se autogenera del nombre si se deja vacío.'),
             Forms\Components\ColorPicker::make('color')
                 ->label('Color del badge')
-                ->helperText('Color hex para el chip de la categoria.'),
+                ->helperText('Color hex para el chip de la categoría.'),
             Forms\Components\TextInput::make('sort_order')
                 ->label('Orden')
                 ->numeric()

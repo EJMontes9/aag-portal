@@ -17,7 +17,7 @@
     @endif
 @endpush
 
-{{-- El BreadcrumbList lo emite <x-ui.breadcrumb-bar>, no se duplica aqui. --}}
+{{-- El BreadcrumbList lo emite <x-ui.breadcrumb-bar>, no se duplica aquí. --}}
 
 @section('content')
 <x-ui.breadcrumb-bar :items="[
@@ -27,24 +27,24 @@
 <x-ui.page-header
     kicker="Sala de prensa"
     title="Noticias y boletines"
-    description="Comunicados oficiales, novedades operativas y actualizaciones del aeropuerto Jose Joaquin de Olmedo."
+    description="Comunicados oficiales, novedades operativas y actualizaciones del aeropuerto José Joaquín de Olmedo."
     data-aos="fade-up" />
 
 <section class="bg-bg">
     <div class="section-wrap">
-        {{-- Filtros + busqueda --}}
-        {{-- Los chips de filtro llevan aria-current: el color por si solo no le
-             dice al lector de pantalla cual esta activo. Y anillo de foco, que
+        {{-- Filtros + búsqueda --}}
+        {{-- Los chips de filtro llevan aria-current: el color por sí solo no le
+             dice al lector de pantalla cuál está activo. Y anillo de foco, que
              es la primera parada del teclado tras la miga de pan. --}}
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-            <nav class="flex flex-wrap gap-2" aria-label="Filtrar por categoria">
-                <a href="{{ route('news.index') }}"
+            <nav class="flex flex-wrap gap-2" aria-label="Filtrar por categoría">
+                <a href="{{ route('news.index') }}" wire:navigate
                    @if(! $activeCategory) aria-current="page" @endif
                    class="pill {{ ! $activeCategory ? 'bg-brand-navy text-on-navy' : 'hover:bg-brand-soft/70 hover:text-brand-primary' }} transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
                     Todas
                 </a>
                 @foreach($categories as $cat)
-                    <a href="{{ route('news.index', ['categoria' => $cat->slug]) }}"
+                    <a href="{{ route('news.index', ['categoria' => $cat->slug]) }}" wire:navigate
                        @if($activeCategory === $cat->slug) aria-current="page" @endif
                        class="pill {{ $activeCategory === $cat->slug ? 'bg-brand-navy text-on-navy' : 'hover:bg-brand-soft/70 hover:text-brand-primary' }} transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
                         {{ $cat->name }}
@@ -53,8 +53,8 @@
             </nav>
 
             {{-- El buscador se estira a todo el ancho por debajo de sm para que a
-                 360px no comparta linea con "Limpiar" y quede en 2 caracteres. --}}
-            <form method="GET" action="{{ route('news.index') }}" class="flex items-center gap-3 w-full lg:w-auto">
+                 360px no comparta línea con "Limpiar" y quede en 2 caracteres. --}}
+            <form method="GET" action="{{ route('news.index') }}" wire:navigate class="flex items-center gap-3 w-full lg:w-auto">
                 @if($activeCategory)
                     <input type="hidden" name="categoria" value="{{ $activeCategory }}">
                 @endif
@@ -71,7 +71,7 @@
                            class="pl-10 pr-4 py-2.5 rounded-pill border border-border bg-card text-[15px] focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary w-full lg:w-72">
                 </div>
                 @if($q)
-                    <a href="{{ route('news.index', ['categoria' => $activeCategory]) }}"
+                    <a href="{{ route('news.index', ['categoria' => $activeCategory]) }}" wire:navigate
                        class="shrink-0 rounded-pill text-[12px] uppercase font-bold tracking-[0.07em] text-muted hover:text-brand-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg">Limpiar</a>
                 @endif
             </form>
@@ -79,9 +79,9 @@
 
         {{-- Listado --}}
         @if($news->isEmpty())
-            {{-- Estado vacio con salida: en vez de dejar al usuario en un callejon
-                 sin salida se le ofrece la accion que lo desbloquea (quitar el
-                 filtro activo) o, si no habia filtro, ir a otra seccion. --}}
+            {{-- Estado vacío con salida: en vez de dejar al usuario en un callejón
+                 sin salida se le ofrece la acción que lo desbloquea (quitar el
+                 filtro activo) o, si no había filtro, ir a otra sección. --}}
             <div class="mt-10 px-5 text-center py-16 rounded-card border border-dashed border-border bg-card">
                 <svg class="w-10 h-10 mx-auto text-muted/60" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5"/>
@@ -91,13 +91,13 @@
                     @if($q)
                         No encontramos resultados para <strong class="font-semibold text-fg">&ldquo;{{ $q }}&rdquo;</strong>. Prueba con otra palabra o revisa el listado completo.
                     @elseif($activeCategory)
-                        Aun no se han publicado noticias en esta categoria. Puedes consultar el resto de la sala de prensa.
+                        Aún no se han publicado noticias en esta categoría. Puedes consultar el resto de la sala de prensa.
                     @else
-                        Aun no se han publicado noticias. Vuelve pronto: aqui se publican los comunicados oficiales de la institucion.
+                        Aún no se han publicado noticias. Vuelve pronto: aquí se publican los comunicados oficiales de la institución.
                     @endif
                 </p>
                 @if($q || $activeCategory)
-                    <a href="{{ route('news.index') }}" class="btn-ghost mt-6">Ver todas las noticias</a>
+                    <a href="{{ route('news.index') }}" wire:navigate class="btn-ghost mt-6">Ver todas las noticias</a>
                 @endif
             </div>
         @else
@@ -107,7 +107,7 @@
             <div class="mt-8 flex flex-col gap-4">
                 @foreach($news as $item)
                     <article class="b-list group">
-                        <a href="{{ route('news.show', $item->slug) }}" class="b-list-thumb" tabindex="-1" aria-hidden="true">
+                        <a href="{{ route('news.show', $item->slug) }}" wire:navigate class="b-list-thumb" tabindex="-1" aria-hidden="true">
                             @if($item->cover_url)
                                 <img src="{{ $item->cover_url }}"
                                      alt="{{ $item->cover_image_alt ?: $item->title }}"
@@ -131,11 +131,11 @@
                                 </span>
                             @endif
 
-                            {{-- Jerarquia de la fila: titulo 18px > entradilla 14px
-                                 > metadato 12px. Antes titulo y entradilla se
-                                 separaban poco y el bloque se leia plano. --}}
+                            {{-- Jerarquía de la fila: título 18px > entradilla 14px
+                                 > metadato 12px. Antes título y entradilla se
+                                 separaban poco y el bloque se leía plano. --}}
                             <h2 class="font-serif text-[18px] leading-[1.25] text-brand-navy">
-                                <a href="{{ route('news.show', $item->slug) }}"
+                                <a href="{{ route('news.show', $item->slug) }}" wire:navigate
                                    class="rounded-pill transition-colors group-hover:text-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card">
                                     {{ $item->title }}
                                 </a>
@@ -157,7 +157,7 @@
                 @endforeach
             </div>
 
-            {{-- Paginacion --}}
+            {{-- Paginación --}}
             <div class="mt-10">
                 {{ $news->links() }}
             </div>

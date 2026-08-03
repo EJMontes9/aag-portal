@@ -20,16 +20,16 @@ class FlightsBlock extends BlockType
             ->icon(self::icon())
             ->schema([
                 Forms\Components\TextInput::make('kicker')->label('Kicker')->default('ESTADO DE VUELOS'),
-                Forms\Components\TextInput::make('title')->label('Titulo')->default('Consulta llegadas y salidas en tiempo real.'),
-                Forms\Components\Textarea::make('subtitle')->label('Descripcion')->rows(2),
-                Forms\Components\TextInput::make('cta_label')->label('Etiqueta boton')->default('Ir al portal de vuelos'),
+                Forms\Components\TextInput::make('title')->label('Título')->default('Consulta llegadas y salidas en tiempo real.'),
+                Forms\Components\Textarea::make('subtitle')->label('Descripción')->rows(2),
+                Forms\Components\TextInput::make('cta_label')->label('Etiqueta botón')->default('Ir al portal de vuelos'),
                 Forms\Components\TextInput::make('cta_url')->label('URL externa')->default('https://tagsa.aero/vuelos'),
-                Forms\Components\TextInput::make('cta_note')->label('Nota junto al boton'),
+                Forms\Components\TextInput::make('cta_note')->label('Nota junto al botón'),
                 Forms\Components\FileUpload::make('image')
                     ->label('Imagen del bloque')
                     ->helperText('Si no se define, se usa la imagen del aeropuerto por defecto.')
                     ->image()
-                    // Lista explicita: la regla "image" a secas admite SVG, que
+                    // Lista explícita: la regla "image" a secas admite SVG, que
                     // puede llevar <script> dentro y se sirve en nuestro dominio.
                     ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                     ->maxSize(4096)

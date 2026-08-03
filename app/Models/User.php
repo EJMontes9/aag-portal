@@ -14,9 +14,9 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser
 {
-    // HasApiTokens es lo que permite emitir tokens de la API publica desde el
-    // panel (ver ApiTokenResource). Solo anade una relacion y createToken(); no
-    // abre acceso a nada por si mismo: mientras API_ENABLED sea false las rutas
+    // HasApiTokens es lo que permite emitir tokens de la API pública desde el
+    // panel (ver ApiTokenResource). Solo añade una relación y createToken(); no
+    // abre acceso a nada por sí mismo: mientras API_ENABLED sea false las rutas
     // de la API ni siquiera existen.
     use HasFactory, Notifiable, HasRoles, LogsActivity, HasApiTokens;
 
@@ -56,7 +56,7 @@ class User extends Authenticatable implements FilamentUser
     /**
      * Roles que pueden entrar al panel.
      *
-     * Esto solo abre la puerta; QUE puede hacer cada uno dentro lo deciden los
+     * Esto solo abre la puerta; QUÉ puede hacer cada uno dentro lo deciden los
      * permisos (ver RolePermissionSeeder). Un usuario sin ninguno de estos
      * roles no llega ni a la pantalla de inicio del panel.
      */

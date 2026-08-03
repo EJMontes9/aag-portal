@@ -6,12 +6,12 @@
 
      Las dos versiones anteriores fallaban por motivos distintos: la primera
      pintaba horarios de ejemplo, que un pasajero puede confundir con datos
-     reales; la segunda los tapaba con un velo que repetia el mismo mensaje
-     que ya esta en la columna de texto, a un palmo de distancia.
+     reales; la segunda los tapaba con un velo que repetía el mismo mensaje
+     que ya está en la columna de texto, a un palmo de distancia.
 
      La AAG no expone datos de vuelos propios —la fuente es el portal de
-     TAGSA, al que lleva el boton—, asi que aqui no hay nada que tabular. Una
-     imagen institucional acompana el mensaje sin competir con el y sin
+     TAGSA, al que lleva el botón—, así que aquí no hay nada que tabular. Una
+     imagen institucional acompaña el mensaje sin competir con él y sin
      arriesgar que nadie lea una hora que no existe.
 
      La imagen se puede cambiar desde el admin; si no hay ninguna cargada se
@@ -44,7 +44,7 @@
             @endif
             @if($block->get('cta_label'))
                 <div class="mt-7 flex flex-wrap items-center gap-4">
-                    {{-- Sobre fondo oscuro la accion principal de B es el amarillo. --}}
+                    {{-- Sobre fondo oscuro la acción principal de B es el amarillo. --}}
                     <a href="{{ $block->get('cta_url', '#') }}" target="_blank" rel="noopener" class="btn-white">
                         {{ $block->get('cta_label') }}
                         {{-- Icono de enlace externo: avisa de que se sale del portal. --}}

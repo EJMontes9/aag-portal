@@ -18,7 +18,7 @@ class MenuItem extends Model
 
     protected static function booted(): void
     {
-        // Cuando se modifica/borra cualquier item, invalidar la cache del menu padre.
+        // Cuando se modifica/borra cualquier item, invalidar la caché del menú padre.
         // Sin esto, Menu::byLocation() cachea forever y los cambios no se reflejan.
         $bust = function (MenuItem $item) {
             $location = $item->menu?->location;

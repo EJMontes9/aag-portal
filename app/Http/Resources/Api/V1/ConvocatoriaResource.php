@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Storage;
 /**
  * Convocatoria completa (DETALLE).
  *
- * Anade requisitos, cronograma y documentos: exactamente lo que la ficha
- * publica ya muestra en /convocatorias/{slug}.
+ * Añade requisitos, cronograma y documentos: exactamente lo que la ficha
+ * pública ya muestra en /convocatorias/{slug}.
  */
 class ConvocatoriaResource extends JsonResource
 {
@@ -43,13 +43,13 @@ class ConvocatoriaResource extends JsonResource
      * Documentos descargables, con URL absoluta ya resuelta.
      *
      * Se devuelve la URL y no la ruta interna de almacenamiento: la ruta no le
-     * sirve de nada a un consumidor externo y describe como esta organizado el
+     * sirve de nada a un consumidor externo y describe cómo está organizado el
      * disco por dentro. El PDF de bases se funde en la misma lista porque para
-     * quien consume es un documento mas; que en la base de datos viva en su
+     * quien consume es un documento más; que en la base de datos viva en su
      * propia columna es un detalle nuestro.
      *
      * Las entradas sin archivo se descartan en vez de devolverse con url null:
-     * un documento que no se puede descargar no es informacion, es ruido.
+     * un documento que no se puede descargar no es información, es ruido.
      */
     private function documentos(): array
     {
@@ -65,7 +65,7 @@ class ConvocatoriaResource extends JsonResource
 
         foreach ((array) $this->resource->documentos as $doc) {
             // El formulario ha usado dos nombres de clave a lo largo del
-            // tiempo; la vista publica contempla los dos y aqui se hace igual.
+            // tiempo; la vista pública contempla los dos y aquí se hace igual.
             $archivo = $doc['archivo'] ?? $doc['path'] ?? '';
 
             if (! $archivo) {

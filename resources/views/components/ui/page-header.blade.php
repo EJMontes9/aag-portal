@@ -1,17 +1,17 @@
-{{-- Cabecera de pagina interior de la Propuesta B.
+{{-- Cabecera de página interior de la Propuesta B.
 
      Caja BLANCA a todo el ancho, cerrada abajo por el filete amarillo de 3px, y
-     dentro: rotulo opcional, titular en Neulis Black navy de 28px EN MAYUSCULAS
+     dentro: rótulo opcional, titular en Neulis Black navy de 28px EN MAYÚSCULAS
      y bajada de 13px en gris.
 
      El filete amarillo lo aporta ya la propia clase .page-header (que hace
-     @apply rule-accent en app.css), por eso no se repite .rule-accent aqui:
-     duplicarla no anade nada y hace creer que son dos reglas distintas.
+     @apply rule-accent en app.css), por eso no se repite .rule-accent aquí:
+     duplicarla no añade nada y hace creer que son dos reglas distintas.
 
      Slots:
        kicker / title / description  -> como props o como slots
-       meta                          -> fila de chips ENCIMA del titulo
-                                        (estado de convocatoria, ubicacion...)
+       meta                          -> fila de chips ENCIMA del título
+                                        (estado de convocatoria, ubicación...)
        (slot por defecto)            -> lo que haga falta debajo de la bajada --}}
 @props([
     'title',
@@ -20,8 +20,8 @@
 ])
 
 <header {{ $attributes->merge(['class' => 'page-header']) }}>
-    {{-- Se sube el padding vertical un escalon (24->28px y 32->40px): la cabecera
-         es el primer bloque de la pagina y necesita mas aire para separar el
+    {{-- Se sube el padding vertical un escalón (24->28px y 32->40px): la cabecera
+         es el primer bloque de la página y necesita más aire para separar el
          titular del filete amarillo y de la miga de pan que la precede. --}}
     <div class="section-wrap !py-7 md:!py-10">
         @isset($meta)
@@ -40,7 +40,7 @@
 
         @if($description)
             {{-- La bajada es texto de lectura, no un metadato: sube a 15px y la
-                 medida se limita en "ch" (no en max-w-3xl) para que la linea
+                 medida se limita en "ch" (no en max-w-3xl) para que la línea
                  quede en 65-75 caracteres pese a lo estrecha que es la
                  condensada, que con un ancho fijo en px se pasa de largo. --}}
             <p class="mt-3 max-w-[70ch] text-[15px] leading-[1.65] text-muted">

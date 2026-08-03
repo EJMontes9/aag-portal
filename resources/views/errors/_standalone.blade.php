@@ -1,19 +1,19 @@
 {{--
-    Pagina de error AUTONOMA para 500 y 503.
+    Página de error AUTÓNOMA para 500 y 503.
 
     Deliberadamente NO extiende layouts.app ni llama a settings(), Menu ni
-    ningun modelo: estos dos errores se disparan justo cuando algo de eso
-    puede estar caido (base de datos inaccesible, cache corrupta, sitio en
-    mantenimiento). Si la plantilla de error dependiera de la BD, fallaria a su
-    vez y Laravel acabaria mostrando su pantalla cruda por defecto, que es
+    ningún modelo: estos dos errores se disparan justo cuando algo de eso
+    puede estar caído (base de datos inaccesible, caché corrupta, sitio en
+    mantenimiento). Si la plantilla de error dependiera de la BD, fallaría a su
+    vez y Laravel acabaría mostrando su pantalla cruda por defecto, que es
     exactamente lo que se quiere evitar.
 
     Por el mismo motivo los colores van escritos literales en vez de leerse de
-    los tokens: son los institucionales de la Propuesta B, y aqui no hay
-    ningun sitio de donde leerlos. Las fuentes se sirven desde /fonts, que es
+    los tokens: son los institucionales de la Propuesta B, y aquí no hay
+    ningún sitio de donde leerlos. Las fuentes se sirven desde /fonts, que es
     Apache directamente, sin PHP de por medio.
 
-    Parametros: $code, $titulo, $mensaje, $nota (opcional)
+    Parámetros: $code, $titulo, $mensaje, $nota (opcional)
 --}}
 <!DOCTYPE html>
 <html lang="es">

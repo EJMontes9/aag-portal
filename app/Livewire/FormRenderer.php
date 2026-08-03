@@ -151,7 +151,7 @@ class FormRenderer extends Component
 
             // Tipo
             match ($field->type) {
-                // Igual que en el boletin: 'email:rfc,dns' valida el formato y
+                // Igual que en el boletín: 'email:rfc,dns' valida el formato y
                 // que el dominio exista; CorreoSeguro cierra el CRLF. Los dos.
                 'email'    => array_push($fieldRules, 'email:rfc,dns', new CorreoSeguro),
                 'tel'      => $fieldRules[] = 'regex:/^[+\d\s\-().]{6,25}$/',

@@ -6,7 +6,7 @@ class BlockRegistry
 {
     /**
      * Registro central de los tipos de bloque disponibles.
-     * Para agregar un nuevo tipo solo crea la clase y registrala aqui.
+     * Para agregar un nuevo tipo solo crea la clase y regístrala aquí.
      */
     public static function types(): array
     {

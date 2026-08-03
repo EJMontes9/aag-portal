@@ -12,7 +12,7 @@ use Filament\Tables\Table;
 class ItemsRelationManager extends RelationManager
 {
     protected static string $relationship = 'allItems';
-    protected static ?string $title = 'Items del menu';
+    protected static ?string $title = 'Items del menú';
     protected static ?string $modelLabel = 'item';
     protected static ?string $pluralModelLabel = 'items';
 
@@ -25,7 +25,7 @@ class ItemsRelationManager extends RelationManager
                 ->maxLength(255),
             Forms\Components\TextInput::make('url')
                 ->label('URL')
-                ->helperText('Ruta relativa (ej: /noticias) o URL completa. Dejar vacio si es un dropdown (solo grupo de submenus).'),
+                ->helperText('Ruta relativa (ej: /noticias) o URL completa. Dejar vacío si es un dropdown (solo grupo de submenús).'),
             Forms\Components\Select::make('parent_id')
                 ->label('Item padre (opcional)')
                 ->options(fn () => MenuItem::where('menu_id', $this->ownerRecord->id)
@@ -34,7 +34,7 @@ class ItemsRelationManager extends RelationManager
                     ->pluck('label', 'id'))
                 ->searchable()
                 ->placeholder('Sin padre (item de primer nivel)')
-                ->helperText('Si selecciona un padre, este item aparecera como submenu desplegable.'),
+                ->helperText('Si selecciona un padre, este item aparecerá como submenú desplegable.'),
             Forms\Components\Select::make('target')
                 ->label('Abrir en')
                 ->options(['_self' => 'Misma ventana', '_blank' => 'Nueva ventana'])
@@ -47,7 +47,7 @@ class ItemsRelationManager extends RelationManager
                 ->label('Orden')
                 ->numeric()
                 ->default(0)
-                ->helperText('Menor numero aparece primero.'),
+                ->helperText('Menor número aparece primero.'),
             Forms\Components\Toggle::make('is_active')
                 ->label('Activo')
                 ->default(true),
@@ -72,7 +72,7 @@ class ItemsRelationManager extends RelationManager
                     ->color(fn ($state) => $state ? 'gray' : 'warning'),
                 Tables\Columns\TextColumn::make('parent.label')
                     ->label('Padre')
-                    ->placeholder('Raiz')
+                    ->placeholder('Raíz')
                     ->badge()
                     ->color('gray'),
                 Tables\Columns\TextColumn::make('sort_order')
@@ -88,7 +88,7 @@ class ItemsRelationManager extends RelationManager
                     ->label('Solo de primer nivel')
                     ->query(fn ($q) => $q->whereNull('parent_id')),
                 Tables\Filters\Filter::make('only_children')
-                    ->label('Solo submenus')
+                    ->label('Solo submenús')
                     ->query(fn ($q) => $q->whereNotNull('parent_id')),
             ])
             ->headerActions([

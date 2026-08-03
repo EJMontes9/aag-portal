@@ -24,10 +24,10 @@ class ProjectResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Section::make('Datos basicos')
+            Forms\Components\Section::make('Datos básicos')
                 ->schema([
                     Forms\Components\TextInput::make('title')
-                        ->label('Titulo')
+                        ->label('Título')
                         ->required()
                         ->maxLength(255)
                         ->live(onBlur: true)
@@ -40,7 +40,7 @@ class ProjectResource extends Resource
                         ->label('Slug (URL)')
                         ->maxLength(255)
                         ->unique(ignoreRecord: true)
-                        ->helperText('Se autogenera del titulo.'),
+                        ->helperText('Se autogenera del título.'),
                     Forms\Components\Textarea::make('summary')
                         ->label('Resumen corto')
                         ->rows(2)
@@ -48,12 +48,12 @@ class ProjectResource extends Resource
                         ->helperText('Aparece en cards del listado.')
                         ->columnSpanFull(),
                     Forms\Components\RichEditor::make('description')
-                        ->label('Descripcion completa')
+                        ->label('Descripción completa')
                         ->disableToolbarButtons(['attachFiles'])
                         ->columnSpanFull(),
                 ])->columns(2),
 
-            Forms\Components\Section::make('Imagen principal y galeria')
+            Forms\Components\Section::make('Imagen principal y galería')
                 ->schema([
                     Forms\Components\FileUpload::make('cover_image')
                         ->label('Imagen de portada')
@@ -63,9 +63,9 @@ class ProjectResource extends Resource
                         ->directory('projects/covers')
                         ->disk('public')
                         ->maxSize(4096)
-                        ->helperText('JPG/PNG, max 4MB. Recomendado 1600x900.'),
+                        ->helperText('JPG/PNG, máx 4MB. Recomendado 1600x900.'),
                     Forms\Components\FileUpload::make('gallery')
-                        ->label('Galeria de fotos')
+                        ->label('Galería de fotos')
                         ->image()
                         ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
                         ->imageEditor()
@@ -75,7 +75,7 @@ class ProjectResource extends Resource
                         ->disk('public')
                         ->maxSize(4096)
                         ->maxFiles(20)
-                        ->helperText('Hasta 20 imagenes. Se mostraran en lightbox.'),
+                        ->helperText('Hasta 20 imágenes. Se mostrarán en lightbox.'),
                 ])->columns(2),
 
             Forms\Components\Section::make('Estado y cronograma')
@@ -93,11 +93,11 @@ class ProjectResource extends Resource
                         ->label('Presupuesto')
                         ->maxLength(100)
                         ->placeholder('Ej: USD 2.5M')
-                        ->helperText('Texto libre, no se procesa como numero.'),
+                        ->helperText('Texto libre, no se procesa como número.'),
                     Forms\Components\DatePicker::make('start_date')->label('Fecha de inicio'),
-                    Forms\Components\DatePicker::make('end_date')->label('Fecha de finalizacion'),
+                    Forms\Components\DatePicker::make('end_date')->label('Fecha de finalización'),
                     Forms\Components\TextInput::make('location')
-                        ->label('Ubicacion')
+                        ->label('Ubicación')
                         ->maxLength(150)
                         ->columnSpanFull(),
                 ])->columns(2),
@@ -120,7 +120,7 @@ class ProjectResource extends Resource
                         ->columnSpanFull(),
                 ]),
 
-            Forms\Components\Section::make('Publicacion y SEO')
+            Forms\Components\Section::make('Publicación y SEO')
                 ->collapsed()
                 ->schema([
                     Forms\Components\Toggle::make('is_published')->label('Publicado')->default(true),
@@ -162,7 +162,7 @@ class ProjectResource extends Resource
                         default => ucfirst($state),
                     }),
                 Tables\Columns\TextColumn::make('location')
-                    ->label('Ubicacion')
+                    ->label('Ubicación')
                     ->placeholder('—')
                     ->limit(30),
                 Tables\Columns\TextColumn::make('start_date')
@@ -171,7 +171,7 @@ class ProjectResource extends Resource
                     ->placeholder('—')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('end_date')
-                    ->label('Finalizacion')
+                    ->label('Finalización')
                     ->date('d M Y')
                     ->placeholder('—')
                     ->toggleable(),

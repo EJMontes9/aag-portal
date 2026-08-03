@@ -25,9 +25,9 @@
     <title>{{ $title ?? 'Editor visual' }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    {{-- Neulis Black y Barlow Condensed se auto-hospedan via @font-face en
-         app.css, asi que aqui NO se pide nada a Google Fonts: Neulis ni
-         siquiera existe en su catalogo y la peticion fallaba. Solo la mono
+    {{-- Neulis Black y Barlow Condensed se auto-hospedan vía @font-face en
+         app.css, así que aquí NO se pide nada a Google Fonts: Neulis ni
+         siquiera existe en su catálogo y la petición fallaba. Solo la mono
          (opcional, de uso marginal en el editor) sigue viniendo de Google. --}}
     @if($fontMono && $fontMono !== 'JetBrains Mono')
         <link rel="preconnect" href="https://fonts.googleapis.com">

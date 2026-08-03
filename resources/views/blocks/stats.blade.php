@@ -11,8 +11,8 @@
     };
     $onNavy = $bg === 'navy';
 
-    // Clases de rejilla ESTATICAS: Tailwind escanea el codigo fuente en tiempo
-    // de build, asi que una clase construida en runtime ("md:grid-cols-{$n}")
+    // Clases de rejilla ESTÁTICAS: Tailwind escanea el código fuente en tiempo
+    // de build, así que una clase construida en runtime ("md:grid-cols-{$n}")
     // nunca llega a compilarse. Hay que escribirlas literales.
     $cols = min(count($items), 4);
     $gridClass = match($cols) {
@@ -25,10 +25,10 @@
 
 {{-- Cifras institucionales.
 
-     La maqueta B no incluye ningun componente de estadisticas (el unico que
-     existe entre las propuestas es el de la C). Se diseña aqui con el
+     La maqueta B no incluye ningún componente de estadísticas (el único que
+     existe entre las propuestas es el de la C). Se diseña aquí con el
      vocabulario de B: caja blanca, borde 1px marcado, radio 4px, sin sombra;
-     cifra en Neulis Black navy y rotulo condensado en gris. --}}
+     cifra en Neulis Black navy y rótulo condensado en gris. --}}
 <section class="{{ $bgClass }}">
     <div class="section-wrap">
         @if($block->get('title') || $block->get('kicker'))
@@ -46,7 +46,7 @@
         @endif
 
         {{-- Cada cifra va rematada por el filete amarillo superior, el mismo
-             recurso que marca las bandas del header. Da jerarquia sin recurrir
+             recurso que marca las bandas del header. Da jerarquía sin recurrir
              a sombras ni a fondos de color, que no pertenecen a B. --}}
         <div class="grid {{ $gridClass }} gap-4">
             @foreach($items as $item)

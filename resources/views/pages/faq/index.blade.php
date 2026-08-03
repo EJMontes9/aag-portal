@@ -1,12 +1,12 @@
 @extends('layouts.app', [
     'title' => 'Preguntas frecuentes',
-    'description' => 'Resuelve tus dudas sobre el aeropuerto, viajes, tramites y servicios de la Autoridad Aeroportuaria de Guayaquil.',
+    'description' => 'Resuelve tus dudas sobre el aeropuerto, viajes, trámites y servicios de la Autoridad Aeroportuaria de Guayaquil.',
 ])
 
 {{-- ══ JSON-LD: FAQPage ══════════════════════════════════════════════════════════
      Google muestra las preguntas desplegables directamente en el SERP.
      Solo incluimos FAQs cuando no hay filtro activo (para evitar duplicados).
-     El BreadcrumbList NO va aqui: lo emite <x-ui.breadcrumb-bar> mas abajo.
+     El BreadcrumbList NO va aquí: lo emite <x-ui.breadcrumb-bar> más abajo.
 ─────────────────────────────────────────────────────────────────────────────── --}}
 @if(!$activeCategory && !$q && $faqs->isNotEmpty())
 @push('json-ld')
@@ -40,24 +40,24 @@
 <x-ui.page-header
     kicker="Centro de ayuda"
     title="Preguntas frecuentes"
-    description="Encuentra respuestas rapidas sobre el aeropuerto, viajes, tramites institucionales y servicios."
+    description="Encuentra respuestas rápidas sobre el aeropuerto, viajes, trámites institucionales y servicios."
     data-aos="fade-up" />
 
 <section class="bg-bg">
     <div class="section-wrap">
-        {{-- Filtros + busqueda --}}
-        {{-- Barra de filtros identica a la de noticias (mismos tamanos, mismo
+        {{-- Filtros + búsqueda --}}
+        {{-- Barra de filtros idéntica a la de noticias (mismos tamaños, mismo
              aria-current, mismo anillo de foco): las dos secciones ofrecen la
-             misma funcion y no deben verse ni comportarse distinto. --}}
+             misma función y no deben verse ni comportarse distinto. --}}
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-            <nav class="flex flex-wrap gap-2" aria-label="Filtrar por categoria">
-                <a href="{{ route('faq.index') }}"
+            <nav class="flex flex-wrap gap-2" aria-label="Filtrar por categoría">
+                <a href="{{ route('faq.index') }}" wire:navigate
                    @if(! $activeCategory) aria-current="page" @endif
                    class="pill {{ ! $activeCategory ? 'bg-brand-navy text-on-navy' : 'hover:bg-brand-soft/70 hover:text-brand-primary' }} transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
                     Todas
                 </a>
                 @foreach($categories as $cat)
-                    <a href="{{ route('faq.index', ['categoria' => $cat->slug]) }}"
+                    <a href="{{ route('faq.index', ['categoria' => $cat->slug]) }}" wire:navigate
                        @if($activeCategory === $cat->slug) aria-current="page" @endif
                        class="pill {{ $activeCategory === $cat->slug ? 'bg-brand-navy text-on-navy' : 'hover:bg-brand-soft/70 hover:text-brand-primary' }} transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
                         {{ $cat->name }}
@@ -65,7 +65,7 @@
                 @endforeach
             </nav>
 
-            <form method="GET" action="{{ route('faq.index') }}" class="flex items-center gap-3 w-full lg:w-auto">
+            <form method="GET" action="{{ route('faq.index') }}" wire:navigate class="flex items-center gap-3 w-full lg:w-auto">
                 @if($activeCategory)
                     <input type="hidden" name="categoria" value="{{ $activeCategory }}">
                 @endif
@@ -82,17 +82,17 @@
                            class="pl-10 pr-4 py-2.5 rounded-pill border border-border bg-card text-[15px] focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary w-full lg:w-72">
                 </div>
                 @if($q)
-                    <a href="{{ route('faq.index', ['categoria' => $activeCategory]) }}"
+                    <a href="{{ route('faq.index', ['categoria' => $activeCategory]) }}" wire:navigate
                        class="shrink-0 rounded-pill text-[12px] uppercase font-bold tracking-[0.07em] text-muted hover:text-brand-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg">Limpiar</a>
                 @endif
             </form>
         </div>
 
-        {{-- Acordeon agrupado por categoria --}}
+        {{-- Acordeón agrupado por categoría --}}
         @if($faqs->isEmpty())
-            {{-- El vacio de una FAQ es el peor momento para dejar al usuario
+            {{-- El vacío de una FAQ es el peor momento para dejar al usuario
                  solo: se le da la salida (quitar filtro) y el canal de contacto,
-                 que es justo lo que venia a buscar. --}}
+                 que es justo lo que venía a buscar. --}}
             <div class="mt-10 px-5 text-center py-16 rounded-card border border-dashed border-border bg-card">
                 <svg class="w-10 h-10 mx-auto text-muted/60" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"/>
@@ -100,16 +100,16 @@
                 <p class="mt-4 font-serif text-page-title uppercase text-brand-navy">No encontramos respuestas</p>
                 <p class="mt-3 mx-auto max-w-[60ch] text-[15px] leading-[1.6] text-muted">
                     @if($q)
-                        No hay resultados para <strong class="font-semibold text-fg">&ldquo;{{ $q }}&rdquo;</strong>. Prueba con otra palabra, revisa todas las preguntas o escribenos directamente.
+                        No hay resultados para <strong class="font-semibold text-fg">&ldquo;{{ $q }}&rdquo;</strong>. Prueba con otra palabra, revisa todas las preguntas o escríbenos directamente.
                     @else
-                        Aun no hay preguntas publicadas en esta categoria. Si tu duda es urgente, puedes escribirnos.
+                        Aún no hay preguntas publicadas en esta categoría. Si tu duda es urgente, puedes escribirnos.
                     @endif
                 </p>
                 <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
                     @if($q || $activeCategory)
-                        <a href="{{ route('faq.index') }}" class="btn-ghost">Ver todas las preguntas</a>
+                        <a href="{{ route('faq.index') }}" wire:navigate class="btn-ghost">Ver todas las preguntas</a>
                     @endif
-                    <a href="/contacto" class="btn-primary">Ir a contacto</a>
+                    <a href="/contacto" wire:navigate class="btn-primary">Ir a contacto</a>
                 </div>
             </div>
         @else
@@ -120,7 +120,7 @@
                     @endphp
 
                     @if($cat)
-                        {{-- Rotulo de seccion de B: 18px Neulis en mayusculas, con el
+                        {{-- Rótulo de sección de B: 18px Neulis en mayúsculas, con el
                              filete amarillo debajo haciendo de separador. --}}
                         <h2 class="font-serif text-lg uppercase text-brand-navy rule-accent pb-2.5 mt-10 first:mt-0 mb-5">
                             {{ $cat->name }}
@@ -137,12 +137,12 @@
                                         :aria-expanded="openIdx === '{{ $idx }}'"
                                         aria-controls="faq-panel-{{ $idx }}"
                                         {{-- El anillo va por dentro (ring-inset): la caja
-                                             del acordeon esta pegada a la siguiente y un
-                                             anillo con offset se solaparia con ella. --}}
+                                             del acordeón está pegada a la siguiente y un
+                                             anillo con offset se solaparía con ella. --}}
                                         class="w-full flex items-start justify-between gap-4 text-left px-4 py-4 transition-colors hover:bg-brand-soft/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-primary">
                                     <span class="text-[16px] font-bold leading-[1.35] text-brand-navy">{{ $faq->question }}</span>
-                                    {{-- El indicador de B es un CARACTER (− / +), no un icono:
-                                         el acordeon no gira ni anima nada, solo cambia el signo. --}}
+                                    {{-- El indicador de B es un CARÁCTER (− / +), no un icono:
+                                         el acordeón no gira ni anima nada, solo cambia el signo. --}}
                                     <span aria-hidden="true"
                                           class="shrink-0 w-4 text-center text-[20px] font-bold leading-[1.35] text-brand-primary"
                                           x-text="openIdx === '{{ $idx }}' ? '−' : '+'">+</span>
@@ -173,15 +173,15 @@
         @endif
 
         {{-- CTA contacto --}}
-        {{-- El CTA solo tiene sentido cuando SI hay respuestas listadas: en el
-             estado vacio ya se ofrece el mismo boton de contacto y repetirlo
-             dejaba dos llamadas identicas a un palmo una de otra. --}}
+        {{-- El CTA solo tiene sentido cuando SÍ hay respuestas listadas: en el
+             estado vacío ya se ofrece el mismo botón de contacto y repetirlo
+             dejaba dos llamadas idénticas a un palmo una de otra. --}}
         @if($faqs->isNotEmpty())
         <div class="mt-12 max-w-3xl card-surface rule-accent p-8 md:p-10 text-center">
             <span class="kicker">¿No encontraste tu respuesta?</span>
             <h2 class="font-serif text-section-title uppercase text-brand-navy mt-2.5">Conversemos directamente</h2>
-            <p class="mt-3 mx-auto max-w-[60ch] text-[15px] leading-[1.6] text-muted">Nuestro equipo responde consultas, sugerencias y solicitudes de informacion publica.</p>
-            <a href="/contacto" class="btn-primary mt-6">Ir a contacto</a>
+            <p class="mt-3 mx-auto max-w-[60ch] text-[15px] leading-[1.6] text-muted">Nuestro equipo responde consultas, sugerencias y solicitudes de información pública.</p>
+            <a href="/contacto" wire:navigate class="btn-primary mt-6">Ir a contacto</a>
         </div>
         @endif
     </div>

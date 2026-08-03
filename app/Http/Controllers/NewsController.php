@@ -24,9 +24,9 @@ class NewsController extends Controller
             }
         }
 
-        // La busqueda se acota a 80 caracteres: mas alla no aporta nada y evita
+        // La búsqueda se acota a 80 caracteres: más allá no aporta nada y evita
         // que se manden cadenas enormes que encarecen el LIKE innecesariamente.
-        // (El valor va como binding de PDO, asi que no hay inyeccion posible;
+        // (El valor va como binding de PDO, así que no hay inyección posible;
         //  esto es por coste, no por seguridad de la consulta.)
         $q = trim((string) $request->get('q'));
         $q = $q !== '' ? mb_substr($q, 0, 80) : '';
@@ -39,7 +39,7 @@ class NewsController extends Controller
         }
 
         // El link en el <head> anuncia el feed con ?format=rss (ver layouts/app.blade.php).
-        // Si no se atiende aqui, ese enlace queda roto y los lectores de feeds reciben HTML.
+        // Si no se atiende aquí, ese enlace queda roto y los lectores de feeds reciben HTML.
         if ($request->get('format') === 'rss') {
             $feedItems = News::query()
                 ->published()
@@ -68,6 +68,7 @@ class NewsController extends Controller
         $item->incrementViews();
 
         $related = News::published()
+            ->with('category', 'author')
             ->where('id', '!=', $item->id)
             ->when($item->category_id, fn ($q) => $q->where('category_id', $item->category_id))
             ->latest('published_at')

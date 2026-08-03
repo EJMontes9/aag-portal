@@ -3,7 +3,7 @@
     'description' => 'Procesos de selección y avisos institucionales de la Autoridad Aeroportuaria de Guayaquil.',
 ])
 
-{{-- El BreadcrumbList lo emite <x-ui.breadcrumb-bar>, no se duplica aqui. --}}
+{{-- El BreadcrumbList lo emite <x-ui.breadcrumb-bar>, no se duplica aquí. --}}
 
 @section('content')
 @php
@@ -32,15 +32,15 @@
             {{-- Filas de listado de B (misma caja que .b-list: blanca, borde
                  marcado, padding 20px, hover solo de borde). Se escriben las
                  utilidades a mano en vez de usar .b-list porque esa clase ya
-                 trae "flex gap-5" para el thumb lateral, y aqui el contenido va
+                 trae "flex gap-5" para el thumb lateral, y aquí el contenido va
                  apilado: una convocatoria no tiene portada y un placeholder de
-                 160x110 repetido en cada fila solo anadiria ruido. --}}
+                 160x110 repetido en cada fila solo añadiría ruido. --}}
             <div class="flex flex-col gap-3">
                 @foreach($vigentes as $conv)
                 @php
                     $docTotal = count((array)($conv->documentos ?? [])) + ($conv->bases_pdf ? 1 : 0);
                 @endphp
-                <a href="{{ route('convocatorias.show', $conv->slug) }}"
+                <a href="{{ route('convocatorias.show', $conv->slug) }}" wire:navigate
                    class="group block rounded-card border border-border bg-card p-5 transition-colors duration-200 hover:border-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
                    data-aos="fade-up">
                     <div class="flex flex-wrap items-center gap-2">
@@ -48,7 +48,7 @@
                         <span class="pill">{{ $conv->tipo === 'aviso' ? 'Aviso' : 'Proceso' }}</span>
                     </div>
 
-                    {{-- Misma jerarquia que la fila de noticias: titulo 18px,
+                    {{-- Misma jerarquía que la fila de noticias: título 18px,
                          resumen 14px, metadatos 12px. --}}
                     <h3 class="mt-2.5 font-serif text-[18px] leading-[1.25] text-brand-navy transition-colors group-hover:text-brand-primary">
                         {{ $conv->title }}
@@ -78,7 +78,7 @@
                         </span>
                         @endif
                         {{-- sm:ml-auto y no ml-auto: por debajo de 640px la fila de
-                             metadatos ya va a dos lineas y empujar este rotulo a
+                             metadatos ya va a dos líneas y empujar este rótulo a
                              la derecha lo dejaba solo y descolgado. --}}
                         <span class="w-full sm:w-auto sm:ml-auto text-[12px] font-bold uppercase tracking-[0.07em] text-brand-primary">
                             Ver detalles &rsaquo;
@@ -89,8 +89,8 @@
             </div>
         </section>
         @else
-        {{-- El vacio aqui es un estado normal (no siempre hay procesos abiertos):
-             se explica que significa y se orienta a donde mirar, en vez de
+        {{-- El vacío aquí es un estado normal (no siempre hay procesos abiertos):
+             se explica qué significa y se orienta a dónde mirar, en vez de
              dejar solo el titular negativo. --}}
         <div class="px-5 text-center py-16 rounded-card border border-dashed border-border bg-card">
             <svg class="w-10 h-10 mx-auto text-muted/60 mb-3" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
@@ -98,29 +98,29 @@
             </svg>
             <p class="font-serif text-page-title uppercase text-brand-navy">No hay convocatorias vigentes</p>
             <p class="mt-3 mx-auto max-w-[60ch] text-[15px] leading-[1.6] text-muted">
-                En este momento no hay procesos ni avisos abiertos. Los nuevos se publican en esta misma pagina@if($cerradas->isNotEmpty()); mas abajo puedes consultar los procesos anteriores@endif.
+                En este momento no hay procesos ni avisos abiertos. Los nuevos se publican en esta misma página@if($cerradas->isNotEmpty()); más abajo puedes consultar los procesos anteriores@endif.
             </p>
         </div>
         @endif
 
-        {{-- Archivo historico de procesos cerrados.
-             La seccion se pinta tambien cuando el filtro no devuelve nada: si
-             desapareciera, el usuario que acaba de elegir un anio se quedaria
+        {{-- Archivo histórico de procesos cerrados.
+             La sección se pinta también cuando el filtro no devuelve nada: si
+             desapareciera, el usuario que acaba de elegir un año se quedaría
              sin el desplegable para corregirlo. --}}
         @if($cerradas->isNotEmpty() || $anio)
         <section class="mt-10" id="archivo">
             <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-5">
                 <h2 class="font-serif text-lg uppercase text-brand-navy rule-accent pb-2.5 mb-0">Procesos anteriores</h2>
 
-                {{-- Formulario GET con boton visible en vez de auto-submit por JS:
+                {{-- Formulario GET con botón visible en vez de auto-submit por JS:
                      el filtro sigue funcionando sin JavaScript, que es lo que se
-                     espera de un archivo publico consultable. --}}
+                     espera de un archivo público consultable. --}}
                 @if($anios->isNotEmpty())
-                <form method="GET" action="{{ route('convocatorias.index') }}" class="flex items-center gap-2.5">
+                <form method="GET" action="{{ route('convocatorias.index') }}" wire:navigate class="flex items-center gap-2.5">
                     @if($tipo)
                         <input type="hidden" name="tipo" value="{{ $tipo }}">
                     @endif
-                    <label for="conv-anio" class="text-[12px] font-bold uppercase tracking-[0.07em] text-muted shrink-0">Anio</label>
+                    <label for="conv-anio" class="text-[12px] font-bold uppercase tracking-[0.07em] text-muted shrink-0">Año</label>
                     <select name="anio" id="conv-anio"
                             class="rounded-pill border border-border bg-card px-4 py-2.5 text-[15px] num-tabular focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary">
                         <option value="">Todos</option>
@@ -137,17 +137,17 @@
             </div>
 
             {{-- Recuento: en un archivo paginado el usuario necesita saber
-                 cuanto hay en total, no solo lo que ve en la pagina actual. --}}
+                 cuánto hay en total, no solo lo que ve en la página actual. --}}
             @if($cerradas->total() > 0)
             <p class="mb-4 text-[12px] text-muted num-tabular">
                 {{ $cerradas->total() }} proceso{{ $cerradas->total() !== 1 ? 's' : '' }}@if($anio) de {{ $anio }}@endif
-                &middot; pagina {{ $cerradas->currentPage() }} de {{ $cerradas->lastPage() }}
+                &middot; página {{ $cerradas->currentPage() }} de {{ $cerradas->lastPage() }}
             </p>
             @endif
 
             <div class="flex flex-col gap-2">
                 @foreach($cerradas as $conv)
-                <a href="{{ route('convocatorias.show', $conv->slug) }}"
+                <a href="{{ route('convocatorias.show', $conv->slug) }}" wire:navigate
                    class="group flex items-center gap-4 rounded-card border border-border bg-card px-4 py-3.5 transition-colors hover:border-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
                     <span class="chip-cerrado shrink-0">Cerrado</span>
                     <span class="flex-1 min-w-0">
@@ -166,12 +166,12 @@
                 @endforeach
             </div>
 
-            {{-- Filtro sin resultados: se ofrece la salida (quitar el anio) en
+            {{-- Filtro sin resultados: se ofrece la salida (quitar el año) en
                  vez de dejar un hueco en blanco. --}}
             @if($cerradas->isEmpty())
             <div class="px-5 text-center py-12 rounded-card border border-dashed border-border bg-card">
                 <p class="text-[15px] font-semibold text-fg">No hay procesos cerrados en {{ $anio }}</p>
-                <a href="{{ route('convocatorias.index', $tipo ? ['tipo' => $tipo] : []) }}#archivo" class="btn-ghost mt-5">Ver todo el archivo</a>
+                <a href="{{ route('convocatorias.index', $tipo ? ['tipo' => $tipo] : []) }}#archivo" wire:navigate class="btn-ghost mt-5">Ver todo el archivo</a>
             </div>
             @endif
 

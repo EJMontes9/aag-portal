@@ -30,27 +30,27 @@ class AppServiceProvider extends ServiceProvider
     }
 
     /**
-     * Declara en que proxies inversos se confia (Cloudflare, normalmente).
+     * Declara en qué proxies inversos se confía (Cloudflare, normalmente).
      *
-     * ── Por que aqui y no en bootstrap/app.php ──────────────────────────────
-     * Lo natural seria ponerlo en el closure withMiddleware() de
+     * ── Por qué aquí y no en bootstrap/app.php ──────────────────────────────
+     * Lo natural sería ponerlo en el closure withMiddleware() de
      * bootstrap/app.php, pero ese closure corre mientras se CONSTRUYE la
-     * aplicacion: el contenedor aun no tiene registrado el servicio 'config',
-     * y una llamada a config() alli lanza
+     * aplicación: el contenedor aún no tiene registrado el servicio 'config',
+     * y una llamada a config() allí lanza
      *
      *     BindingResolutionException: Target class [config] does not exist
      *
-     * que no deja arrancar NADA: el sitio entero responde 500. Aqui, en boot(),
-     * la configuracion ya esta disponible.
+     * que no deja arrancar NADA: el sitio entero responde 500. Aquí, en boot(),
+     * la configuración ya está disponible.
      *
-     * ── Que resuelve ────────────────────────────────────────────────────────
-     * Detras de un proxy, la IP que ve Apache es la del proxy y no la del
+     * ── Qué resuelve ────────────────────────────────────────────────────────
+     * Detrás de un proxy, la IP que ve Apache es la del proxy y no la del
      * visitante. Sin esto, todos los visitantes cuentan como uno solo: el
-     * limite del boletin (5 intentos por IP) se vuelve global y cinco intentos
-     * de cualquiera bloquean el formulario para todo el mundo. Ademas Laravel
+     * límite del boletín (5 intentos por IP) se vuelve global y cinco intentos
+     * de cualquiera bloquean el formulario para todo el mundo. Además Laravel
      * no detecta el HTTPS original y puede generar enlaces http://.
      *
-     * Por defecto no se confia en nadie: confiar de mas permite falsear la IP
+     * Por defecto no se confía en nadie: confiar de más permite falsear la IP
      * con una cabecera X-Forwarded-For inventada. Ver config/proxies.php.
      */
     protected function configurarProxies(): void
@@ -77,21 +77,21 @@ class AppServiceProvider extends ServiceProvider
     }
 
     /**
-     * SEGURIDAD -- Cierre por defecto de la autorizacion.
+     * SEGURIDAD -- Cierre por defecto de la autorización.
      *
      * Filament, cuando no encuentra una Policy para un modelo, DEVUELVE
      * Response::allow(): es decir, permite. El proyecto tiene 15 recursos y
-     * una sola policy (RolePolicy), asi que todos los demas quedaban abiertos
+     * una sola policy (RolePolicy), así que todos los demás quedaban abiertos
      * a cualquier usuario capaz de entrar al panel -- incluido el rol
-     * "editor". Eso incluye los datos personales de suscriptores y los envios
+     * "editor". Eso incluye los datos personales de suscriptores y los envíos
      * de formularios de contacto.
      *
-     * Filament Shield esta instalado pero nunca se activo: no hay permisos en
-     * la base de datos ni configuracion publicada, asi que no compensaba nada.
+     * Filament Shield está instalado pero nunca se activó: no hay permisos en
+     * la base de datos ni configuración publicada, así que no compensaba nada.
      *
      * Este Gate::before invierte el criterio: quien no sea super_admin solo
-     * puede hacer aquello para lo que exista un permiso explicito. Devolver
-     * null (en vez de false) deja que sigan evaluandose las policies y los
+     * puede hacer aquello para lo que exista un permiso explícito. Devolver
+     * null (en vez de false) deja que sigan evaluándose las policies y los
      * permisos de Spatie; lo que se corta es el "permitir por ausencia".
      */
     protected function configurarAutorizacion(): void
@@ -99,13 +99,13 @@ class AppServiceProvider extends ServiceProvider
         Gate::before(function ($user, string $ability, array $arguments = []) {
             $objetivo = $arguments[0] ?? null;
 
-            // EXCEPCION antes que nada: nadie borra su propia cuenta, ni
+            // EXCEPCIÓN antes que nada: nadie borra su propia cuenta, ni
             // siquiera un super_admin.
             //
-            // Esta comprobacion tiene que ir AQUI y no solo en UserPolicy:
+            // Esta comprobación tiene que ir AQUÍ y no solo en UserPolicy:
             // el "return true" de abajo cortocircuita las policies, de modo
             // que para un super_admin la de usuarios no llegaba a evaluarse
-            // y podia eliminarse a si mismo, dejando el portal potencialmente
+            // y podía eliminarse a sí mismo, dejando el portal potencialmente
             // sin ninguna cuenta con acceso total.
             if ($objetivo instanceof \App\Models\User
                 && $objetivo->id === $user->id
@@ -114,7 +114,7 @@ class AppServiceProvider extends ServiceProvider
             }
 
             // El super_admin conserva acceso total. Es lo que hace Shield
-            // cuando esta bien configurado, y evita quedarse fuera del panel.
+            // cuando está bien configurado, y evita quedarse fuera del panel.
             if (method_exists($user, 'hasRole') && $user->hasRole('super_admin')) {
                 return true;
             }

@@ -9,21 +9,21 @@ use Filament\Forms\Components\Builder\Block;
 class StatsBlock extends BlockType
 {
     public static function key(): string { return 'stats'; }
-    public static function label(): string { return 'Numeros / Estadisticas'; }
+    public static function label(): string { return 'Números / Estadísticas'; }
     public static function icon(): string { return 'heroicon-o-chart-bar'; }
     public static function view(): string { return 'blocks.stats'; }
 
     public static function defaults(): array
     {
         return [
-            'kicker' => 'EN NUMEROS',
+            'kicker' => 'EN NÚMEROS',
             'title' => 'La AAG en cifras',
-            'subtitle' => 'Datos representativos de la operacion del Aeropuerto Internacional Jose Joaquin de Olmedo.',
+            'subtitle' => 'Datos representativos de la operación del Aeropuerto Internacional José Joaquín de Olmedo.',
             'background' => 'soft',
             'items' => [
-                ['value' => '8.2M', 'label' => 'Pasajeros al ano'],
+                ['value' => '8.2M', 'label' => 'Pasajeros al año'],
                 ['value' => '92', 'label' => 'Destinos conectados'],
-                ['value' => '15', 'label' => 'Aerolineas operando'],
+                ['value' => '15', 'label' => 'Aerolíneas operando'],
                 ['value' => '99.8%', 'label' => 'Disponibilidad operativa'],
             ],
         ];
@@ -36,10 +36,10 @@ class StatsBlock extends BlockType
             ->icon(self::icon())
             ->schema([
                 Forms\Components\TextInput::make('kicker')->label('Kicker'),
-                Forms\Components\TextInput::make('title')->label('Titulo'),
-                Forms\Components\Textarea::make('subtitle')->label('Descripcion')->rows(2),
+                Forms\Components\TextInput::make('title')->label('Título'),
+                Forms\Components\Textarea::make('subtitle')->label('Descripción')->rows(2),
                 Forms\Components\Repeater::make('items')
-                    ->label('Estadisticas')
+                    ->label('Estadísticas')
                     ->schema([
                         Forms\Components\TextInput::make('value')->label('Valor')->required(),
                         Forms\Components\TextInput::make('label')->label('Etiqueta')->required(),

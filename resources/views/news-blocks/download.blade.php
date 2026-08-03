@@ -4,7 +4,7 @@
     $url = \Illuminate\Support\Facades\Storage::disk('public')->url($data['file']);
     $ext = strtoupper(pathinfo($data['file'], PATHINFO_EXTENSION));
 
-    // Tamaño del archivo si esta accesible
+    // Tamaño del archivo si está accesible
     $path = \Illuminate\Support\Facades\Storage::disk('public')->path($data['file']);
     $size = file_exists($path) ? filesize($path) : null;
     $sizeHuman = $size ? round($size / 1024 / 1024, 1).' MB' : null;
@@ -30,7 +30,7 @@
             {{ $ext }}@if($sizeHuman) · {{ $sizeHuman }} @endif
         </p>
     </div>
-    {{-- Sin desplazamiento en hover: B es un diseno estatico, solo cambia el color --}}
+    {{-- Sin desplazamiento en hover: B es un diseño estático, solo cambia el color --}}
     <svg class="w-5 h-5 text-muted shrink-0 group-hover:text-brand-primary transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/>
     </svg>

@@ -8,20 +8,20 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Convierte los 404 en redirecciones cuando la direccion pedida es una de las
+ * Convierte los 404 en redirecciones cuando la dirección pedida es una de las
  * antiguas del WordPress.
  *
- * ── Por que se comprueba DESPUES y no antes ─────────────────────────────────
- * Lo intuitivo seria mirar la tabla al principio de cada peticion, pero eso
- * haria trabajo de mas en el 99,9% de las visitas, que van a paginas que si
- * existen. Aqui se deja pasar la peticion y solo se mira la tabla si el portal
- * ha respondido 404: el coste recae unicamente sobre las direcciones que ya
+ * ── Por qué se comprueba DESPUÉS y no antes ─────────────────────────────────
+ * Lo intuitivo sería mirar la tabla al principio de cada petición, pero eso
+ * haría trabajo de más en el 99,9% de las visitas, que van a páginas que sí
+ * existen. Aquí se deja pasar la petición y solo se mira la tabla si el portal
+ * ha respondido 404: el coste recae únicamente sobre las direcciones que ya
  * han fallado.
  *
- * ── Por que no se confia a ciegas en el destino ─────────────────────────────
+ * ── Por qué no se confía a ciegas en el destino ─────────────────────────────
  * El destino lo escribe una persona desde el panel. Si una cuenta del panel se
- * viera comprometida, poder redirigir a cualquier sitio convertiria el dominio
- * institucional en un trampolin de phishing: un enlace que empieza por
+ * viera comprometida, poder redirigir a cualquier sitio convertiría el dominio
+ * institucional en un trampolín de phishing: un enlace que empieza por
  * aag.org.ec y termina en una copia falsa de un banco. Por eso solo se admiten
  * rutas internas y direcciones https, y se rechaza cualquier otro esquema
  * (javascript:, data:, //otro-dominio...).
@@ -36,9 +36,9 @@ class RedirigirRutasAntiguas
             return $response;
         }
 
-        // Solo GET y HEAD: redirigir un POST perderia el cuerpo de la peticion,
-        // y quien envia un formulario a una direccion que ya no existe merece el
-        // 404 y no un envio silencioso a otra parte.
+        // Solo GET y HEAD: redirigir un POST perdería el cuerpo de la petición,
+        // y quien envía un formulario a una dirección que ya no existe merece el
+        // 404 y no un envío silencioso a otra parte.
         if (! $request->isMethodSafe()) {
             return $response;
         }
@@ -58,7 +58,7 @@ class RedirigirRutasAntiguas
 
         // El contador se actualiza sin disparar eventos del modelo (ver
         // Redirect::registrarUso), pero hace falta el registro para conocer su
-        // id y su codigo. Se busca aqui, no en activas(), porque esto solo
+        // id y su código. Se busca aquí, no en activas(), porque esto solo
         // ocurre en las visitas que de verdad se redirigen.
         $registro = Redirect::query()->where('from_path', $origen)->first();
 
@@ -73,7 +73,7 @@ class RedirigirRutasAntiguas
 
     /**
      * Admite rutas internas ("/nosotros") y direcciones https completas.
-     * Rechaza todo lo demas, incluidas las que empiezan por "//", que el
+     * Rechaza todo lo demás, incluidas las que empiezan por "//", que el
      * navegador interpreta como otro dominio heredando el esquema actual.
      */
     protected function destinoSeguro(string $destino): bool

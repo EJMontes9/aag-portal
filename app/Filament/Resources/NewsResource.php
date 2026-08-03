@@ -24,10 +24,10 @@ class NewsResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Section::make('Datos basicos')
+            Forms\Components\Section::make('Datos básicos')
                 ->schema([
                     Forms\Components\TextInput::make('title')
-                        ->label('Titulo')
+                        ->label('Título')
                         ->required()
                         ->maxLength(255)
                         ->live(onBlur: true)
@@ -40,7 +40,7 @@ class NewsResource extends Resource
                         ->label('Slug (URL)')
                         ->maxLength(255)
                         ->unique(ignoreRecord: true)
-                        ->helperText('Se autogenera del titulo. Solo letras, numeros y guiones.'),
+                        ->helperText('Se autogenera del título. Solo letras, números y guiones.'),
                     Forms\Components\Textarea::make('excerpt')
                         ->label('Extracto')
                         ->rows(2)
@@ -50,7 +50,7 @@ class NewsResource extends Resource
                 ])->columns(2),
 
             Forms\Components\Section::make('Contenido por bloques')
-                ->description('Compon la noticia agregando bloques: texto, imagenes, video, mapas, citas, etc. Arrastra para reordenar.')
+                ->description('Compon la noticia agregando bloques: texto, imágenes, video, mapas, citas, etc. Arrastra para reordenar.')
                 ->schema([
                     Forms\Components\Builder::make('content_blocks')
                         ->label('')
@@ -65,7 +65,7 @@ class NewsResource extends Resource
                 ]),
 
             Forms\Components\Section::make('Contenido legacy (texto plano)')
-                ->description('Campo opcional para texto simple sin bloques. Si tu noticia ya usa bloques arriba, deja esto vacio.')
+                ->description('Campo opcional para texto simple sin bloques. Si tu noticia ya usa bloques arriba, deja esto vacío.')
                 ->collapsed()
                 ->schema([
                     Forms\Components\RichEditor::make('content')
@@ -84,17 +84,17 @@ class NewsResource extends Resource
                         ->directory('news/covers')
                         ->disk('public')
                         ->maxSize(4096)
-                        ->helperText('JPG/PNG, max 4MB. Recomendado 1600x900.'),
+                        ->helperText('JPG/PNG, máx 4MB. Recomendado 1600x900.'),
                     Forms\Components\TextInput::make('cover_image_alt')
                         ->label('Texto alternativo de la imagen')
                         ->maxLength(255)
-                        ->helperText('Descripcion para lectores de pantalla y SEO.'),
+                        ->helperText('Descripción para lectores de pantalla y SEO.'),
                 ])->columns(2),
 
-            Forms\Components\Section::make('Clasificacion y publicacion')
+            Forms\Components\Section::make('Clasificación y publicación')
                 ->schema([
                     Forms\Components\Select::make('category_id')
-                        ->label('Categoria')
+                        ->label('Categoría')
                         ->relationship('category', 'name')
                         ->searchable()
                         ->preload()
@@ -117,12 +117,12 @@ class NewsResource extends Resource
                         ->default('draft')
                         ->required(),
                     Forms\Components\DateTimePicker::make('published_at')
-                        ->label('Fecha de publicacion')
+                        ->label('Fecha de publicación')
                         ->seconds(false)
-                        ->helperText('Si se deja vacio y el estado es "Publicada", se asigna ahora.'),
+                        ->helperText('Si se deja vacío y el estado es "Publicada", se asigna ahora.'),
                     Forms\Components\Toggle::make('featured_on_home')
                         ->label('Destacar en home')
-                        ->helperText('Aparecera en el bloque "Noticias destacadas" del home.'),
+                        ->helperText('Aparecerá en el bloque "Noticias destacadas" del home.'),
                 ])->columns(2),
 
             Forms\Components\Section::make('SEO')
@@ -131,12 +131,12 @@ class NewsResource extends Resource
                     Forms\Components\TextInput::make('meta_title')
                         ->label('Meta title')
                         ->maxLength(70)
-                        ->helperText('Si se deja vacio, usa el titulo.'),
+                        ->helperText('Si se deja vacío, usa el título.'),
                     Forms\Components\Textarea::make('meta_description')
                         ->label('Meta description')
                         ->maxLength(160)
                         ->rows(2)
-                        ->helperText('Si se deja vacio, usa el extracto.'),
+                        ->helperText('Si se deja vacío, usa el extracto.'),
                 ])->columns(2),
         ]);
     }
@@ -151,13 +151,13 @@ class NewsResource extends Resource
                     ->square()
                     ->size(50),
                 Tables\Columns\TextColumn::make('title')
-                    ->label('Titulo')
+                    ->label('Título')
                     ->searchable()
                     ->limit(60)
                     ->wrap()
                     ->weight('medium'),
                 Tables\Columns\TextColumn::make('category.name')
-                    ->label('Categoria')
+                    ->label('Categoría')
                     ->badge()
                     ->color(fn ($record) => $record?->category?->color ? null : 'gray')
                     ->placeholder('—'),
@@ -202,7 +202,7 @@ class NewsResource extends Resource
                         'archived' => 'Archivada',
                     ]),
                 Tables\Filters\SelectFilter::make('category_id')
-                    ->label('Categoria')
+                    ->label('Categoría')
                     ->relationship('category', 'name'),
                 Tables\Filters\TernaryFilter::make('featured_on_home')
                     ->label('Destacada'),

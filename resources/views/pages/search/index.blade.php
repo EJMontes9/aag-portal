@@ -1,11 +1,11 @@
 @extends('layouts.app', [
     'title' => $q !== '' ? 'Resultados para "' . $q . '"' : 'Buscador',
-    'description' => 'Busca noticias, convocatorias, proyectos, paginas y preguntas frecuentes de la Autoridad Aeroportuaria de Guayaquil.',
+    'description' => 'Busca noticias, convocatorias, proyectos, páginas y preguntas frecuentes de la Autoridad Aeroportuaria de Guayaquil.',
 ])
 
 @push('head')
-    {{-- Una pagina de resultados no aporta nada al indice y genera tantas URLs
-         distintas como terminos se busquen. --}}
+    {{-- Una página de resultados no aporta nada al índice y genera tantas URLs
+         distintas como términos se busquen. --}}
     <meta name="robots" content="noindex, follow">
 @endpush
 
@@ -17,14 +17,14 @@
 <x-ui.page-header
     kicker="Buscador"
     title="Buscar en el portal"
-    description="Consulta a la vez noticias, convocatorias, proyectos, paginas institucionales y preguntas frecuentes."
+    description="Consulta a la vez noticias, convocatorias, proyectos, páginas institucionales y preguntas frecuentes."
     data-aos="fade-up" />
 
 <section class="bg-bg">
     <div class="section-wrap">
 
-        {{-- ── Campo de busqueda ─────────────────────────────────────────── --}}
-        <form method="GET" action="{{ route('search') }}" role="search" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        {{-- ── Campo de búsqueda ─────────────────────────────────────────── --}}
+        <form method="GET" action="{{ route('search') }}" wire:navigate role="search" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <label for="search-q" class="sr-only">Buscar en el portal</label>
             <div class="relative flex-1">
                 <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
@@ -43,7 +43,7 @@
         </form>
 
         @if($q !== '')
-            {{-- Contador anunciado por lectores de pantalla: el numero de
+            {{-- Contador anunciado por lectores de pantalla: el número de
                  resultados cambia sin recargar el foco del usuario. --}}
             <p class="mt-5 text-[14px] text-muted num-tabular" aria-live="polite">
                 @if($total === 0)
@@ -54,7 +54,7 @@
                     para <strong class="font-semibold text-fg">&ldquo;{{ $q }}&rdquo;</strong>
                     @if($resultados->lastPage() > 1)
                         <span aria-hidden="true"> · </span>
-                        <span>Pagina {{ $resultados->currentPage() }} de {{ $resultados->lastPage() }}</span>
+                        <span>Página {{ $resultados->currentPage() }} de {{ $resultados->lastPage() }}</span>
                     @endif
                 @endif
             </p>
@@ -73,11 +73,12 @@
                         <ul class="mt-4 flex flex-col gap-3">
                             @foreach($items as $item)
                                 <li>
-                                    {{-- El enlace envuelve la tarjeta entera: un solo
+                                    {{-- El enlace envuelve la tarjeta entera: una sola
                                          parada de tabulador por resultado, en vez de
-                                         obligar a recorrer titulo y extracto por
+                                         obligar a recorrer título y extracto por
                                          separado. --}}
                                     <a href="{{ $item['url'] }}"
+                                       @if(is_internal_link($item['url'] ?? null)) wire:navigate @endif
                                        class="block rounded-card border-2 border-border bg-card px-5 py-4 transition-colors hover:border-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
                                         <h3 class="font-serif text-[17px] leading-[1.3] text-brand-navy">
                                             {!! \App\Http\Controllers\SearchController::resaltar($item['titulo'], $q, 140) !!}
@@ -104,7 +105,7 @@
                 {{ $resultados->links() }}
             </div>
 
-        {{-- ── Estado vacio ──────────────────────────────────────────────── --}}
+        {{-- ── Estado vacío ──────────────────────────────────────────────── --}}
         @elseif($q !== '')
             <div class="mt-8 px-5 text-center py-16 rounded-card border-2 border-dashed border-border bg-card">
                 <svg class="w-10 h-10 mx-auto text-muted/60" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
@@ -114,13 +115,13 @@
                     No se encontraron resultados para &ldquo;{{ $q }}&rdquo;
                 </p>
                 <p class="mt-3 mx-auto max-w-[60ch] text-[15px] leading-[1.6] text-muted">
-                    Revisa la ortografia, prueba con una sola palabra o usa un termino mas general.
+                    Revisa la ortografía, prueba con una sola palabra o usa un término más general.
                 </p>
 
                 <ul class="mt-6 flex flex-wrap justify-center gap-2">
                     @foreach(['aeropuerto', 'convocatoria', 'vuelos', 'proyectos', 'transparencia'] as $sugerencia)
                         <li>
-                            <a href="{{ route('search', ['q' => $sugerencia]) }}"
+                            <a href="{{ route('search', ['q' => $sugerencia]) }}" wire:navigate
                                class="pill hover:bg-brand-soft/70 hover:text-brand-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card">
                                 {{ $sugerencia }}
                             </a>
@@ -129,22 +130,22 @@
                 </ul>
 
                 <div class="mt-7 flex flex-wrap justify-center gap-3">
-                    <a href="{{ route('news.index') }}" class="btn-ghost">Ver noticias</a>
-                    <a href="{{ route('faq.index') }}" class="btn-ghost">Preguntas frecuentes</a>
+                    <a href="{{ route('news.index') }}" wire:navigate class="btn-ghost">Ver noticias</a>
+                    <a href="{{ route('faq.index') }}" wire:navigate class="btn-ghost">Preguntas frecuentes</a>
                 </div>
             </div>
 
-        {{-- ── Sin termino todavia ───────────────────────────────────────── --}}
+        {{-- ── Sin término todavía ───────────────────────────────────────── --}}
         @else
             <div class="mt-8 px-5 py-14 text-center rounded-card border-2 border-dashed border-border bg-card">
-                <p class="font-serif text-page-title uppercase text-brand-navy">Escribe un termino para empezar</p>
+                <p class="font-serif text-page-title uppercase text-brand-navy">Escribe un término para empezar</p>
                 <p class="mt-3 mx-auto max-w-[60ch] text-[15px] leading-[1.6] text-muted">
-                    La busqueda recorre a la vez noticias, convocatorias, proyectos, paginas institucionales y preguntas frecuentes.
+                    La búsqueda recorre a la vez noticias, convocatorias, proyectos, páginas institucionales y preguntas frecuentes.
                 </p>
                 <ul class="mt-6 flex flex-wrap justify-center gap-2">
                     @foreach(['aeropuerto', 'convocatoria', 'vuelos', 'proyectos', 'transparencia'] as $sugerencia)
                         <li>
-                            <a href="{{ route('search', ['q' => $sugerencia]) }}"
+                            <a href="{{ route('search', ['q' => $sugerencia]) }}" wire:navigate
                                class="pill hover:bg-brand-soft/70 hover:text-brand-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card">
                                 {{ $sugerencia }}
                             </a>

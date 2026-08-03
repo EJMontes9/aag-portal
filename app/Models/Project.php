@@ -31,7 +31,7 @@ class Project extends Model
                 $m->slug = Str::slug($m->title);
             }
 
-            // SEGURIDAD -- La descripcion se pinta sin escapar ({!! !!}); se
+            // SEGURIDAD -- La descripción se pinta sin escapar ({!! !!}); se
             // limpia el HTML antes de guardarla. Ver App\Services\HtmlSanitizer.
             if ($m->isDirty('description')) {
                 $m->description = \App\Services\HtmlSanitizer::limpiar($m->description);

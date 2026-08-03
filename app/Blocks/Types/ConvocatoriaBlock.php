@@ -33,11 +33,11 @@ class ConvocatoriaBlock extends BlockType
                     ->label('Convocatoria a mostrar')
                     ->options(fn () => Convocatoria::where('status', 'vigente')->pluck('title', 'id'))
                     ->searchable()
-                    ->helperText('Si se deja vacio usa la convocatoria vigente mas proxima a cerrar.')
-                    ->placeholder('Auto (proxima a cerrar)'),
+                    ->helperText('Si se deja vacío usa la convocatoria vigente más próxima a cerrar.')
+                    ->placeholder('Auto (próxima a cerrar)'),
                 Forms\Components\Toggle::make('hide_when_closed')
-                    ->label('Ocultar cuando este cerrada')
-                    ->helperText('Si esta activo, el bloque desaparece del home cuando la convocatoria cierra. Si esta desactivado, muestra "Convocatoria cerrada" con badge gris.')
+                    ->label('Ocultar cuando esté cerrada')
+                    ->helperText('Si está activo, el bloque desaparece del home cuando la convocatoria cierra. Si está desactivado, muestra "Convocatoria cerrada" con badge gris.')
                     ->default(true),
             ]);
     }

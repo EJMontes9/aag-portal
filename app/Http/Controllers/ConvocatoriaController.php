@@ -17,15 +17,15 @@ class ConvocatoriaController extends Controller
             ->orderBy('closes_at')
             ->get();
 
-        // Archivo historico. Se declara como closure y no como query suelta
-        // porque hace falta recorrerlo dos veces (una para los anios del
-        // desplegable y otra para la pagina en curso) y un Builder reutilizado
-        // arrastraria los where del primer uso al segundo.
+        // Archivo histórico. Se declara como closure y no como query suelta
+        // porque hace falta recorrerlo dos veces (una para los años del
+        // desplegable y otra para la página en curso) y un Builder reutilizado
+        // arrastraría los where del primer uso al segundo.
         $archivo = fn () => Convocatoria::where('status', 'cerrada')
             ->when($tipo, fn ($q) => $q->where('tipo', $tipo));
 
-        // Los anios salen de los datos, no de un rango fijo: asi el desplegable
-        // nunca ofrece un anio que devuelva cero resultados.
+        // Los años salen de los datos, no de un rango fijo: así el desplegable
+        // nunca ofrece un año que devuelva cero resultados.
         $anios = $archivo()
             ->whereNotNull('closes_at')
             ->selectRaw('YEAR(closes_at) as anio')
@@ -34,8 +34,8 @@ class ConvocatoriaController extends Controller
             ->pluck('anio')
             ->map(fn ($a) => (int) $a);
 
-        // Solo se acepta un anio presente en la lista. Un ?anio=abc o un anio
-        // inventado dejarian el listado vacio sin explicar por que, asi que se
+        // Solo se acepta un año presente en la lista. Un ?anio=abc o un año
+        // inventado dejarían el listado vacío sin explicar por qué, así que se
         // ignoran y se muestra el archivo completo.
         $anio = $anios->contains((int) $request->get('anio')) ? (int) $request->get('anio') : null;
 
@@ -43,9 +43,9 @@ class ConvocatoriaController extends Controller
             ->when($anio, fn ($q) => $q->whereYear('closes_at', $anio))
             ->orderByDesc('closes_at')
             ->paginate(15)
-            // withQueryString conserva tipo y anio al cambiar de pagina; el
+            // withQueryString conserva tipo y año al cambiar de página; el
             // fragment devuelve al bloque del archivo en vez de al principio
-            // de la pagina, que en desktop queda muy por encima.
+            // de la página, que en desktop queda muy por encima.
             ->withQueryString()
             ->fragment('archivo');
 

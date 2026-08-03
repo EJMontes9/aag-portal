@@ -20,7 +20,7 @@ class TextImageBlock extends BlockType
             ->icon(self::icon())
             ->schema([
                 Forms\Components\TextInput::make('kicker')->label('Kicker (opcional)'),
-                Forms\Components\TextInput::make('title')->label('Titulo')->required(),
+                Forms\Components\TextInput::make('title')->label('Título')->required(),
                 Forms\Components\Textarea::make('body')->label('Texto principal')->rows(5),
                 Forms\Components\FileUpload::make('image')
                     ->label('Imagen')
@@ -43,8 +43,8 @@ class TextImageBlock extends BlockType
                     ->label('Lado de la imagen')
                     ->options(['right' => 'Derecha', 'left' => 'Izquierda'])
                     ->default('right'),
-                Forms\Components\TextInput::make('cta_label')->label('Boton - etiqueta'),
-                Forms\Components\TextInput::make('cta_url')->label('Boton - URL'),
+                Forms\Components\TextInput::make('cta_label')->label('Botón - etiqueta'),
+                Forms\Components\TextInput::make('cta_url')->label('Botón - URL'),
                 Forms\Components\Select::make('background')
                     ->label('Fondo')
                     ->options([

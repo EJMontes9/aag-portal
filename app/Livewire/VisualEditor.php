@@ -64,16 +64,16 @@ class VisualEditor extends Component
         $this->authorizeEditor();
         if (! $this->editingBlockId) return;
 
-        // SEGURIDAD -- Se busca el bloque DENTRO de la pagina que se esta
-        // editando, no globalmente. $editingBlockId es una propiedad publica y
-        // en Livewire el cliente puede fijar su valor en la peticion, asi que
-        // un PageBlock::find() suelto permitia escribir en bloques de
-        // cualquier otra pagina (y ademas invalidaba la cache de la pagina
-        // equivocada, dejando el cambio invisible y el log de auditoria
-        // apuntando al sitio erroneo).
+        // SEGURIDAD -- Se busca el bloque DENTRO de la página que se está
+        // editando, no globalmente. $editingBlockId es una propiedad pública y
+        // en Livewire el cliente puede fijar su valor en la petición, así que
+        // un PageBlock::find() suelto permitía escribir en bloques de
+        // cualquier otra página (y además invalidaba la caché de la página
+        // equivocada, dejando el cambio invisible y el log de auditoría
+        // apuntando al sitio erróneo).
         //
-        // Es el mismo patron que ya usaban openBlock, moveUp, moveDown,
-        // toggleVisibility y deleteBlock; saveBlock era la excepcion.
+        // Es el mismo patrón que ya usaban openBlock, moveUp, moveDown,
+        // toggleVisibility y deleteBlock; saveBlock era la excepción.
         $block = $this->page->blocks()->whereKey($this->editingBlockId)->first();
         if (! $block) return;
 
@@ -123,10 +123,10 @@ class VisualEditor extends Component
     {
         $this->authorizeEditor();
 
-        // Validar que todos los IDs pertenezcan a esta pagina
+        // Validar que todos los IDs pertenezcan a esta página
         $valid = $this->page->blocks()->whereIn('id', $orderedIds)->pluck('id')->all();
         if (count($valid) !== count($orderedIds)) {
-            throw new \RuntimeException('Lista de bloques invalida');
+            throw new \RuntimeException('Lista de bloques inválida');
         }
 
         \DB::transaction(function () use ($orderedIds) {
@@ -263,11 +263,11 @@ class VisualEditor extends Component
     {
         $this->authorizeEditor();
 
-        // SEGURIDAD -- La regla "image" de Laravel ACEPTA SVG, y aqui el
+        // SEGURIDAD -- La regla "image" de Laravel ACEPTA SVG, y aquí el
         // archivo se guardaba tal cual, sin reprocesar. Un SVG puede contener
-        // <script> y se sirve desde nuestro propio dominio, asi que ejecutaba
-        // JavaScript con la sesion de quien lo abriera (normalmente un
-        // administrador). Se sustituye por una lista explicita de formatos
+        // <script> y se sirve desde nuestro propio dominio, así que ejecutaba
+        // JavaScript con la sesión de quien lo abriera (normalmente un
+        // administrador). Se sustituye por una lista explícita de formatos
         // rasterizados.
         $this->validate([
             'slideImage' => [
@@ -281,21 +281,21 @@ class VisualEditor extends Component
             'slideImage.image'     => 'El archivo debe ser una imagen.',
             'slideImage.max'       => 'La imagen debe pesar menos de 4 MB.',
             'slideImage.mimes'     => 'Formato no permitido. Usa JPG, PNG, GIF o WebP.',
-            'slideImage.mimetypes' => 'El contenido del archivo no corresponde a una imagen valida.',
+            'slideImage.mimetypes' => 'El contenido del archivo no corresponde a una imagen válida.',
         ]);
 
         if (! $this->slideImage) return;
 
-        // El directorio venia del cliente. Flysystem ya bloquea el path
+        // El directorio venía del cliente. Flysystem ya bloquea el path
         // traversal, pero se restringe a una lista conocida para que no se
-        // puedan sembrar carpetas arbitrarias en el disco publico.
+        // puedan sembrar carpetas arbitrarias en el disco público.
         $directoriosPermitidos = ['banners', 'bloques', 'media'];
         if (! in_array($directory, $directoriosPermitidos, true)) {
             $directory = 'bloques';
         }
 
-        // Se pasa por MediaService para que re-codifique a WebP: ademas de
-        // pesar menos, el reprocesado destruye cualquier carga util incrustada
+        // Se pasa por MediaService para que re-codifique a WebP: además de
+        // pesar menos, el reprocesado destruye cualquier carga útil incrustada
         // en los metadatos de la imagen (polyglots).
         try {
             $media = MediaService::upload($this->slideImage, $directory);
@@ -340,7 +340,7 @@ class VisualEditor extends Component
             'blockImage.image'     => 'El archivo debe ser una imagen.',
             'blockImage.max'       => 'La imagen no puede superar 10 MB.',
             'blockImage.mimes'     => 'Formato no permitido. Usa JPG, PNG, GIF o WebP.',
-            'blockImage.mimetypes' => 'El contenido del archivo no corresponde a una imagen valida.',
+            'blockImage.mimetypes' => 'El contenido del archivo no corresponde a una imagen válida.',
         ]);
 
         if (! $this->blockImage) return;

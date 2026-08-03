@@ -67,7 +67,7 @@ class LotaipMonth extends Model
     }
 
     /**
-     * Documentos filtrados segun extensiones efectivas.
+     * Documentos filtrados según extensiones efectivas.
      */
     public function getVisibleDocuments()
     {

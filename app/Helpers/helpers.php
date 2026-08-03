@@ -166,6 +166,29 @@ if (! function_exists('hex_to_rgb_tuple')) {
  * puede ser configurado por el admin como un color claro (amarillo) o
  * oscuro (azul) -- el texto se adapta solo para mantener buen contraste.
  */
+/**
+ * Un link es "navegacion interna" (candidato a wire:navigate) si apunta a
+ * una URL del propio sitio y no fuerza una pestana nueva. Se excluyen
+ * anclas (#...), mailto:, tel:, y cualquier dominio externo -- wire:navigate
+ * solo tiene sentido para transiciones entre paginas Blade del portal.
+ */
+if (! function_exists('is_internal_link')) {
+    function is_internal_link(?string $href, ?string $target = null): bool
+    {
+        if (! $href || $target) {
+            return false;
+        }
+        if (str_starts_with($href, '#') || str_starts_with($href, 'mailto:') || str_starts_with($href, 'tel:')) {
+            return false;
+        }
+        if (! str_starts_with($href, 'http://') && ! str_starts_with($href, 'https://')) {
+            return true; // ruta relativa
+        }
+        return str_starts_with($href, rtrim(config('app.url'), '/').'/')
+            || $href === rtrim(config('app.url'), '/');
+    }
+}
+
 if (! function_exists('contrast_text_tuple')) {
     function contrast_text_tuple(?string $hex, string $dark = '11 30 74', string $light = '255 255 255'): string
     {

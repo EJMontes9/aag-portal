@@ -16,26 +16,26 @@ class MediaService
     const QUALITY    = 85;
 
     /**
-     * Tipos permitidos, indexados por MIME REAL (leido del contenido del
-     * archivo, no de lo que declare el cliente) y con la extension que se le
-     * asignara al guardarlo.
+     * Tipos permitidos, indexados por MIME REAL (leído del contenido del
+     * archivo, no de lo que declare el cliente) y con la extensión que se le
+     * asignará al guardarlo.
      *
-     * SEGURIDAD -- Esta lista es la barrera principal contra la ejecucion
-     * remota de codigo. Antes no existia: se guardaba el archivo con la
-     * extension que enviaba el cliente ($file->getClientOriginalExtension()),
-     * de modo que un .php subido desde la galeria de medios quedaba bajo
-     * storage/app/public y Apache lo ejecutaba a traves del symlink /storage.
+     * SEGURIDAD -- Esta lista es la barrera principal contra la ejecución
+     * remota de código. Antes no existía: se guardaba el archivo con la
+     * extensión que enviaba el cliente ($file->getClientOriginalExtension()),
+     * de modo que un .php subido desde la galería de medios quedaba bajo
+     * storage/app/public y Apache lo ejecutaba a través del symlink /storage.
      *
      * Reglas al tocar esta lista:
-     *   - La extension SIEMPRE se deriva de aqui, nunca del nombre original.
+     *   - La extensión SIEMPRE se deriva de aquí, nunca del nombre original.
      *   - Nada de SVG: admite <script> y se sirve en nuestro propio origen,
-     *     asi que es XSS almacenado contra quien lo abra (normalmente un
-     *     administrador). Si algun dia hace falta, hay que sanearlo antes con
-     *     una libreria dedicada y servirlo como adjunto.
+     *     así que es XSS almacenado contra quien lo abra (normalmente un
+     *     administrador). Si algún día hace falta, hay que sanearlo antes con
+     *     una librería dedicada y servirlo como adjunto.
      *   - Nada de HTML, XML ni nada interpretable por el navegador.
      */
     const TIPOS_PERMITIDOS = [
-        // Imagenes
+        // Imágenes
         'image/jpeg'  => 'jpg',
         'image/png'   => 'png',
         'image/gif'   => 'gif',
@@ -54,8 +54,8 @@ class MediaService
     ];
 
     /**
-     * Extensiones que jamas deben escribirse en disco, pase lo que pase.
-     * Es una segunda red por si alguien amplia TIPOS_PERMITIDOS sin pensar.
+     * Extensiones que jamás deben escribirse en disco, pase lo que pase.
+     * Es una segunda red por si alguien amplía TIPOS_PERMITIDOS sin pensar.
      */
     const EXTENSIONES_PROHIBIDAS = [
         'php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phtml', 'pht', 'phps', 'phar',
@@ -65,15 +65,15 @@ class MediaService
     ];
 
     /**
-     * Valida el archivo contra la allowlist y devuelve la extension segura.
+     * Valida el archivo contra la allowlist y devuelve la extensión segura.
      *
-     * @throws \RuntimeException si el tipo no esta permitido.
+     * @throws \RuntimeException si el tipo no está permitido.
      */
     public static function extensionSegura(UploadedFile $file): string
     {
         // getMimeType() lee el CONTENIDO del archivo (finfo). getClientMimeType()
         // es solo lo que dice la cabecera del multipart, que el atacante controla,
-        // asi que no sirve para decidir.
+        // así que no sirve para decidir.
         $mime = $file->getMimeType();
 
         if (! $mime || ! isset(self::TIPOS_PERMITIDOS[$mime])) {
@@ -97,8 +97,8 @@ class MediaService
 
     public static function upload(UploadedFile $file, ?string $folder = null): Media
     {
-        // Se valida ANTES de tocar el disco: si el tipo no esta permitido, la
-        // excepcion sube y no se escribe nada.
+        // Se valida ANTES de tocar el disco: si el tipo no está permitido, la
+        // excepción sube y no se escribe nada.
         $ext = self::extensionSegura($file);
 
         $mime   = $file->getMimeType();
@@ -120,13 +120,13 @@ class MediaService
         $fullPath = Storage::disk('public')->path($storedPath);
         $mime     = mime_content_type($fullPath) ?: 'application/octet-stream';
 
-        // SEGURIDAD -- Aqui el archivo YA esta escrito en disco: Filament lo
-        // guarda antes de que podamos intervenir. Asi que si el tipo no esta
+        // SEGURIDAD -- Aquí el archivo YA está escrito en disco: Filament lo
+        // guarda antes de que podamos intervenir. Así que si el tipo no está
         // permitido hay que BORRARLO, no limitarse a rechazarlo; si no, queda
         // accesible por URL aunque no se registre en la tabla media.
         // Este era el caso del SVG: Image::decodePath fallaba, el catch de
-        // MediaResource solo escribia un aviso en el log, y el archivo quedaba
-        // huerfano pero publicamente accesible.
+        // MediaResource solo escribía un aviso en el log, y el archivo quedaba
+        // huérfano pero públicamente accesible.
         if (! isset(self::TIPOS_PERMITIDOS[$mime])) {
             Storage::disk('public')->delete($storedPath);
             throw new \RuntimeException("Tipo de archivo no permitido ({$mime}). El archivo fue descartado.");
@@ -168,8 +168,8 @@ class MediaService
         }
 
         // No es imagen (documento o video ya validado contra la allowlist).
-        // La extension se toma de la allowlist, no del nombre en disco: si
-        // Filament lo guardo con una extension enganosa, se renombra.
+        // La extensión se toma de la allowlist, no del nombre en disco: si
+        // Filament lo guardó con una extensión engañosa, se renombra.
         $extSegura = self::TIPOS_PERMITIDOS[$mime];
         $extActual = strtolower(pathinfo($storedPath, PATHINFO_EXTENSION));
 
@@ -226,14 +226,14 @@ class MediaService
 
     protected static function storeFile(UploadedFile $file, string $folder, string $type, ?string $ext = null): Media
     {
-        // La extension SIEMPRE sale de la allowlist, derivada del MIME real.
+        // La extensión SIEMPRE sale de la allowlist, derivada del MIME real.
         // Nunca de $file->getClientOriginalExtension(), que la controla quien
-        // sube el archivo: ese era el origen de la ejecucion remota de codigo.
+        // sube el archivo: ese era el origen de la ejecución remota de código.
         $ext = $ext ?? self::extensionSegura($file);
 
         $baseName = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
-        // Str::slug puede devolver cadena vacia (nombre solo con simbolos o en
-        // un alfabeto no latino); sin esto el archivo se llamaria "-a1b2c3.pdf".
+        // Str::slug puede devolver cadena vacía (nombre solo con símbolos o en
+        // un alfabeto no latino); sin esto el archivo se llamaría "-a1b2c3.pdf".
         if ($baseName === '') {
             $baseName = 'archivo';
         }

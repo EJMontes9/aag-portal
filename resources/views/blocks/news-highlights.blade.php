@@ -18,7 +18,7 @@
     if ($items->isEmpty()) return;
 @endphp
 
-{{-- Noticias — Propuesta B: titulo en MAYUSCULAS Neulis Black navy a la
+{{-- Noticias — Propuesta B: título en MAYÚSCULAS Neulis Black navy a la
      izquierda y "VER TODAS →" en celeste a la derecha, sobre fondo blanco. --}}
 @php
     // Rejilla ESTATICA: una clase construida en runtime ("lg:grid-cols-{$n}")
@@ -34,8 +34,8 @@
 @endphp
 <section class="bg-card">
     <div class="section-wrap">
-        {{-- flex-wrap: por debajo de ~380px el titulo y el "ver todas" no caben
-             en la misma linea y se apilan en vez de comprimirse. --}}
+        {{-- flex-wrap: por debajo de ~380px el título y el "ver todas" no caben
+             en la misma línea y se apilan en vez de comprimirse. --}}
         <header class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 mb-8" data-aos="fade-up">
             <h2 class="font-serif text-[18px] text-brand-navy tracking-[0.06em] uppercase">
                 {{ $block->get('title', 'NOTICIAS Y BOLETINES') }}
@@ -43,7 +43,7 @@
             @if($block->get('show_view_all'))
                 {{-- Mismo tratamiento de "ver todas" en todos los bloques: 12px,
                      celeste -> navy en hover y anillo de foco para teclado. --}}
-                <a href="{{ route('news.index') }}"
+                <a href="{{ route('news.index') }}" wire:navigate
                    class="shrink-0 inline-flex items-center rounded-pill text-[12px] font-bold text-brand-primary hover:text-brand-navy tracking-[0.06em] transition-colors uppercase focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card">
                     {{ $block->get('view_all_label', 'VER TODAS →') }}
                 </a>

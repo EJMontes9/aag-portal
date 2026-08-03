@@ -1,18 +1,18 @@
 {{--
-    Cuerpo compartido de las paginas de error que SI pueden usar el layout del
+    Cuerpo compartido de las páginas de error que SÍ pueden usar el layout del
     sitio (404, 403, 419). Se renderizan con cabecera y pie completos a
-    proposito: quien llega aqui necesita poder seguir navegando, y perder el
-    menu justo cuando te has perdido es el peor momento para hacerlo.
+    propósito: quien llega aquí necesita poder seguir navegando, y perder el
+    menú justo cuando te has perdido es el peor momento para hacerlo.
 
     Los errores 500 y 503 NO usan esto: si lo que ha fallado es la base de
-    datos, el layout —que lee settings() y los menus— reventaria tambien y
-    Laravel acabaria mostrando su pantalla de error por defecto. Esos dos son
-    paginas autonomas sin ninguna dependencia.
+    datos, el layout —que lee settings() y los menús— reventaría también y
+    Laravel acabaría mostrando su pantalla de error por defecto. Esos dos son
+    páginas autónomas sin ninguna dependencia.
 
-    Parametros:
-      $code      codigo grande (404, 403...)
+    Parámetros:
+      $code      código grande (404, 403...)
       $titulo    titular
-      $mensaje   explicacion en una o dos frases
+      $mensaje   explicación en una o dos frases
       $sugerencias  (opcional) array de motivos posibles
 --}}
 @extends('layouts.app', ['title' => $titulo])
@@ -24,7 +24,7 @@
         <div class="section-wrap">
             <div class="max-w-5xl mx-auto card-surface overflow-hidden">
 
-                {{-- Cabecera navy con el codigo, cerrada por el filete amarillo --}}
+                {{-- Cabecera navy con el código, cerrada por el filete amarillo --}}
                 <div class="bg-brand-navy rule-accent px-6 md:px-10 py-8 md:py-10">
                     <div class="flex flex-col sm:flex-row sm:items-center gap-5 md:gap-8">
                         <span class="font-serif text-[64px] md:text-[80px] leading-none text-brand-accent num-tabular shrink-0">
@@ -56,7 +56,7 @@
                 </div>
                 @endif
 
-                {{-- Buscador: la salida mas util cuando el contenido se ha movido --}}
+                {{-- Buscador: la salida más útil cuando el contenido se ha movido --}}
                 <div class="px-6 md:px-10 py-6 border-b border-border">
                     <form action="{{ route('news.index') }}" method="GET" class="flex flex-col sm:flex-row gap-3">
                         <label for="error-q" class="sr-only">Buscar en el portal</label>

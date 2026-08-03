@@ -28,7 +28,7 @@ class FaqController extends Controller
             });
         }
 
-        // Agrupamos por categoria para mostrar como acordeon agrupado
+        // Agrupamos por categoría para mostrar como acordeón agrupado
         $faqs = $query->get();
         $grouped = $faqs->groupBy(fn ($f) => $f->category_id ?? 0);
 

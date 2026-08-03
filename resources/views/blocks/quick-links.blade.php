@@ -17,27 +17,28 @@
     ];
 @endphp
 
-{{-- Accesos rapidos — Propuesta B: tiles cuadrados centrados, solo icono y
-     rotulo (sin descripcion), sobre fondo gris. La maqueta los pone en 6
-     columnas fijas; aqui la rejilla escala de 2 a 6 segun ancho, porque el
-     numero de accesos es configurable desde el admin. --}}
+{{-- Accesos rápidos — Propuesta B: tiles cuadrados centrados, solo icono y
+     rótulo (sin descripción), sobre fondo gris. La maqueta los pone en 6
+     columnas fijas; aquí la rejilla escala de 2 a 6 según ancho, porque el
+     número de accesos es configurable desde el admin. --}}
 <section class="bg-bg border-t border-border">
     <div class="section-wrap">
-        {{-- Rotulo de seccion en el mismo registro que el resto de bloques
-             (Neulis 18px en mayusculas); se conserva centrado porque la rejilla
-             de tiles tambien lo esta. --}}
+        {{-- Rótulo de sección en el mismo registro que el resto de bloques
+             (Neulis 18px en mayúsculas); se conserva centrado porque la rejilla
+             de tiles también lo está. --}}
         <h2 class="text-center font-serif text-[18px] tracking-[0.06em] uppercase text-brand-navy mb-8"
             data-aos="fade-up">
             {{ $block->get('title', 'ACCESOS RÁPIDOS') }}
         </h2>
 
-        {{-- Escalon intermedio en md: entre 768 y 1024px las 3 columnas dejaban
+        {{-- Escalón intermedio en md: entre 768 y 1024px las 3 columnas dejaban
              los tiles demasiado anchos y las 6 los apretaban. --}}
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             @foreach($links as $link)
                 {{-- El anillo de foco va en el <a>, que es lo que recibe el foco de
                      teclado; el resto de estados de la tarjeta cuelgan de :group. --}}
                 <a href="{{ $link['url'] ?? '#' }}"
+                   @if(is_internal_link($link['url'] ?? null)) wire:navigate @endif
                    class="group block no-underline rounded-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
                    data-stagger="quick-link"
                    style="opacity:0;">
@@ -49,8 +50,8 @@
                                       d="{{ $iconPaths[$link['icon'] ?? 'plane'] ?? $iconPaths['plane'] }}"/>
                             </svg>
                         </div>
-                        {{-- Es el unico texto del tile: a 11px en condensada y
-                             mayusculas costaba leerlo de un vistazo. --}}
+                        {{-- Es el único texto del tile: a 11px en condensada y
+                             mayúsculas costaba leerlo de un vistazo. --}}
                         <div class="text-[13px] font-sans font-bold text-brand-navy tracking-[0.04em] leading-snug transition-colors duration-200 group-hover:text-brand-primary">
                             {{ strtoupper($link['label'] ?? '') }}
                         </div>

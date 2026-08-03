@@ -4,7 +4,7 @@
         <div class="aag-welcome-card">
             <div class="aag-welcome-content">
                 <div class="aag-welcome-text">
-                    <p class="aag-welcome-kicker">PANEL DE ADMINISTRACION</p>
+                    <p class="aag-welcome-kicker">PANEL DE ADMINISTRACIÓN</p>
                     <h2 class="aag-welcome-title">
                         Bienvenido/a, <span class="aag-welcome-name">{{ explode(' ', $userName)[0] }}</span>
                     </h2>
@@ -22,7 +22,7 @@
             </div>
         </div>
 
-        {{-- Tarjetas de accesos rapidos --}}
+        {{-- Tarjetas de accesos rápidos --}}
         <div class="aag-actions-grid">
             @if($homePageId)
                 <a href="{{ url('/admin/visual-editor/'.$homePageId) }}" class="aag-action-card aag-action-primary">
@@ -33,7 +33,7 @@
                     </div>
                     <div class="aag-action-body">
                         <h3>Editor visual del Home</h3>
-                        <p>Modifica los bloques de la pagina de inicio</p>
+                        <p>Modifica los bloques de la página de inicio</p>
                     </div>
                     <svg class="aag-action-arrow" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
                 </a>
@@ -46,7 +46,7 @@
                     </svg>
                 </div>
                 <div class="aag-action-body">
-                    <h3>Paginas</h3>
+                    <h3>Páginas</h3>
                     <p>Gestionar contenido del sitio</p>
                 </div>
                 <svg class="aag-action-arrow" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
@@ -60,7 +60,7 @@
                 </div>
                 <div class="aag-action-body">
                     <h3>Convocatorias</h3>
-                    <p>Procesos de seleccion abiertos</p>
+                    <p>Procesos de selección abiertos</p>
                 </div>
                 <svg class="aag-action-arrow" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
             </a>
@@ -73,7 +73,7 @@
                     </svg>
                 </div>
                 <div class="aag-action-body">
-                    <h3>Configuracion del sitio</h3>
+                    <h3>Configuración del sitio</h3>
                     <p>Logo, colores, contacto, redes</p>
                 </div>
                 <svg class="aag-action-arrow" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>

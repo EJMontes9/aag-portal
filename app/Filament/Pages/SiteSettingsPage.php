@@ -33,9 +33,9 @@ class SiteSettingsPage extends Page implements HasForms
     use InteractsWithForms;
 
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
-    protected static ?string $navigationGroup = 'Configuracion';
-    protected static ?string $navigationLabel = 'Configuracion del Sitio';
-    protected static ?string $title = 'Configuracion del Sitio';
+    protected static ?string $navigationGroup = 'Configuración';
+    protected static ?string $navigationLabel = 'Configuración del Sitio';
+    protected static ?string $title = 'Configuración del Sitio';
     protected static string $view = 'filament.pages.site-settings-page';
     protected static ?int $navigationSort = 1;
 
@@ -79,7 +79,7 @@ class SiteSettingsPage extends Page implements HasForms
                         Tab::make('Identidad')
                             ->icon('heroicon-o-identification')
                             ->schema([
-                                Section::make('Informacion Institucional')
+                                Section::make('Información Institucional')
                                     ->schema([
                                         // Se retiraron 'site_slogan', 'site_description' y
                                         // 'site_logo_footer': ninguna vista del portal los
@@ -92,16 +92,33 @@ class SiteSettingsPage extends Page implements HasForms
                                         FileUpload::make('site_favicon')->label('Favicon (.ico, .png)')->acceptedFileTypes(['image/png', 'image/x-icon', 'image/vnd.microsoft.icon'])->maxSize(512)->directory('branding')->disk('public'),
                                     ])->columns(2),
                             ]),
-                        Tab::make('Tipografias')
+                        Tab::make('Tipografías')
                             ->icon('heroicon-o-language')
                             ->schema([
-                                Section::make('Familias tipograficas')
-                                    ->description('Elige la combinacion de 3 familias: titular (serif), cuerpo/UI (sans) y datos (monospace). Todas cargan desde Google Fonts.')
+                                Section::make('Familias tipográficas')
+                                    ->description('Elige la combinación de 3 familias: titular (serif), cuerpo/UI (sans) y datos (monospace). Todas cargan desde Google Fonts.')
                                     ->schema([
                                         Select::make('font_serif')->label('Titulares (serif)')->options($serifFonts)->default('Neulis Black')->selectablePlaceholder(false)->required(),
                                         Select::make('font_sans')->label('UI y cuerpo (sans)')->options($sansFonts)->default('Barlow Semi Condensed')->selectablePlaceholder(false)->required(),
                                         Select::make('font_mono')->label('Datos y cifras (mono)')->options($monoFonts)->default('JetBrains Mono')->selectablePlaceholder(false)->required(),
                                     ])->columns(3),
+                                Section::make('Tamaño de texto')
+                                    ->description('Controla si los visitantes pueden ajustar el tamaño del texto del portal con los botones A-/A+ del encabezado.')
+                                    ->schema([
+                                        Toggle::make('text_size_control_enabled')
+                                            ->label('Permitir al visitante ajustar el tamaño del texto')
+                                            ->helperText('Si está desactivado, el sitio siempre se muestra en el tamaño por defecto.')
+                                            ->default(true),
+                                        Select::make('default_text_size')
+                                            ->label('Tamaño de texto por defecto')
+                                            ->options([
+                                                'normal' => 'Normal',
+                                                'grande' => 'Grande',
+                                                'muy_grande' => 'Muy grande',
+                                            ])
+                                            ->default('normal')
+                                            ->required(),
+                                    ])->columns(2),
                             ]),
                         Tab::make('Colores')
                             ->icon('heroicon-o-swatch')
@@ -110,7 +127,7 @@ class SiteSettingsPage extends Page implements HasForms
                                     ->description('Tokens principales usados en todo el portal. Aceptan formato hex (#0B1E4A).')
                                     ->schema([
                                         ColorPicker::make('color_navy')->label('Navy institucional')->default('#0B1E4A'),
-                                        ColorPicker::make('color_primary')->label('Azul accion primaria')->default('#1E3A8A'),
+                                        ColorPicker::make('color_primary')->label('Azul acción primaria')->default('#1E3A8A'),
                                         ColorPicker::make('color_accent')->label('Azul acento')->default('#5B8FD9'),
                                         ColorPicker::make('color_soft')->label('Azul fondo suave')->default('#CFE0F3'),
                                     ])->columns(4),
@@ -131,7 +148,7 @@ class SiteSettingsPage extends Page implements HasForms
                                     ->schema([
                                         Toggle::make('dark_mode_enabled')
                                             ->label('Permitir al visitante cambiar a modo oscuro')
-                                            ->helperText('Si esta desactivado, el sitio siempre se muestra en el tema por defecto.')
+                                            ->helperText('Si está desactivado, el sitio siempre se muestra en el tema por defecto.')
                                             ->default(true),
                                         Select::make('default_theme')
                                             ->label('Tema por defecto')
@@ -149,8 +166,8 @@ class SiteSettingsPage extends Page implements HasForms
                             ->schema([
                                 Section::make('Datos de Contacto')
                                     ->schema([
-                                        Textarea::make('contact_address')->label('Direccion')->rows(2),
-                                        TextInput::make('contact_phone')->label('Telefono'),
+                                        Textarea::make('contact_address')->label('Dirección')->rows(2),
+                                        TextInput::make('contact_phone')->label('Teléfono'),
                                         TextInput::make('contact_email')->label('Email')->email(),
                                         // 'contact_map_embed' retirado: ninguna vista lo usaba.
                                         // El mapa de la pagina de contacto se pone con el bloque
@@ -282,16 +299,16 @@ class SiteSettingsPage extends Page implements HasForms
                         Tab::make('Header / CTA')
                             ->icon('heroicon-o-bars-3-center-left')
                             ->schema([
-                                Section::make('Boton CTA del header')
-                                    ->description('Boton destacado en el header (ej: "Estado de vuelos").')
+                                Section::make('Botón CTA del header')
+                                    ->description('Botón destacado en el header (ej: "Estado de vuelos").')
                                     ->schema([
-                                        Toggle::make('header_cta_enabled')->label('Mostrar boton CTA')->default(true),
-                                        TextInput::make('header_cta_label')->label('Etiqueta del boton')->default('Estado de vuelos'),
+                                        Toggle::make('header_cta_enabled')->label('Mostrar botón CTA')->default(true),
+                                        TextInput::make('header_cta_label')->label('Etiqueta del botón')->default('Estado de vuelos'),
                                         TextInput::make('header_cta_url')->label('URL destino')->default('#'),
                                         Toggle::make('header_show_clock')->label('Mostrar reloj Guayaquil (GYE)')->default(true),
                                     ])->columns(2),
                                 Section::make('Franja superior (topbar)')
-                                    ->description('La franja amarilla sobre la cabecera. Su contenido son los enlaces del menu "topbar", que se editan en Menus.')
+                                    ->description('La franja amarilla sobre la cabecera. Su contenido son los enlaces del menú "topbar", que se editan en Menus.')
                                     ->schema([
                                         // 'topbar_text' y 'topbar_faq_label' retirados: los usaba
                                         // la cabecera anterior. La actual (Propuesta B) llena esa
@@ -302,25 +319,25 @@ class SiteSettingsPage extends Page implements HasForms
                         Tab::make('Animaciones')
                             ->icon('heroicon-o-sparkles')
                             ->schema([
-                                Section::make('Animaciones del sitio publico')
-                                    ->description('Controla el movimiento del frontend. Las animaciones siempre se desactivan automaticamente si el usuario tiene "reducir movimiento" activado en su sistema operativo.')
+                                Section::make('Animaciones del sitio público')
+                                    ->description('Controla el movimiento del frontend. Las animaciones siempre se desactivan automáticamente si el usuario tiene "reducir movimiento" activado en su sistema operativo.')
                                     ->schema([
                                         Toggle::make('animations_enabled')
                                             ->label('Animaciones activas')
-                                            ->helperText('Si esta desactivado, todo el sitio se muestra estatico.')
+                                            ->helperText('Si está desactivado, todo el sitio se muestra estático.')
                                             ->default(true),
                                         Select::make('animations_speed')
                                             ->label('Velocidad de animaciones')
                                             ->options([
-                                                'slow' => 'Lenta (mas suave)',
+                                                'slow' => 'Lenta (más suave)',
                                                 'normal' => 'Normal (recomendada)',
-                                                'fast' => 'Rapida (mas dinamica)',
+                                                'fast' => 'Rápida (más dinámica)',
                                             ])
                                             ->default('normal')
                                             ->required(),
                                         Toggle::make('animations_on_mobile')
-                                            ->label('Animaciones en moviles')
-                                            ->helperText('Desactivar en moviles ahorra bateria y mejora rendimiento en dispositivos antiguos.')
+                                            ->label('Animaciones en móviles')
+                                            ->helperText('Desactivar en móviles ahorra batería y mejora rendimiento en dispositivos antiguos.')
                                             ->default(true),
                                     ])->columns(3),
                             ]),
@@ -484,7 +501,7 @@ class SiteSettingsPage extends Page implements HasForms
                             ->schema([
                                 Section::make('Footer')
                                     ->schema([
-                                        Textarea::make('footer_about')->label('Texto sobre la institucion')->rows(3),
+                                        Textarea::make('footer_about')->label('Texto sobre la institución')->rows(3),
                                         TextInput::make('footer_copyright')->label('Texto copyright')->default('© 2026 Autoridad Aeroportuaria de Guayaquil'),
                                     ]),
 
@@ -542,6 +559,7 @@ class SiteSettingsPage extends Page implements HasForms
         return match(true) {
             str_starts_with($key, 'site_')        => 'Identidad',
             str_starts_with($key, 'font_')        => 'Tipografías',
+            in_array($key, ['text_size_control_enabled', 'default_text_size']) => 'Tipografías',
             str_starts_with($key, 'color_')       => 'Colores',
             in_array($key, ['dark_mode_enabled', 'default_theme']) => 'Tema',
             str_starts_with($key, 'contact_')     => 'Contacto',
@@ -573,8 +591,8 @@ class SiteSettingsPage extends Page implements HasForms
 
         if ($guardada === '') {
             Notification::make()
-                ->title('Falta la direccion del subdominio')
-                ->body('Escribe la direccion de los documentos y pulsa "Guardar cambios" antes de publicar.')
+                ->title('Falta la dirección del subdominio')
+                ->body('Escribe la dirección de los documentos y pulsa "Guardar cambios" antes de publicar.')
                 ->warning()
                 ->send();
 
@@ -587,7 +605,7 @@ class SiteSettingsPage extends Page implements HasForms
         if ($enPantalla !== '' && $enPantalla !== $guardada) {
             Notification::make()
                 ->title('Hay cambios sin guardar')
-                ->body("La publicacion usaria la direccion guardada ({$guardada}), no la que acabas de escribir. Pulsa \"Guardar cambios\" primero.")
+                ->body("La publicación usaría la dirección guardada ({$guardada}), no la que acabas de escribir. Pulsa \"Guardar cambios\" primero.")
                 ->warning()
                 ->send();
 
@@ -614,7 +632,7 @@ class SiteSettingsPage extends Page implements HasForms
                 ->log("Error al publicar documentos de {$seccion}: " . $e->getMessage());
 
             Notification::make()
-                ->title('No se pudo completar la publicacion')
+                ->title('No se pudo completar la publicación')
                 ->body($e->getMessage())
                 ->danger()
                 ->persistent()
@@ -657,7 +675,7 @@ class SiteSettingsPage extends Page implements HasForms
         }
 
         Notification::make()
-            ->title($simulacion ? 'Simulacion terminada (no se publico nada)' : 'Documentos publicados')
+            ->title($simulacion ? 'Simulación terminada (no se publicó nada)' : 'Documentos publicados')
             ->body($resumen)
             ->success()
             ->persistent()
@@ -677,7 +695,7 @@ class SiteSettingsPage extends Page implements HasForms
         ));
 
         if (empty($lineas)) {
-            return 'El proceso termino sin devolver detalle.';
+            return 'El proceso terminó sin devolver detalle.';
         }
 
         return implode(' ', array_slice($lineas, -3));
@@ -693,7 +711,7 @@ class SiteSettingsPage extends Page implements HasForms
         $oldSettings = SiteSetting::allCached();
 
         $assetKeys   = ['site_logo', 'site_logo_dark', 'site_logo_footer', 'site_favicon', 'seo_og_image'];
-        $booleanKeys = ['dark_mode_enabled', 'header_cta_enabled', 'header_show_clock', 'topbar_enabled', 'animations_enabled', 'animations_on_mobile'];
+        $booleanKeys = ['dark_mode_enabled', 'text_size_control_enabled', 'header_cta_enabled', 'header_show_clock', 'topbar_enabled', 'animations_enabled', 'animations_on_mobile'];
         // Campos que NO se guardan directamente en settings
         $skipKeys    = ['mail_preset', 'mail_test_to'];
 
@@ -765,7 +783,7 @@ class SiteSettingsPage extends Page implements HasForms
                 ->log("Configuración actualizada — {$sectionList}");
         }
 
-        Notification::make()->title('Configuracion guardada correctamente')->success()->send();
+        Notification::make()->title('Configuración guardada correctamente')->success()->send();
     }
 
     protected function getFormActions(): array

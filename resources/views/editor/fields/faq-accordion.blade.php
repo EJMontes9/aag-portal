@@ -6,11 +6,11 @@
             <input type="text" wire:model="editingBlockSettings.kicker" class="ve-input" maxlength="60">
         </div>
         <div class="ve-field">
-            <label class="ve-label">Titulo</label>
+            <label class="ve-label">Título</label>
             <input type="text" wire:model="editingBlockSettings.title" class="ve-input" maxlength="120">
         </div>
         <div class="ve-field">
-            <label class="ve-label">Subtitulo</label>
+            <label class="ve-label">Subtítulo</label>
             <textarea wire:model="editingBlockSettings.subtitle" class="ve-input" rows="2" maxlength="240"></textarea>
         </div>
     </div>
@@ -19,22 +19,22 @@
         <h3 class="ve-section-title">Fuente</h3>
         <div class="ve-grid-2">
             <div class="ve-field">
-                <label class="ve-label">Que preguntas mostrar</label>
+                <label class="ve-label">Qué preguntas mostrar</label>
                 <select wire:model.live="editingBlockSettings.source" class="ve-input">
                     <option value="featured">Destacadas</option>
-                    <option value="category">De una categoria</option>
+                    <option value="category">De una categoría</option>
                     <option value="all">Todas (primeras N)</option>
                 </select>
             </div>
             <div class="ve-field">
-                <label class="ve-label">Cantidad maxima</label>
+                <label class="ve-label">Cantidad máxima</label>
                 <input type="number" min="1" max="20" wire:model="editingBlockSettings.limit" class="ve-input">
             </div>
         </div>
 
         @if(($editingBlockSettings['source'] ?? null) === 'category')
             <div class="ve-field">
-                <label class="ve-label">Categoria</label>
+                <label class="ve-label">Categoría</label>
                 <select wire:model="editingBlockSettings.category_id" class="ve-input">
                     <option value="">Seleccionar...</option>
                     @foreach(\App\Models\FaqCategory::orderBy('sort_order')->get() as $cat)
@@ -52,7 +52,7 @@
         <div class="ve-field">
             <label class="ve-toggle">
                 <input type="checkbox" wire:model.live="editingBlockSettings.show_view_all">
-                <span>Mostrar enlace a la pagina /faq</span>
+                <span>Mostrar enlace a la página /faq</span>
             </label>
         </div>
         <div class="ve-field">

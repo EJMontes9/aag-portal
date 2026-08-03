@@ -33,13 +33,13 @@ class RecentConvocatoriasWidget extends BaseWidget
             )
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->label('Titulo')
+                    ->label('Título')
                     ->wrap()
                     ->limit(60)
                     ->weight('medium'),
 
                 Tables\Columns\TextColumn::make('area')
-                    ->label('Area')
+                    ->label('Área')
                     ->badge()
                     ->color('gray'),
 
@@ -78,8 +78,8 @@ class RecentConvocatoriasWidget extends BaseWidget
                     ->url(fn (Convocatoria $record): string => url('/admin/convocatorias/'.$record->id.'/edit')),
             ])
             ->paginated(false)
-            ->emptyStateHeading('No hay convocatorias todavia')
-            ->emptyStateDescription('Crea la primera convocatoria desde el menu lateral.')
+            ->emptyStateHeading('No hay convocatorias todavía')
+            ->emptyStateDescription('Crea la primera convocatoria desde el menú lateral.')
             ->emptyStateIcon('heroicon-o-megaphone');
     }
 }

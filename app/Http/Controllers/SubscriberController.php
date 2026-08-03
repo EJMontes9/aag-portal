@@ -32,13 +32,13 @@ class SubscriberController extends Controller
         try {
             $data = $request->validate([
                 // CorreoSeguro se suma a 'email:rfc', no la sustituye: cierra la
-                // inyeccion de cabeceras (CRLF) que la regla de Laravel 11 deja pasar.
+                // inyección de cabeceras (CRLF) que la regla de Laravel 11 deja pasar.
                 'email' => ['required', 'email:rfc', 'max:255', new CorreoSeguro],
                 'name' => 'nullable|string|max:255',
                 'source' => 'nullable|string|max:100',
             ], [
                 'email.required' => 'El email es obligatorio.',
-                'email.email' => 'El email no parece valido.',
+                'email.email' => 'El email no parece válido.',
             ]);
         } catch (ValidationException $e) {
             RateLimiter::hit($key, 600);
@@ -51,28 +51,28 @@ class SubscriberController extends Controller
         RateLimiter::hit($key, 600);
 
         // ── SEGURIDAD: respuesta uniforme ────────────────────────────────────
-        // Antes el mensaje cambiaba segun el estado del correo ("Ya estas
+        // Antes el mensaje cambiaba según el estado del correo ("Ya estás
         // suscrito" / "Ya enviamos un correo" / "Gracias por suscribirte"), lo
-        // que convertia el formulario en un oraculo: cualquiera podia ir
-        // probando direcciones y averiguar cuales estan en la lista. Eso es un
-        // dato personal, y ademas util para preparar campanas de phishing
+        // que convertía el formulario en un oráculo: cualquiera podía ir
+        // probando direcciones y averiguar cuáles están en la lista. Eso es un
+        // dato personal, y además útil para preparar campañas de phishing
         // dirigidas.
         //
         // Ahora la respuesta es SIEMPRE la misma, pase lo que pase por dentro.
         $respuesta = response()->json([
             'ok' => true,
-            'message' => 'Gracias. Si tu correo es valido, quedara registrado en el boletin.',
+            'message' => 'Gracias. Si tu correo es válido, quedará registrado en el boletín.',
         ]);
 
         $existing = Subscriber::where('email', $data['email'])->first();
 
         if ($existing) {
-            // Quien se dio de baja NO se reactiva solo: es una decision
-            // explicita suya, y revertirla porque alguien (quiza otra persona)
-            // escriba su correo en el formulario seria reinscribirlo sin su
+            // Quien se dio de baja NO se reactiva solo: es una decisión
+            // explícita suya, y revertirla porque alguien (quizá otra persona)
+            // escriba su correo en el formulario sería reinscribirlo sin su
             // consentimiento. Para volver, tiene que pedirlo por contacto.
             //
-            // Los estados 'confirmed' y 'pending' tampoco se tocan: ya estan
+            // Los estados 'confirmed' y 'pending' tampoco se tocan: ya están
             // en la lista.
             return $respuesta;
         }

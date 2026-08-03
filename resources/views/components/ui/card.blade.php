@@ -21,7 +21,7 @@
         default => 'p-6',
     };
 
-    // B es un diseno estatico: el hover solo cambia el color del borde, nunca desplaza
+    // B es un diseño estático: el hover solo cambia el color del borde, nunca desplaza
     // la caja ni saca una sombra.
     $hoverClass = $hover ? 'transition-colors hover:border-brand-primary' : '';
 @endphp

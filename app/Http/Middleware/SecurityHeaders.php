@@ -9,11 +9,11 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Cabeceras de seguridad de la respuesta.
  *
- * Va en middleware (codigo) y no en el .htaccess a proposito: asi viaja con el
+ * Va en middleware (código) y no en el .htaccess a propósito: así viaja con el
  * repositorio y se aplica igual en local, en cPanel o donde se despliegue, sin
  * depender de que alguien recuerde configurar el servidor.
  *
- * El portal no tenia ninguna de estas cabeceras.
+ * El portal no tenía ninguna de estas cabeceras.
  */
 class SecurityHeaders
 {
@@ -23,7 +23,7 @@ class SecurityHeaders
 
         // Evita que el navegador "adivine" el tipo de un archivo por su
         // contenido. Es lo que impide que algo subido como .txt acabe
-        // interpretandose como HTML o JavaScript.
+        // interpretándose como HTML o JavaScript.
         $response->headers->set('X-Content-Type-Options', 'nosniff');
 
         // Sin esto, el panel /admin puede empotrarse en un iframe de otro
@@ -34,17 +34,17 @@ class SecurityHeaders
         // navegar a otro dominio.
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
-        // El portal no usa camara, microfono ni geolocalizacion.
+        // El portal no usa cámara, micrófono ni geolocalización.
         $response->headers->set(
             'Permissions-Policy',
             'camera=(), microphone=(), geolocation=(), interest-cohort=()'
         );
 
-        // Oculta la version de PHP, que facilita buscar exploits conocidos.
+        // Oculta la versión de PHP, que facilita buscar exploits conocidos.
         $response->headers->remove('X-Powered-By');
 
         // HSTS: solo bajo HTTPS. Enviarlo por HTTP no tiene efecto, y en local
-        // (donde no hay certificado) dejaria el dominio inaccesible en el
+        // (donde no hay certificado) dejaría el dominio inaccesible en el
         // navegador durante el max-age. Por eso se condiciona.
         if ($request->secure()) {
             $response->headers->set(
@@ -55,40 +55,40 @@ class SecurityHeaders
 
         // ── Content-Security-Policy ─────────────────────────────────────────
         // Es la defensa de fondo contra el XSS: aunque se cuele HTML en un
-        // contenido, el navegador no ejecuta scripts de otros origenes.
+        // contenido, el navegador no ejecuta scripts de otros orígenes.
         //
         // 'unsafe-inline' y 'unsafe-eval' son ambos necesarios. Conviene leer
         // esto antes de intentar quitarlos "por endurecer":
         //
-        //   'unsafe-inline' -> Alpine y Livewire usan atributos en linea, y el
+        //   'unsafe-inline' -> Alpine y Livewire usan atributos en línea, y el
         //                      portal inyecta las variables de color en un
-        //                      <style> generado en cada peticion.
+        //                      <style> generado en cada petición.
         //
-        //   'unsafe-eval'   -> Alpine 3 compila CADA expresion (x-show, x-data,
-        //                      :class...) con new Function(), tambien cuando se
+        //   'unsafe-eval'   -> Alpine 3 compila CADA expresión (x-show, x-data,
+        //                      :class...) con new Function(), también cuando se
         //                      sirve compilado por Vite. Sin esta directiva el
         //                      navegador lo bloquea y Alpine falla a medias:
-        //                      retira los x-cloak pero no evalua los x-show, de
+        //                      retira los x-cloak pero no evalúa los x-show, de
         //                      modo que todo queda visible a la vez.
         //
-        //                      Ocurrio de verdad: el navegador de transparencia
-        //                      mostraba los cuatro anios apilados (enero a
+        //                      Ocurrió de verdad: el navegador de transparencia
+        //                      mostraba los cuatro años apilados (enero a
         //                      diciembre repetido cuatro veces) en vez de uno.
-        //                      Afectaba igual al menu movil, al acordeon de FAQ,
+        //                      Afectaba igual al menú móvil, al acordeón de FAQ,
         //                      al slider y al contador de convocatorias.
         //
-        //                      El sintoma es silencioso: la pagina carga sin
+        //                      El síntoma es silencioso: la página carga sin
         //                      errores visibles y solo se ve en la consola del
         //                      navegador ("Alpine Expression Error: ...
         //                      'unsafe-eval' is not an allowed source"). Si
         //                      alguna vez algo interactivo deja de responder,
-        //                      mirar ahi primero.
+        //                      mirar ahí primero.
         //
-        // Con ambas directivas la CSP no detiene un XSS en linea, pero sigue
-        // aportando: limita DE DONDE se puede cargar codigo y, sobre todo,
+        // Con ambas directivas la CSP no detiene un XSS en línea, pero sigue
+        // aportando: limita DE DONDE se puede cargar código y, sobre todo,
         // A DONDE se pueden enviar los datos robados (connect-src). Quitarlas
-        // exigiria migrar a la build CSP de Alpine, que obliga a reescribir
-        // todas las expresiones como metodos de un componente.
+        // exigiría migrar a la build CSP de Alpine, que obliga a reescribir
+        // todas las expresiones como métodos de un componente.
         //
         // En el panel /admin no se aplica: Filament genera scripts propios y
         // una CSP restrictiva lo rompe.
@@ -96,7 +96,7 @@ class SecurityHeaders
             // El subdominio de documentos (LOTAIP) es un origen distinto. Los
             // enlaces de descarga son navegaciones, que la CSP no bloquea, pero
             // se declara igualmente para que las miniaturas o vistas previas
-            // que se añadan mas adelante no queden cortadas sin explicacion.
+            // que se añadan más adelante no queden cortadas sin explicación.
             $origenDocumentos = '';
             try {
                 $base = trim((string) settings('documents_base_url', ''));
@@ -105,7 +105,7 @@ class SecurityHeaders
                     $origenDocumentos = ' ' . $esquema . '://' . $host;
                 }
             } catch (\Throwable) {
-                // Si la tabla de ajustes aun no existe (instalacion nueva) se
+                // Si la tabla de ajustes aún no existe (instalación nueva) se
                 // sigue sin el origen extra en vez de romper la respuesta.
             }
 
@@ -122,7 +122,7 @@ class SecurityHeaders
                 "frame-src 'self' https://www.google.com https://maps.google.com https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com",
                 // Nadie puede empotrarnos a nosotros (equivale a X-Frame-Options).
                 "frame-ancestors 'self'",
-                // No hay formularios que envien a terceros.
+                // No hay formularios que envíen a terceros.
                 "form-action 'self'",
                 "base-uri 'self'",
                 "object-src 'none'",

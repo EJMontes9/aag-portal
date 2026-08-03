@@ -5,7 +5,7 @@
     $hideWhenClosed = (bool)($block->settings['hide_when_closed'] ?? true);
 
     $conv = $convId
-        ? \App\Models\Convocatoria::find($convId)
+        ? \App\Models\Convocatoria::cached((int) $convId)
         : \App\Models\Convocatoria::featured();
 
     $tipo            = $conv?->tipo ?? 'proceso';
@@ -29,7 +29,7 @@
         <div class="grid lg:grid-cols-[1.4fr_1fr] gap-4 items-stretch">
             <div class="card-surface p-6 md:p-8 flex flex-col justify-center" data-aos="fade-up">
                 {{-- chip-cerrado en vez del gris suelto: el estado "sin convocatoria"
-                     comparte semantica con "cerrado", asi que reusa su color apagado. --}}
+                     comparte semántica con "cerrado", así que reusa su color apagado. --}}
                 <span class="chip-cerrado w-fit">SIN CONVOCATORIA ACTIVA</span>
                 <h2 class="font-serif text-section-title text-brand-navy mt-3">
                     No hay convocatorias abiertas en este momento
@@ -38,7 +38,7 @@
                     Cuando se abra un nuevo proceso o se publique un aviso, aparecerá aquí automáticamente.
                 </p>
                 <div class="mt-5">
-                    <a href="/convocatorias" class="btn-ghost">
+                    <a href="/convocatorias" wire:navigate class="btn-ghost">
                         Ver procesos anteriores
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
@@ -46,9 +46,9 @@
                     </a>
                 </div>
             </div>
-            {{-- Panel de espera. Se elimino el falso contador "00:00:00:00" de la
-                 version anterior: mostrar ceros sugiere un plazo vencido y en B
-                 el vacio se comunica con un rotulo, no con un widget inerte. --}}
+            {{-- Panel de espera. Se eliminó el falso contador "00:00:00:00" de la
+                 versión anterior: mostrar ceros sugiere un plazo vencido y en B
+                 el vacío se comunica con un rótulo, no con un widget inerte. --}}
             <div class="card-surface bg-brand-soft/40 p-6 md:p-8 flex flex-col items-center justify-center gap-3 text-center"
                  data-aos="fade-up" data-aos-delay="150">
                 <svg class="w-8 h-8 text-brand-primary" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
@@ -71,7 +71,7 @@
     $imagenUrl = $conv->imagen ? Storage::disk('public')->url($conv->imagen) : null;
     $cronograma = is_array($conv->cronograma) ? $conv->cronograma : [];
 @endphp
-{{-- Se retiraron los circulos difuminados de fondo: B no tiene formas redondas
+{{-- Se retiraron los círculos difuminados de fondo: B no tiene formas redondas
      ni degradados decorativos, la banda navy es plana y el ritmo lo dan los
      filetes. El color va por token (bg-brand-navy), no por inline style. --}}
 <section class="bg-brand-navy rule-accent">
@@ -140,7 +140,7 @@
                         @foreach($cronograma as $item)
                         <div class="flex items-center justify-between gap-4 py-2.5 border-b border-white/10 last:border-0">
                             <div class="flex items-center gap-2.5">
-                                {{-- Cuadrado de 6px, no punto: B no usa circulos. --}}
+                                {{-- Cuadrado de 6px, no punto: B no usa círculos. --}}
                                 <span class="w-1.5 h-1.5 bg-brand-accent flex-shrink-0"></span>
                                 <span class="text-on-navy text-[14px] font-semibold">{{ $item['etapa'] ?? '' }}</span>
                             </div>
@@ -160,7 +160,7 @@
                 </div>
             @endif
 
-            {{-- Enlace de referencia. Sobre fondo oscuro la accion es AMARILLA (.btn-white). --}}
+            {{-- Enlace de referencia. Sobre fondo oscuro la acción es AMARILLA (.btn-white). --}}
             @if($conv->enlace_referencia)
                 <div class="mt-7 text-center">
                     <a href="{{ $conv->enlace_referencia }}" target="_blank" rel="noopener" class="btn-white">
@@ -274,7 +274,7 @@
 <section class="bg-bg">
     <div class="section-wrap">
         <div class="max-w-3xl mx-auto" data-aos="fade-up" data-aos-duration="700">
-            {{-- Filete vertical de 3px amarillo: es la version en vertical del
+            {{-- Filete vertical de 3px amarillo: es la versión en vertical del
                  .rule-accent de B (antes era un degradado redondeado). --}}
             <div class="border-l-[3px] border-brand-accent pl-6 md:pl-8">
 
@@ -377,17 +377,17 @@
     // (La lista de documentos se incluye directamente en cada layout)
 @endphp
 
-{{-- ════ LAYOUT: SPLIT (tarjeta unica con cabecera navy) ══════════════════
+{{-- ════ LAYOUT: SPLIT (tarjeta única con cabecera navy) ══════════════════
 
-     Antes eran dos columnas (1.3fr / 1fr) con items-start: la izquierda crecia
-     con todo el contenido y la derecha solo tenia el countdown, una caja de
+     Antes eran dos columnas (1.3fr / 1fr) con items-start: la izquierda crecía
+     con todo el contenido y la derecha solo tenía el countdown, una caja de
      unos 200px, de modo que quedaba un hueco enorme a su lado. El desequilibrio
      era estructural, no de contenido: cualquier convocatoria con cronograma o
-     requisitos lo reproducia.
+     requisitos lo reproducía.
 
      Ahora es una sola tarjeta a lo ancho, con el countdown integrado en la
      cabecera navy en horizontal (que es donde mejor funciona: son cuatro cifras
-     cortas) y el cuerpo repartido en dos columnas que SI se llenan. No hay
+     cortas) y el cuerpo repartido en dos columnas que SÍ se llenan. No hay
      hueco posible, haya el contenido que haya. --}}
 @if($procesoLayout !== 'card' && $procesoLayout !== 'minimal')
 <section class="bg-bg">
@@ -395,12 +395,12 @@
         <article class="max-w-5xl mx-auto card-surface overflow-hidden"
                  data-aos="fade-up" data-aos-duration="700">
 
-            {{-- ── Cabecera navy: identidad + titulo + countdown ─────────────── --}}
+            {{-- ── Cabecera navy: identidad + título + countdown ─────────────── --}}
             <div class="bg-brand-navy rule-accent px-6 md:px-8 py-6">
 
                 @if($logo)
                 {{-- Logo blanqueado para que funcione sobre navy, igual que en el
-                     pie de pagina. Es el sello de oficialidad del anuncio. --}}
+                     pie de página. Es el sello de oficialidad del anuncio. --}}
                 <div class="flex items-center gap-3 mb-4 pb-4 border-b border-white/15">
                     <img src="{{ $logo }}" alt="" aria-hidden="true"
                          class="h-7 w-auto object-contain" style="filter:brightness(0) invert(1);">
@@ -590,12 +590,12 @@
             </div>
             @endif
 
-            {{-- ── Pie: llamada a la accion ──────────────────────────────────── --}}
+            {{-- ── Pie: llamada a la acción ──────────────────────────────────── --}}
             <div class="border-t border-border bg-bg px-6 md:px-8 py-5 flex flex-wrap items-center justify-between gap-4">
                 <p class="text-[14px] text-muted">
                     Consulta las bases completas y el detalle del proceso.
                 </p>
-                <a href="{{ $convLink }}" class="btn-primary">
+                <a href="{{ $convLink }}" wire:navigate class="btn-primary">
                     Ver convocatoria completa
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
@@ -618,7 +618,7 @@
                 <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-5">
                     <div class="flex-1 min-w-0">
                         {{-- Sobre navy los .chip-* apagados siguen legibles (fondo claro,
-                             texto oscuro), asi que se usa la misma clase que en split. --}}
+                             texto oscuro), así que se usa la misma clase que en split. --}}
                         <span class="{{ $chipClass }} mb-3">
                             <span class="w-1.5 h-1.5 bg-current inline-block"></span>
                             {{ $chipLabel }}
@@ -750,7 +750,7 @@
                     @if($logo)
                     <img src="{{ $logo }}" alt="{{ settings('site_name','AAG') }}" class="h-6 object-contain">
                     @endif
-                    <a href="{{ $convLink }}" class="btn-primary ml-auto">
+                    <a href="{{ $convLink }}" wire:navigate class="btn-primary ml-auto">
                         Ver convocatoria completa
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
@@ -861,7 +861,7 @@
                     @if($logo)
                     <img src="{{ $logo }}" alt="{{ settings('site_name','AAG') }}" class="h-6 object-contain">
                     @endif
-                    <a href="{{ $convLink }}"
+                    <a href="{{ $convLink }}" wire:navigate
                        class="inline-flex items-center gap-2 rounded-pill font-sans text-[12px] font-bold uppercase tracking-[0.06em] text-brand-primary hover:text-brand-navy transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
                         Ver convocatoria completa y documentos
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>

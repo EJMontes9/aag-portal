@@ -9,7 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * Noticia completa (DETALLE).
  *
- * Anade al resumen lo que solo tiene sentido en la ficha. Rigen las mismas
+ * Añade al resumen lo que solo tiene sentido en la ficha. Rigen las mismas
  * exclusiones que en NoticiaResumenResource: nada de autor, visitas, estado ni
  * campos de SEO.
  */
@@ -31,9 +31,9 @@ class NoticiaResource extends JsonResource
                     'slug' => (string) $this->resource->category->slug,
                 ]
                 : null,
-            // El cuerpo sale como HTML porque asi se guarda. Ya viene saneado
-            // desde el modelo (News::booted pasa HtmlSanitizer al guardar), asi
-            // que es el mismo HTML que la web pinta, sin sorpresas anadidas.
+            // El cuerpo sale como HTML porque así se guarda. Ya viene saneado
+            // desde el modelo (News::booted pasa HtmlSanitizer al guardar), así
+            // que es el mismo HTML que la web pinta, sin sorpresas añadidas.
             'contenido' => (string) $this->resource->content,
             'imagen_portada' => $this->resource->cover_url,
             'imagen_portada_alt' => $this->resource->cover_image_alt,

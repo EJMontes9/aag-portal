@@ -26,7 +26,7 @@ class EditPage extends EditRecord
                 ->color('success')
                 ->url(fn () => url('/admin/visual-editor/'.$this->record->id)),
             Actions\Action::make('view_public')
-                ->label('Ver publico')
+                ->label('Ver público')
                 ->icon('heroicon-o-arrow-top-right-on-square')
                 ->url(fn () => $this->record->key === 'home' ? url('/') : url('/'.$this->record->slug))
                 ->openUrlInNewTab(),

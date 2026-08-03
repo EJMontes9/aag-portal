@@ -1,21 +1,21 @@
 @props(['data'])
-{{-- Cuerpo de texto del articulo: es EL bloque que se lee entero, asi que aqui
+{{-- Cuerpo de texto del artículo: es EL bloque que se lee entero, así que aquí
      manda la legibilidad sobre la densidad de la Propuesta B.
 
-     Se sale de "prose-lg" (que a raiz 17px daba parrafos de ~19px, mas grandes
-     que el propio titulo de tarjeta) y se fija el cuerpo en 16px con interlineado
-     1.75 y separacion de 1.15em entre parrafos: es la horquilla de lectura larga
-     y ademas iguala al contenido legacy de pages/news/show, que iba a 14px.
+     Se sale de "prose-lg" (que a raíz 17px daba párrafos de ~19px, más grandes
+     que el propio título de tarjeta) y se fija el cuerpo en 16px con interlineado
+     1.75 y separación de 1.15em entre párrafos: es la horquilla de lectura larga
+     y además iguala al contenido legacy de pages/news/show, que iba a 14px.
 
-     El parrafo pasa de fg/85 a fg pleno: sobre blanco, el 85% de #222 baja el
-     contraste sin ganar nada, y el gris ya esta reservado a los metadatos.
+     El párrafo pasa de fg/85 a fg pleno: sobre blanco, el 85% de #222 baja el
+     contraste sin ganar nada, y el gris ya está reservado a los metadatos.
 
      Los titulares intermedios se alinean con el resto del portal: Neulis en
-     mayusculas y navy, igual que los rotulos de seccion.
+     mayúsculas y navy, igual que los rótulos de sección.
 
-     max-w-[72ch] + mx-auto: acota la medida de linea al entorno de 65-75
-     caracteres. Va aqui, en el TEXTO, y no en la columna del articulo, para no
-     encoger tambien las fotos, galerias y mapas que comparten esa columna. --}}
+     max-w-[72ch] + mx-auto: acota la medida de línea al entorno de 65-75
+     caracteres. Va aquí, en el TEXTO, y no en la columna del artículo, para no
+     encoger también las fotos, galerías y mapas que comparten esa columna. --}}
 <div class="prose max-w-[72ch] mx-auto
             prose-headings:font-serif prose-headings:uppercase prose-headings:text-brand-navy
             prose-h2:text-[20px] prose-h2:mt-9 prose-h2:mb-3

@@ -1,5 +1,5 @@
-{{-- Sesion caducada (token CSRF expirado). Tipico al dejar un formulario
-     abierto mucho rato y enviarlo despues. --}}
+{{-- Sesión caducada (token CSRF expirado). Típico al dejar un formulario
+     abierto mucho rato y enviarlo después. --}}
 @include('errors._layout', [
     'code'    => 419,
     'titulo'  => 'La sesión ha caducado',

@@ -84,9 +84,9 @@
                         @foreach($cronograma as $idx => $item)
                         @php $isLast = $idx === count($cronograma) - 1; @endphp
                         <li class="relative pl-7 {{ $isLast ? 'pb-0' : 'pb-6' }}">
-                            {{-- Marcador cuadrado (2px): en B no hay circulos.
-                                 Sube de 18 a 22px con el numero a 12px: a 9px la
-                                 cifra dentro del cuadrado no se leia. --}}
+                            {{-- Marcador cuadrado (2px): en B no hay círculos.
+                                 Sube de 18 a 22px con el número a 12px: a 9px la
+                                 cifra dentro del cuadrado no se leía. --}}
                             <span class="absolute -left-[11px] top-0 w-[22px] h-[22px] rounded-pill flex items-center justify-center bg-brand-navy text-[12px] font-bold text-white num-tabular">
                                 {{ $idx + 1 }}
                             </span>
@@ -159,9 +159,9 @@
                                 <span class="block font-serif text-[24px] leading-none text-white num-tabular"
                                       x-text="String({{ $k }}).padStart(2,'0')">00</span>
                             </div>
-                            {{-- 12px y opacidad mas alta: DIAS/HRS/MIN/SEG son la
+                            {{-- 12px y opacidad más alta: DIAS/HRS/MIN/SEG son la
                                  clave de lectura del contador y a 10px sobre
-                                 navy con un 60% de blanco casi desaparecian. --}}
+                                 navy con un 60% de blanco casi desaparecían. --}}
                             <span class="block text-[12px] tracking-[0.08em] uppercase font-bold text-white/75">{{ $l }}</span>
                         </div>
                         @endforeach
@@ -177,7 +177,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"/>
                     </svg>
                     <p class="kicker text-muted">Proceso cerrado</p>
-                    <p class="mt-2 text-[12px] uppercase tracking-[0.07em] font-bold text-muted">Cerro el</p>
+                    <p class="mt-2 text-[12px] uppercase tracking-[0.07em] font-bold text-muted">Cerró el</p>
                     <p class="mt-1 font-serif text-lg uppercase text-brand-navy num-tabular">
                         {{ $closes->translatedFormat('d \\d\\e F \\d\\e Y') }}
                     </p>
@@ -192,7 +192,7 @@
                 @endif
 
                 {{-- Volver al listado --}}
-                <a href="{{ route('convocatorias.index') }}" class="btn-ghost w-full">
+                <a href="{{ route('convocatorias.index') }}" wire:navigate class="btn-ghost w-full">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
                     </svg>

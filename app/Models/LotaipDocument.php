@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 class LotaipDocument extends Model
 {
-    /** El archivo esta subido a este hosting, en el disco publico. */
+    /** El archivo está subido a este hosting, en el disco público. */
     public const SOURCE_LOCAL = 'local';
 
     /** El archivo vive en el subdominio de documentos, al que se sube por FTP. */
@@ -32,14 +32,14 @@ class LotaipDocument extends Model
                 return;
             }
 
-            // La extension se deduce de la ruta en ambos casos, quitando antes
-            // la query string por si la URL externa trae parametros.
+            // La extensión se deduce de la ruta en ambos casos, quitando antes
+            // la query string por si la URL externa trae parámetros.
             $sinQuery = strtok($m->file_path, '?');
             $m->extension = strtolower(pathinfo($sinQuery, PATHINFO_EXTENSION));
 
             // El tamaño solo se puede leer de los archivos locales. En los
-            // externos se deja como lo haya escrito el administrador (o vacio):
-            // consultar el subdominio en cada guardado haria depender el panel
+            // externos se deja como lo haya escrito el administrador (o vacío):
+            // consultar el subdominio en cada guardado haría depender el panel
             // de que ese servidor responda.
             if ($m->isLocal()) {
                 $absPath = Storage::disk('public')->path($m->file_path);
@@ -81,18 +81,18 @@ class LotaipDocument extends Model
     }
 
     /**
-     * URL publica del documento.
+     * URL pública del documento.
      *
      * Resuelve en este orden, pensado para no romper nada de lo ya publicado:
      *
      *   1. Si file_path ya es una URL absoluta, se devuelve TAL CUAL. Es el
-     *      caso de los documentos historicos, cuyos enlaces estan publicados
+     *      caso de los documentos históricos, cuyos enlaces están publicados
      *      y no deben cambiar aunque se modifique el subdominio configurado.
      *   2. Si el documento es externo, se compone con la URL base del panel.
-     *   3. Si es local, sale del disco publico como siempre.
+     *   3. Si es local, sale del disco público como siempre.
      *
-     * Solo se admiten esquemas http y https: un administrador podria pegar por
-     * error (o con mala intencion) un "javascript:..." que se ejecutaria al
+     * Solo se admiten esquemas http y https: un administrador podría pegar por
+     * error (o con mala intención) un "javascript:..." que se ejecutaría al
      * pulsar el enlace.
      */
     public function getUrlAttribute(): string
@@ -109,10 +109,10 @@ class LotaipDocument extends Model
         }
 
         // 1. Cualquier cosa con esquema ("algo:...").
-        //    Se comprueba SIN exigir "//" a proposito: "javascript:alert(1)" no
-        //    lleva barras, y si solo se buscara "://" pasaria por ruta relativa
-        //    y se acabaria concatenando al subdominio como un enlace roto.
-        //    Una ruta de archivo legitima no empieza por "esquema:".
+        //    Se comprueba SIN exigir "//" a propósito: "javascript:alert(1)" no
+        //    lleva barras, y si solo se buscara "://" pasaría por ruta relativa
+        //    y se acabaría concatenando al subdominio como un enlace roto.
+        //    Una ruta de archivo legítima no empieza por "esquema:".
         if (preg_match('#^[a-z][a-z0-9+.-]*:#i', $ruta)) {
             return $this->esEsquemaSeguro($ruta) ? $ruta : '';
         }
@@ -123,7 +123,7 @@ class LotaipDocument extends Model
 
             if ($base === '') {
                 // Sin base configurada no se puede construir el enlace. Se
-                // devuelve vacio en vez de una URL rota, y la vista lo trata.
+                // devuelve vacío en vez de una URL rota, y la vista lo trata.
                 return '';
             }
 

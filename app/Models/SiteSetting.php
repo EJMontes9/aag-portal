@@ -10,24 +10,24 @@ class SiteSetting extends Model
     protected $fillable = ['key', 'group', 'type', 'value', 'label', 'description'];
 
     /**
-     * Ajustes ya resueltos para esta peticion.
+     * Ajustes ya resueltos para esta petición.
      *
-     * ── Por que hace falta ──────────────────────────────────────────────────
+     * ── Por qué hace falta ──────────────────────────────────────────────────
      * Cache::rememberForever() evita ir a la tabla site_settings, pero NO evita
-     * ir a la cache: con CACHE_STORE=database (que es lo que hay en cPanel, sin
+     * ir a la caché: con CACHE_STORE=database (que es lo que hay en cPanel, sin
      * Redis) cada lectura es un "select * from cache where key in (?)".
      *
-     * Y settings() se llama muchisimo al pintar una pagina: cada bloque, cada
-     * componente, cada color de la linea grafica. Medido antes de este cambio:
-     * la portada hacia 86 consultas identicas a la cache, y /transparencia
-     * llegaba a 4631 (mas de 1,4 segundos solo en base de datos) porque recorre
+     * Y settings() se llama muchísimo al pintar una página: cada bloque, cada
+     * componente, cada color de la línea gráfica. Medido antes de este cambio:
+     * la portada hacía 86 consultas idénticas a la caché, y /transparencia
+     * llegaba a 4631 (más de 1,4 segundos solo en base de datos) porque recorre
      * cientos de meses y documentos.
      *
-     * Todas devuelven exactamente lo mismo dentro de una misma peticion, asi
+     * Todas devuelven exactamente lo mismo dentro de una misma petición, así
      * que basta con quedarse el resultado en memoria: la primera llamada va a
-     * la cache, el resto salen de aqui.
+     * la caché, el resto salen de aquí.
      *
-     * Es memoria por peticion, no un cache persistente: PHP la descarta al
+     * Es memoria por petición, no un caché persistente: PHP la descarta al
      * terminar. No hay riesgo de servir datos viejos a otro visitante.
      */
     protected static ?array $memoria = null;
@@ -39,11 +39,11 @@ class SiteSetting extends Model
     }
 
     /**
-     * Invalida la cache persistente Y la de esta peticion.
+     * Invalida la caché persistente Y la de esta petición.
      *
      * Las dos, y en este orden: si solo se limpiara la de disco, el panel
-     * seguiria mostrando el valor viejo al recargar el formulario tras guardar,
-     * porque esa misma peticion ya tiene el array en memoria.
+     * seguiría mostrando el valor viejo al recargar el formulario tras guardar,
+     * porque esa misma petición ya tiene el array en memoria.
      */
     public static function olvidar(): void
     {

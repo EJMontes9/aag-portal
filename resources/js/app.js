@@ -152,12 +152,49 @@ function setupSmoothScroll() {
 }
 
 // ===========================================================================
-//  Inicializacion al cargar el DOM
+//  Resalta el link activo del menu principal/movil segun la URL actual.
+//
+//  El header vive dentro de @persist('header') (ver layouts/app.blade.php):
+//  con wire:navigate, Livewire NO vuelve a pedir/renderizar ese nodo entre
+//  paginas, asi que la clase "activa" calculada en el servidor en la carga
+//  inicial se quedaria congelada en esa primera pagina para siempre. Esto
+//  la recalcula en el cliente cada vez que cambia la URL.
 // ===========================================================================
-document.addEventListener('DOMContentLoaded', () => {
+function updateActiveNav() {
+    document.querySelectorAll('.nav-link[href]').forEach((a) => {
+        let isActive = false;
+        try {
+            isActive = new URL(a.href, window.location.origin).pathname.replace(/\/$/, '')
+                === window.location.pathname.replace(/\/$/, '');
+        } catch { /* href invalido o externo: no es un match */ }
+
+        a.classList.toggle('nav-link-active', isActive);
+        if (isActive) {
+            a.setAttribute('aria-current', 'page');
+        } else {
+            a.removeAttribute('aria-current');
+        }
+    });
+}
+
+// ===========================================================================
+//  Inicializacion de interacciones por pagina.
+//
+//  Corre en DOMContentLoaded (primera carga) Y en livewire:navigated (cada
+//  transicion wire:navigate posterior), porque a partir de la primera
+//  navegacion SPA el DOMContentLoaded del documento original no se repite:
+//  solo cambia el contenido de <main>. Sin este segundo enganche, el titulo
+//  animado, los contadores, AOS y el scroll suave solo funcionarian en la
+//  pagina con la que se entro al sitio.
+// ===========================================================================
+function initPageInteractions() {
     animateHeroTitle();
     setupCounters();
     setupSmoothScroll();
+    updateActiveNav();
+    // AOS escanea el DOM una vez al iniciar; sin refresh no detecta los
+    // elementos data-aos que trae el contenido recien intercambiado.
+    if (ANIM_OK && typeof AOS !== 'undefined') AOS.refreshHard();
     // OJO: cada valor de data-stagger usado en una plantilla TIENE que estar
     // registrado aqui. La regla base de app.css deja esos elementos en
     // opacity:0 a la espera de la animacion, asi que uno sin registrar queda
@@ -166,6 +203,21 @@ document.addEventListener('DOMContentLoaded', () => {
     staggerEntry('[data-stagger="flight-row"]', { gap: 0.09, start: 0.2 });
     staggerEntry('[data-stagger="value-row"]', { gap: 0.1 });
     staggerEntry('[data-stagger="stat"]', { gap: 0.08 });
+}
+
+// DOMContentLoaded siempre dispara exactamente una vez, sin depender de que
+// Livewire cargue bien. livewire:navigated tambien dispara para esa MISMA
+// carga inicial (ademas de cada navegacion posterior) y el orden entre
+// ambos no esta garantizado, asi que la primera vez que se vea
+// livewire:navigated se ignora -- ya la cubrio (o la cubrira) DOMContentLoaded.
+let firstNavigatedSeen = false;
+document.addEventListener('DOMContentLoaded', initPageInteractions);
+document.addEventListener('livewire:navigated', () => {
+    if (!firstNavigatedSeen) {
+        firstNavigatedSeen = true;
+        return;
+    }
+    initPageInteractions();
 });
 
 // ===========================================================================
@@ -201,6 +253,54 @@ document.addEventListener('alpine:init', () => {
 
         apply(theme) {
             document.documentElement.classList.toggle('dark', theme === 'dark');
+        },
+    });
+
+    // Tamaño de texto (A-/A+). El font-size inline pisa el 106.25% fijo de
+    // app.css en el <html>, y como el resto del sitio usa rem, todo escala.
+    window.Alpine.store('textSize', {
+        steps: ['87.5%', '100%', '106.25%', '118.75%', '131.25%', '143.75%', '156.25%'],
+        defaults: { normal: '106.25%', grande: '118.75%', muy_grande: '131.25%' },
+        index: 2,
+        allowed: false,
+
+        init() {
+            this.allowed = root.dataset.textsizeAllowed === 'true';
+            const defaultSize = this.defaults[root.dataset.textsizeDefault] || this.defaults.normal;
+            const storedPreference = localStorage.getItem('aag-text-size');
+            const size = this.allowed && storedPreference ? storedPreference : defaultSize;
+
+            this.index = Math.max(0, this.steps.indexOf(size));
+            this.apply();
+        },
+
+        increase() {
+            if (!this.allowed || this.atMax) return;
+            this.index++;
+            this.persist();
+        },
+
+        decrease() {
+            if (!this.allowed || this.atMin) return;
+            this.index--;
+            this.persist();
+        },
+
+        persist() {
+            localStorage.setItem('aag-text-size', this.steps[this.index]);
+            this.apply();
+        },
+
+        apply() {
+            document.documentElement.style.fontSize = this.steps[this.index];
+        },
+
+        get atMin() {
+            return this.index === 0;
+        },
+
+        get atMax() {
+            return this.index === this.steps.length - 1;
         },
     });
 

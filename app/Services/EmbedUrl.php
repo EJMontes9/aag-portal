@@ -5,27 +5,27 @@ namespace App\Services;
 /**
  * Valida las direcciones de contenido incrustado (mapas y video).
  *
- * POR QUE
+ * POR QUÉ
  * -------
  * Los bloques de mapa y de texto+imagen aceptaban un fragmento de HTML que se
- * pintaba tal cual con {!! !!}. El unico "saneo" era quitar los atributos
- * width, height y style, lo cual es cosmetico: un <script> o un
+ * pintaba tal cual con {!! !!}. El único "saneo" era quitar los atributos
+ * width, height y style, lo cual es cosmético: un <script> o un
  * <iframe onload="..."> pegados en ese campo se ejecutaban en el portal.
  *
- * En lugar de intentar limpiar HTML arbitrario, aqui se hace lo contrario: se
- * extrae UNICAMENTE la direccion, se comprueba que sea de un proveedor
- * conocido, y el <iframe> lo construye la plantilla. Asi da igual lo que
- * peguen en el campo; lo unico que sobrevive es una URL de la lista.
+ * En lugar de intentar limpiar HTML arbitrario, aquí se hace lo contrario: se
+ * extrae ÚNICAMENTE la dirección, se comprueba que sea de un proveedor
+ * conocido, y el <iframe> lo construye la plantilla. Así da igual lo que
+ * peguen en el campo; lo único que sobrevive es una URL de la lista.
  *
  * Admite las dos formas de rellenar el campo, porque los administradores
- * suelen pegar el "codigo para insertar" completo:
+ * suelen pegar el "código para insertar" completo:
  *   - el fragmento <iframe src="..."></iframe> de Google Maps o YouTube
- *   - o solo la direccion
+ *   - o solo la dirección
  */
 class EmbedUrl
 {
     /**
-     * Dominios permitidos por tipo de incrustacion.
+     * Dominios permitidos por tipo de incrustación.
      * Se compara el host COMPLETO o un subdominio suyo, nunca por "contiene":
      * "google.com.atacante.net" no debe colarse.
      */
@@ -71,7 +71,7 @@ class EmbedUrl
         $url = trim($url);
 
         // Solo https. Deja fuera javascript:, data: y el http sin cifrar, que
-        // ademas provocaria un aviso de contenido mixto en el navegador.
+        // además provocaría un aviso de contenido mixto en el navegador.
         if (! preg_match('#^https://#i', $url)) {
             return null;
         }

@@ -15,7 +15,7 @@ class LotaipYearResource extends Resource
     protected static ?string $model = LotaipYear::class;
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
     protected static ?string $navigationGroup = 'Transparencia';
-    protected static ?string $navigationLabel = 'Años (LOTAIP / Rendicion)';
+    protected static ?string $navigationLabel = 'Años (LOTAIP / Rendición)';
     protected static ?string $modelLabel = 'año';
     protected static ?string $pluralModelLabel = 'años';
     protected static ?int $navigationSort = 1;
@@ -24,10 +24,10 @@ class LotaipYearResource extends Resource
     {
         return $form->schema([
             Forms\Components\Select::make('section')
-                ->label('Seccion')
+                ->label('Sección')
                 ->options([
                     'lotaip' => 'LOTAIP / Transparencia',
-                    'rendicion' => 'Rendicion de cuentas',
+                    'rendicion' => 'Rendición de cuentas',
                 ])
                 ->required()
                 ->default('lotaip'),
@@ -47,7 +47,7 @@ class LotaipYearResource extends Resource
                     'docx' => 'Word (docx)',
                 ])
                 ->columns(3)
-                ->helperText('Si dejas vacio, se muestran todas las extensiones. Esto se puede sobrescribir por cada mes.'),
+                ->helperText('Si dejas vacío, se muestran todas las extensiones. Esto se puede sobrescribir por cada mes.'),
             Forms\Components\Toggle::make('is_active')->label('Activo')->default(true),
             Forms\Components\TextInput::make('sort_order')->label('Orden')->numeric()->default(0),
         ])->columns(2);
@@ -59,9 +59,9 @@ class LotaipYearResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('year')->label('Año')->weight('medium')->size('lg'),
                 Tables\Columns\TextColumn::make('section')
-                    ->label('Seccion')
+                    ->label('Sección')
                     ->badge()
-                    ->formatStateUsing(fn ($state) => $state === 'lotaip' ? 'LOTAIP' : 'Rendicion'),
+                    ->formatStateUsing(fn ($state) => $state === 'lotaip' ? 'LOTAIP' : 'Rendición'),
                 Tables\Columns\TextColumn::make('allowed_extensions')
                     ->label('Filtro extensiones')
                     ->formatStateUsing(fn ($state) => empty($state) ? 'Todas' : strtoupper(implode(', ', is_array($state) ? $state : json_decode($state, true) ?? [])))
@@ -72,7 +72,7 @@ class LotaipYearResource extends Resource
             ])
             ->defaultSort('year', 'desc')
             ->filters([
-                Tables\Filters\SelectFilter::make('section')->options(['lotaip' => 'LOTAIP', 'rendicion' => 'Rendicion']),
+                Tables\Filters\SelectFilter::make('section')->options(['lotaip' => 'LOTAIP', 'rendicion' => 'Rendición']),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

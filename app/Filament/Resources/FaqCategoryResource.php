@@ -15,9 +15,9 @@ class FaqCategoryResource extends Resource
     protected static ?string $model = FaqCategory::class;
     protected static ?string $navigationIcon = 'heroicon-o-tag';
     protected static ?string $navigationGroup = 'Contenido';
-    protected static ?string $navigationLabel = 'Categorias FAQ';
-    protected static ?string $modelLabel = 'categoria FAQ';
-    protected static ?string $pluralModelLabel = 'categorias FAQ';
+    protected static ?string $navigationLabel = 'Categorías FAQ';
+    protected static ?string $modelLabel = 'categoría FAQ';
+    protected static ?string $pluralModelLabel = 'categorías FAQ';
     protected static ?int $navigationSort = 8;
 
     public static function form(Form $form): Form

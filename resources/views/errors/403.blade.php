@@ -1,4 +1,4 @@
-{{-- Acceso denegado: la direccion existe, pero no se tiene permiso. --}}
+{{-- Acceso denegado: la dirección existe, pero no se tiene permiso. --}}
 @include('errors._layout', [
     'code'    => 403,
     'titulo'  => 'Acceso no autorizado',

@@ -71,11 +71,11 @@
 @endpush
 
 {{-- El BreadcrumbList lo emite <x-ui.breadcrumb-bar> a partir de la misma lista
-     de items que se pinta en pantalla, asi que no se duplica aqui. --}}
+     de items que se pinta en pantalla, así que no se duplica aquí. --}}
 
 @section('content')
 <article class="bg-bg">
-    {{-- Miga de pan + cabecera de pagina interior --}}
+    {{-- Miga de pan + cabecera de página interior --}}
     <x-ui.breadcrumb-bar :items="array_values(array_filter([
         ['label' => 'Noticias', 'url' => route('news.index')],
         $item->category ? ['label' => $item->category->name, 'url' => route('news.index', ['categoria' => $item->category->slug])] : null,
@@ -85,7 +85,7 @@
     <x-ui.page-header :title="$item->title" :description="$item->excerpt">
         @if($item->category)
         <x-slot:meta>
-            {{-- El color propio de la categoria (definido por el admin) se
+            {{-- El color propio de la categoría (definido por el admin) se
                  respeta como color de TEXTO sobre el tinte celeste del chip. --}}
             <span class="pill"
                   @if($item->category->color) style="color: {{ $item->category->color }};" @endif>
@@ -94,8 +94,8 @@
         </x-slot:meta>
         @endif
 
-        {{-- Firma del articulo: sube a 13px porque es informacion que el lector
-             consulta de verdad (quien firma, cuando y cuanto dura), no un
+        {{-- Firma del artículo: sube a 13px porque es información que el lector
+             consulta de verdad (quién firma, cuándo y cuánto dura), no un
              adorno; sigue por debajo de la bajada para no competir con ella. --}}
         <div class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-muted">
             @if($item->author)
@@ -141,10 +141,10 @@
         $hasSidebar = ! empty($sidebarBlocks);
     @endphp
 
-    {{-- Medida de linea: se acota el TEXTO (max-w-[72ch] en cada bloque prose),
-         no la columna. Capar la columna entera encogia tambien fotos y galerias
+    {{-- Medida de línea: se acota el TEXTO (max-w-[72ch] en cada bloque prose),
+         no la columna. Capar la columna entera encogía también fotos y galerías
          y, con sidebar, dejaba un hueco muerto de ~400px entre el cuerpo y la
-         barra lateral. Asi queda el patron editorial habitual: los medios al
+         barra lateral. Así queda el patrón editorial habitual: los medios al
          ancho de la columna y el texto centrado en su medida de lectura. --}}
     <div class="section-wrap">
         <div class="@if($hasSidebar) news-with-sidebar @else max-w-3xl mx-auto @endif">
@@ -166,7 +166,7 @@
                     {{-- Contenido legacy (RichEditor).
                          Mismos valores que news-blocks/text.blade.php: una noticia
                          debe leerse igual venga del editor por bloques o del
-                         campo antiguo. Cuerpo 16px / 1.75 y parrafos separados. --}}
+                         campo antiguo. Cuerpo 16px / 1.75 y párrafos separados. --}}
                     <div class="prose max-w-[72ch] mx-auto
                                 prose-headings:font-serif prose-headings:uppercase prose-headings:text-brand-navy
                                 prose-h2:text-[20px] prose-h2:mt-9 prose-h2:mb-3
@@ -183,7 +183,7 @@
 
                 {{-- Compartir --}}
                 {{-- Barra de compartir: flex-wrap para que a 360px no desborde,
-                     12px para que las etiquetas en mayusculas se lean, y anillo
+                     12px para que las etiquetas en mayúsculas se lean, y anillo
                      de foco en cada enlace. --}}
                 <div class="mt-10 pt-6 border-t border-border flex flex-wrap items-center gap-x-3 gap-y-2 text-[12px] uppercase tracking-[0.07em] font-bold text-muted">
                     <span>Compartir:</span>
@@ -223,11 +223,11 @@
     @if($related->isNotEmpty())
         <section class="bg-card border-t border-border">
             <div class="section-wrap">
-                {{-- Mismo patron de cabecera de bloque que el resto del portal:
-                     kicker celeste + titulo Neulis + filete amarillo separador. --}}
+                {{-- Mismo patrón de cabecera de bloque que el resto del portal:
+                     kicker celeste + título Neulis + filete amarillo separador. --}}
                 <header class="mb-7 rule-accent pb-3">
                     <span class="kicker">Seguir leyendo</span>
-                    <h2 class="font-serif text-section-title uppercase text-brand-navy mt-2">Tambien te puede interesar</h2>
+                    <h2 class="font-serif text-section-title uppercase text-brand-navy mt-2">También te puede interesar</h2>
                 </header>
                 <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-[18px]">
                     @foreach($related as $item)

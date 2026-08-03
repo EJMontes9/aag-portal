@@ -9,7 +9,7 @@ use Filament\Forms\Components\Builder\Block;
 class CtaBlock extends BlockType
 {
     public static function key(): string { return 'cta'; }
-    public static function label(): string { return 'Llamado a la accion (CTA)'; }
+    public static function label(): string { return 'Llamado a la acción (CTA)'; }
     public static function icon(): string { return 'heroicon-o-cursor-arrow-rays'; }
     public static function view(): string { return 'blocks.cta'; }
 
@@ -19,10 +19,10 @@ class CtaBlock extends BlockType
             ->label(self::label())
             ->icon(self::icon())
             ->schema([
-                Forms\Components\TextInput::make('title')->label('Titulo')->required(),
-                Forms\Components\Textarea::make('subtitle')->label('Descripcion')->rows(2),
-                Forms\Components\TextInput::make('cta_label')->label('Boton - etiqueta')->required(),
-                Forms\Components\TextInput::make('cta_url')->label('Boton - URL')->required(),
+                Forms\Components\TextInput::make('title')->label('Título')->required(),
+                Forms\Components\Textarea::make('subtitle')->label('Descripción')->rows(2),
+                Forms\Components\TextInput::make('cta_label')->label('Botón - etiqueta')->required(),
+                Forms\Components\TextInput::make('cta_url')->label('Botón - URL')->required(),
                 Forms\Components\Select::make('background')
                     ->label('Estilo del bloque')
                     ->options([
@@ -34,7 +34,7 @@ class CtaBlock extends BlockType
                     ->default('navy')
                     ->required(),
                 Forms\Components\Select::make('align')
-                    ->label('Alineacion')
+                    ->label('Alineación')
                     ->options(['left' => 'Izquierda', 'center' => 'Centrado'])
                     ->default('center'),
             ])->columns(2);

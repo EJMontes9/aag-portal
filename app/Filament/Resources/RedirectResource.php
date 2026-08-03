@@ -22,37 +22,37 @@ class RedirectResource extends Resource
     protected static ?string $model = Redirect::class;
 
     protected static ?string $navigationIcon  = 'heroicon-o-arrow-path-rounded-square';
-    protected static ?string $navigationGroup = 'Configuracion';
+    protected static ?string $navigationGroup = 'Configuración';
     protected static ?int    $navigationSort  = 46;
 
-    protected static ?string $modelLabel       = 'redireccion';
+    protected static ?string $modelLabel       = 'redirección';
     protected static ?string $pluralModelLabel = 'redirecciones';
     protected static ?string $navigationLabel  = 'Redirecciones';
 
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Section::make('Redireccion')
-                ->description('Envia una direccion que ya no existe a su equivalente en el portal nuevo. Sirve para que los enlaces antiguos, los de Google y los que la gente tiene guardados sigan funcionando.')
+            Forms\Components\Section::make('Redirección')
+                ->description('Envía una dirección que ya no existe a su equivalente en el portal nuevo. Sirve para que los enlaces antiguos, los de Google y los que la gente tiene guardados sigan funcionando.')
                 ->schema([
                     Forms\Components\TextInput::make('from_path')
-                        ->label('Direccion antigua')
+                        ->label('Dirección antigua')
                         ->required()
                         ->maxLength(500)
                         ->unique(ignoreRecord: true)
                         ->placeholder('/quienes-somos')
-                        ->helperText('Solo la parte que va despues del dominio, empezando por barra. Sin https:// ni el nombre del sitio.')
+                        ->helperText('Solo la parte que va después del dominio, empezando por barra. Sin https:// ni el nombre del sitio.')
                         // Se normaliza al guardar para que "/Quienes-Somos/" y
                         // "quienes-somos" no acaben como dos filas distintas que
                         // nunca llegan a coincidir con lo que pide el navegador.
                         ->dehydrateStateUsing(fn (?string $state) => $state ? Redirect::normalizar($state) : $state),
 
                     Forms\Components\TextInput::make('to_path')
-                        ->label('Direccion nueva')
+                        ->label('Dirección nueva')
                         ->required()
                         ->maxLength(500)
                         ->placeholder('/nosotros')
-                        ->helperText('Una ruta de este portal (/nosotros) o una direccion completa que empiece por https://')
+                        ->helperText('Una ruta de este portal (/nosotros) o una dirección completa que empiece por https://')
                         ->rules([
                             // Misma comprobacion que hace el middleware. Se repite
                             // aqui para avisar al escribirlo, en vez de guardar
@@ -60,11 +60,11 @@ class RedirectResource extends Resource
                             fn () => function (string $attribute, $value, \Closure $fail) {
                                 $v = (string) $value;
                                 if (str_starts_with($v, '//')) {
-                                    $fail('No se admite una direccion que empiece por //, porque apunta a otro sitio web.');
+                                    $fail('No se admite una dirección que empiece por //, porque apunta a otro sitio web.');
                                     return;
                                 }
                                 if (! str_starts_with($v, '/') && ! str_starts_with(mb_strtolower($v), 'https://')) {
-                                    $fail('Debe ser una ruta interna (empezando por /) o una direccion https://');
+                                    $fail('Debe ser una ruta interna (empezando por /) o una dirección https://');
                                 }
                             },
                         ]),
@@ -77,7 +77,7 @@ class RedirectResource extends Resource
                         ])
                         ->default(301)
                         ->required()
-                        ->helperText('Permanente traslada a Google el posicionamiento de la direccion antigua. Usa temporal solo si el cambio va a revertirse.'),
+                        ->helperText('Permanente traslada a Google el posicionamiento de la dirección antigua. Usa temporal solo si el cambio va a revertirse.'),
 
                     Forms\Components\Toggle::make('is_active')
                         ->label('Activa')
@@ -87,7 +87,7 @@ class RedirectResource extends Resource
                         ->label('Notas')
                         ->maxLength(500)
                         ->rows(2)
-                        ->helperText('Opcional. Por ejemplo, de donde salio este enlace.')
+                        ->helperText('Opcional. Por ejemplo, de dónde salió este enlace.')
                         ->columnSpanFull(),
                 ])
                 ->columns(2),
@@ -99,7 +99,7 @@ class RedirectResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('from_path')
-                    ->label('Direccion antigua')
+                    ->label('Dirección antigua')
                     ->searchable()
                     ->sortable()
                     ->copyable()
@@ -122,10 +122,10 @@ class RedirectResource extends Resource
                 Tables\Columns\TextColumn::make('hits')
                     ->label('Visitas')
                     ->sortable()
-                    ->description('veces que se uso'),
+                    ->description('veces que se usó'),
 
                 Tables\Columns\TextColumn::make('last_used_at')
-                    ->label('Ultimo uso')
+                    ->label('Último uso')
                     ->dateTime('d/m/Y H:i')
                     ->placeholder('nunca')
                     ->sortable(),
@@ -147,7 +147,7 @@ class RedirectResource extends Resource
                 ]),
             ])
             ->emptyStateHeading('Sin redirecciones')
-            ->emptyStateDescription('Cuando el portal sustituya al sitio anterior, aqui se anaden las direcciones antiguas para que sigan funcionando.');
+            ->emptyStateDescription('Cuando el portal sustituya al sitio anterior, aquí se añaden las direcciones antiguas para que sigan funcionando.');
     }
 
     public static function getPages(): array

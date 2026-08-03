@@ -67,7 +67,7 @@
 @endphp
 
 {{-- Navegador de transparencia (LOTAIP) -- Propuesta B.
-     Rediseno visual: la logica de cache y de navegacion ano->mes->documentos es
+     Rediseño visual: la lógica de cache y de navegación año->mes->documentos es
      la misma. Todo pasa a caja blanca con borde marcado, esquinas de 4px y
      chips rectangulares; se elimina el radio "md" y las paletas rojo/verde
      ajenas al sistema. --}}
@@ -93,7 +93,7 @@
                 <svg class="w-12 h-12 mx-auto text-border" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z"/>
                 </svg>
-                <p class="mt-4 font-serif text-section-title text-brand-navy">Aun no hay informacion publicada</p>
+                <p class="mt-4 font-serif text-section-title text-brand-navy">Aún no hay información publicada</p>
                 <p class="mt-2 text-[15px] text-muted">El administrador puede agregar años, meses y documentos desde el panel.</p>
             </div>
         @else
@@ -122,15 +122,15 @@
 
                 {{-- Sidebar: lista de años --}}
                 <aside>
-                    <h3 class="font-sans text-[11px] tracking-[0.18em] uppercase text-muted font-bold mb-2.5">MENU</h3>
-                    {{-- En movil los años van en fila envolvente (como un selector de
-                         pestanas); apilados en vertical empujaban el contenido varias
+                    <h3 class="font-sans text-[11px] tracking-[0.18em] uppercase text-muted font-bold mb-2.5">MENÚ</h3>
+                    {{-- En móvil los años van en fila envolvente (como un selector de
+                         pestañas); apilados en vertical empujaban el contenido varias
                          pantallas hacia abajo. A partir de lg vuelve a ser columna. --}}
                     <nav class="flex flex-wrap lg:flex-col gap-1.5" aria-label="Seleccionar año">
                         @foreach($tree as $year)
-                            {{-- El año activo se marca en navy solido (el color de
-                                 seleccion de B); los inactivos son caja blanca con
-                                 borde. Antes era al reves y el contraste enganaba. --}}
+                            {{-- El año activo se marca en navy sólido (el color de
+                                 selección de B); los inactivos son caja blanca con
+                                 borde. Antes era al revés y el contraste engañaba. --}}
                             <button type="button"
                                     @click="setYear({{ $year['id'] }})"
                                     :class="yearId === {{ $year['id'] }} ? 'bg-brand-navy text-on-navy border-brand-navy' : 'bg-card text-brand-navy border-border hover:border-brand-primary hover:text-brand-primary'"
@@ -153,7 +153,7 @@
 
                             @foreach($year['months'] as $month)
                                 @if($month['mode'] === 'redirect')
-                                    {{-- Modo redireccion: enlace directo --}}
+                                    {{-- Modo redirección: enlace directo --}}
                                     <a href="{{ $month['redirect_url'] }}"
                                        target="_blank" rel="noopener"
                                        class="group flex items-center gap-3 px-4 py-3.5 card-surface hover:border-brand-primary hover:bg-brand-soft/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg">
@@ -171,7 +171,7 @@
                                         </svg>
                                     </a>
                                 @else
-                                    {{-- Modo archivos: acordeon --}}
+                                    {{-- Modo archivos: acordeón --}}
                                     <div class="card-surface overflow-hidden"
                                          :class="monthId === {{ $month['id'] }} ? 'border-brand-primary' : ''">
                                         <button type="button"
@@ -195,12 +195,12 @@
                                             </span>
                                         </button>
 
-                                        {{-- El listado real de este mes no esta en el HTML de la
-                                             pagina: se pide a TransparencyController@documentos la
-                                             primera vez que se abre (ver setMonth() mas arriba) y
-                                             se pinta aqui con x-html. Antes esto llevaba, para CADA
+                                        {{-- El listado real de este mes no está en el HTML de la
+                                             página: se pide a TransparencyController@documentos la
+                                             primera vez que se abre (ver setMonth() más arriba) y
+                                             se pinta aquí con x-html. Antes esto llevaba, para CADA
                                              mes de CADA año, el HTML completo de sus documentos
-                                             (aunque estuviera oculto); con el archivo historico de
+                                             (aunque estuviera oculto); con el archivo histórico de
                                              LOTAIP eso eran varios megabytes en cada visita. --}}
                                         <div x-show="monthId === {{ $month['id'] }}"
                                              x-transition:enter="transition ease-out duration-200"

@@ -2,18 +2,18 @@
     Footer institucional AAG — Propuesta B.
 
     Banda navy con el logo arriba (fuera de la rejilla) y hasta 5 columnas
-    iguales: Direccion + las que existan como Menu (footer_secondary,
+    iguales: Dirección + las que existan como Menu (footer_secondary,
     footer_services, footer_transparency, footer). Las columnas opcionales se
     ocultan solas si no hay un Menu con esa location -- no se inventan enlaces
     que no le correspondan a la AAG.
 
-    IMPORTANTE: la AAG es una fundacion de la Municipalidad de Guayaquil
-    (Alcaldia), NO es una entidad del Gobierno Nacional del Ecuador. Este
-    footer no debe llevar ninguna mencion, marca ni enlace del Gobierno
+    IMPORTANTE: la AAG es una fundación de la Municipalidad de Guayaquil
+    (Alcaldía), NO es una entidad del Gobierno Nacional del Ecuador. Este
+    footer no debe llevar ninguna mención, marca ni enlace del Gobierno
     Nacional.
 
-    Respecto a la maqueta: en B los <li> del footer son texto plano; aqui son
-    enlaces reales, porque en un portal en produccion tienen que serlo.
+    Respecto a la maqueta: en B los <li> del footer son texto plano; aquí son
+    enlaces reales, porque en un portal en producción tienen que serlo.
 --}}
 @php
     $enlacesMenu = \App\Models\Menu::byLocation('footer');
@@ -67,6 +67,7 @@
                                 <li>
                                     <a href="{{ $item->url ?? '#' }}"
                                        @if($item->target) target="{{ $item->target }}" rel="noopener" @endif
+                                       @if(is_internal_link($item->url ?? null, $item->target ?? null)) wire:navigate @endif
                                        class="hover:text-white transition-colors">{{ $item->label }}</a>
                                 </li>
                             @endif
@@ -81,7 +82,7 @@
                 <p class="text-[12px] font-bold text-brand-accent uppercase tracking-[0.09em]">SÍGUENOS</p>
                 <div class="flex items-center gap-2.5">
                     @foreach($socialLinks as $net => $url)
-                        {{-- Cuadrados, no circulos: en B no existe ninguna forma redondeada --}}
+                        {{-- Cuadrados, no círculos: en B no existe ninguna forma redondeada --}}
                         <a href="{{ $url }}" target="_blank" rel="noopener"
                            class="w-9 h-9 rounded-pill border border-white/15 flex items-center justify-center text-on-navy/80 hover:text-white hover:border-white/40 transition-colors"
                            aria-label="{{ ucfirst($net) }}">
@@ -93,15 +94,17 @@
         @endif
 
         {{-- 12px y opacidad 65%: a 10px sobre /50 el aviso legal quedaba casi
-             ilegible, y es justo el texto que la gente busca a proposito. --}}
+             ilegible, y es justo el texto que la gente busca a propósito. --}}
         <div class="mt-6 pt-5 border-t border-white/15 flex flex-col md:flex-row justify-between gap-3 text-[12px] text-on-navy/65">
             <p>{{ settings('footer_copyright') }}</p>
             <div class="flex flex-wrap gap-5">
-                <a href="/politica-privacidad" class="rounded-pill hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent">Política de privacidad</a>
-                <a href="/terminos" class="rounded-pill hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent">Términos de uso</a>
+                <a href="/politica-privacidad" wire:navigate class="rounded-pill hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent">Política de privacidad</a>
+                <a href="/terminos" wire:navigate class="rounded-pill hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent">Términos de uso</a>
                 {{-- El mapa del sitio se publica en /sitemap.xml (SitemapController).
-                     Este enlace apuntaba a /sitemap, que no existe como ruta y devolvia
-                     404. En produccion quedo cubierto ademas con una redireccion 301. --}}
+                     Este enlace apuntaba a /sitemap, que no existe como ruta y devolvía
+                     404. En producción quedó cubierto además con una redirección 301.
+                     Sin wire:navigate a propósito: es XML, no una página Blade -- Livewire
+                     espera reemplazar un documento HTML, y aquí rompería el swap. --}}
                 <a href="/sitemap.xml" class="rounded-pill hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent">Mapa del sitio</a>
             </div>
         </div>

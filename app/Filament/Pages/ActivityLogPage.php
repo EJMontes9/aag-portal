@@ -15,7 +15,7 @@ class ActivityLogPage extends Page implements HasTable
     use InteractsWithTable;
 
     protected static ?string $navigationIcon  = 'heroicon-o-clipboard-document-list';
-    protected static ?string $navigationGroup = 'Configuracion';
+    protected static ?string $navigationGroup = 'Configuración';
     protected static ?string $navigationLabel = 'Registro de actividad';
     protected static ?string $title           = 'Registro de actividad';
     protected static string  $view            = 'filament.pages.activity-log-page';

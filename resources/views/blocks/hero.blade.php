@@ -7,8 +7,8 @@
     $subtitle  = $block->get('subtitle');
     $stats     = $block->get('stats', []);
 
-    // Los tonos del badge conservan sus CLAVES (estan guardadas en BD) pero se
-    // reexpresan en el lenguaje de B: rectangulos de 2px sin borde, sobre los
+    // Los tonos del badge conservan sus CLAVES (están guardadas en BD) pero se
+    // reexpresan en el lenguaje de B: rectángulos de 2px sin borde, sobre los
     // colores institucionales. En la maqueta el badge del hero es amarillo.
     $pillColors = [
         'success' => 'bg-brand-accent text-on-accent',
@@ -19,8 +19,8 @@
     ];
     $pillClass = $pillColors[$pillTone] ?? $pillColors['accent'];
 
-    // Rejilla de cifras: clases LITERALES. Tailwind escanea el codigo en build,
-    // asi que "grid-cols-{$n}" construido en runtime nunca llega a compilarse
+    // Rejilla de cifras: clases LITERALES. Tailwind escanea el código en build,
+    // así que "grid-cols-{$n}" construido en runtime nunca llega a compilarse
     // (era un bug real de esta plantilla, repetido en los cuatro layouts).
     $statCols = match(min(count($stats), 4)) {
         1 => 'grid-cols-1',
@@ -56,8 +56,8 @@
             @endif
             @if($block->get('cta1_label') || $block->get('cta2_label'))
                 <div class="mt-6 flex flex-wrap gap-3" data-aos="fade-up" data-aos-delay="450">
-                    @if($block->get('cta1_label'))<a href="{{ $block->get('cta1_url','#') }}" class="btn-primary">{{ $block->get('cta1_label') }}</a>@endif
-                    @if($block->get('cta2_label'))<a href="{{ $block->get('cta2_url','#') }}" class="btn-ghost">{{ $block->get('cta2_label') }}</a>@endif
+                    @if($block->get('cta1_label'))<a href="{{ $block->get('cta1_url','#') }}" @if(is_internal_link($block->get('cta1_url','#'))) wire:navigate @endif class="btn-primary">{{ $block->get('cta1_label') }}</a>@endif
+                    @if($block->get('cta2_label'))<a href="{{ $block->get('cta2_url','#') }}" @if(is_internal_link($block->get('cta2_url','#'))) wire:navigate @endif class="btn-ghost">{{ $block->get('cta2_label') }}</a>@endif
                 </div>
             @endif
             @if(count($stats))
@@ -76,7 +76,7 @@
 
         {{-- Columna tarjetas.
              Por debajo de sm la rejilla de 2 columnas dejaba tarjetas de ~160px
-             de ancho con titulos de 17px: se apila en una sola columna y solo a
+             de ancho con títulos de 17px: se apila en una sola columna y solo a
              partir de sm recupera el mosaico de la maqueta. --}}
         @if($cards->isNotEmpty())
         <div class="grid grid-cols-1 sm:grid-cols-2 sm:grid-rows-[170px_170px] gap-4 w-full">
@@ -85,14 +85,16 @@
                      data-aos="fade-left" data-aos-delay="200" data-aos-duration="700">
                     @if(!empty($imageCard['image']))
                         <img src="{{ Storage::disk('public')->url($imageCard['image']) }}" alt="{{ $imageCard['title'] ?? '' }}" class="absolute inset-0 w-full h-full object-cover">
-                        {{-- Velo navy, no negro: el degradado a negro grisaceo era de la Propuesta A --}}
+                        {{-- Velo navy, no negro: el degradado a negro grisáceo era de la Propuesta A --}}
                         <div class="absolute inset-0" style="background:linear-gradient(to top, rgb(var(--color-navy) / 0.85), rgb(var(--color-navy) / 0.15) 60%, transparent);"></div>
                     @endif
                     <div class="relative p-5">
                         @if(!empty($imageCard['kicker']))<span class="pill bg-brand-accent text-on-accent mb-2">{{ $imageCard['kicker'] }}</span>@endif
                         @if(!empty($imageCard['title']))<h3 class="font-serif text-xl text-white leading-tight">{{ $imageCard['title'] }}</h3>@endif
                         @if(!empty($imageCard['cta_label']) && !empty($imageCard['cta_url']))
-                            <a href="{{ $imageCard['cta_url'] }}" class="mt-2.5 inline-flex items-center gap-2 rounded-pill text-[12px] font-bold uppercase tracking-[0.06em] text-white hover:text-brand-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent">{{ $imageCard['cta_label'] }} →</a>
+                            <a href="{{ $imageCard['cta_url'] }}"
+                               @if(is_internal_link($imageCard['cta_url'])) wire:navigate @endif
+                               class="mt-2.5 inline-flex items-center gap-2 rounded-pill text-[12px] font-bold uppercase tracking-[0.06em] text-white hover:text-brand-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent">{{ $imageCard['cta_label'] }} →</a>
                         @endif
                     </div>
                 </div>
@@ -117,7 +119,9 @@
                         <div class="flex items-center justify-between gap-2 mt-3 @if(!empty($card['meta'])) pt-2.5 border-t {{ $borderColor }} @endif">
                             @if(!empty($card['meta']))<span class="text-[12px] {{ $metaColor }}">{{ $card['meta'] }}</span>@endif
                             @if(!empty($card['cta_label']) && !empty($card['cta_url']))
-                                <a href="{{ $card['cta_url'] }}" class="shrink-0 rounded-pill text-[12px] font-bold uppercase tracking-[0.06em] hover:underline transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary {{ $linkColor }}">{{ $card['cta_label'] }} →</a>
+                                <a href="{{ $card['cta_url'] }}"
+                                   @if(is_internal_link($card['cta_url'])) wire:navigate @endif
+                                   class="shrink-0 rounded-pill text-[12px] font-bold uppercase tracking-[0.06em] hover:underline transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary {{ $linkColor }}">{{ $card['cta_label'] }} →</a>
                             @endif
                         </div>
                     @endif
@@ -160,8 +164,8 @@
             @endif
             @if($block->get('cta1_label') || $block->get('cta2_label'))
                 <div class="mt-7 flex flex-wrap gap-3 {{ $centered ? 'justify-center' : '' }}" data-aos="fade-up" data-aos-delay="450">
-                    @if($block->get('cta1_label'))<a href="{{ $block->get('cta1_url','#') }}" class="{{ $isDark ? 'btn-white' : 'btn-primary' }}">{{ $block->get('cta1_label') }}</a>@endif
-                    @if($block->get('cta2_label'))<a href="{{ $block->get('cta2_url','#') }}" class="{{ $isDark ? 'btn-ghost-white' : 'btn-ghost' }}">{{ $block->get('cta2_label') }}</a>@endif
+                    @if($block->get('cta1_label'))<a href="{{ $block->get('cta1_url','#') }}" @if(is_internal_link($block->get('cta1_url','#'))) wire:navigate @endif class="{{ $isDark ? 'btn-white' : 'btn-primary' }}">{{ $block->get('cta1_label') }}</a>@endif
+                    @if($block->get('cta2_label'))<a href="{{ $block->get('cta2_url','#') }}" @if(is_internal_link($block->get('cta2_url','#'))) wire:navigate @endif class="{{ $isDark ? 'btn-ghost-white' : 'btn-ghost' }}">{{ $block->get('cta2_label') }}</a>@endif
                 </div>
             @endif
         </div>
@@ -198,8 +202,8 @@
             @if($subtitle)<p class="mt-4 text-[15px] text-muted max-w-[560px] leading-relaxed" data-aos="fade-up" data-aos-delay="300">{{ $subtitle }}</p>@endif
             @if($block->get('cta1_label') || $block->get('cta2_label'))
                 <div class="mt-6 flex flex-wrap gap-3" data-aos="fade-up" data-aos-delay="450">
-                    @if($block->get('cta1_label'))<a href="{{ $block->get('cta1_url','#') }}" class="btn-primary">{{ $block->get('cta1_label') }}</a>@endif
-                    @if($block->get('cta2_label'))<a href="{{ $block->get('cta2_url','#') }}" class="btn-ghost">{{ $block->get('cta2_label') }}</a>@endif
+                    @if($block->get('cta1_label'))<a href="{{ $block->get('cta1_url','#') }}" @if(is_internal_link($block->get('cta1_url','#'))) wire:navigate @endif class="btn-primary">{{ $block->get('cta1_label') }}</a>@endif
+                    @if($block->get('cta2_label'))<a href="{{ $block->get('cta2_url','#') }}" @if(is_internal_link($block->get('cta2_url','#'))) wire:navigate @endif class="btn-ghost">{{ $block->get('cta2_label') }}</a>@endif
                 </div>
             @endif
             @if(count($stats))
@@ -260,8 +264,8 @@
             @endif
             @if($block->get('cta1_label') || $block->get('cta2_label'))
                 <div class="mt-6 flex flex-wrap gap-2.5 {{ $centered ? 'justify-center' : '' }}" data-aos="fade-up" data-aos-delay="450">
-                    @if($block->get('cta1_label'))<a href="{{ $block->get('cta1_url','#') }}" class="btn-white">{{ $block->get('cta1_label') }}</a>@endif
-                    @if($block->get('cta2_label'))<a href="{{ $block->get('cta2_url','#') }}" class="btn-ghost-white">{{ $block->get('cta2_label') }}</a>@endif
+                    @if($block->get('cta1_label'))<a href="{{ $block->get('cta1_url','#') }}" @if(is_internal_link($block->get('cta1_url','#'))) wire:navigate @endif class="btn-white">{{ $block->get('cta1_label') }}</a>@endif
+                    @if($block->get('cta2_label'))<a href="{{ $block->get('cta2_url','#') }}" @if(is_internal_link($block->get('cta2_url','#'))) wire:navigate @endif class="btn-ghost-white">{{ $block->get('cta2_label') }}</a>@endif
                 </div>
             @endif
         </div>

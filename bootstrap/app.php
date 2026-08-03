@@ -58,6 +58,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // actua cuando la respuesta ya es un 404, asi que cuanto mas tarde se
         // ejecute, menos trabajo hace en las visitas normales.
         $middleware->web(append: [
+            \App\Http\Middleware\ForceHttps::class,
             \App\Http\Middleware\SecurityHeaders::class,
             \App\Http\Middleware\RedirigirRutasAntiguas::class,
         ]);

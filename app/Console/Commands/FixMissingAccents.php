@@ -129,7 +129,7 @@ class FixMissingAccents extends Command
         $paginasConBloqueTocado = [];
         foreach (PageBlock::all() as $pb) {
             $original = $pb->settings;
-            $fijo = $this->fixArrayRecursivo($original);
+            $fijo = $this->fixArrayRecursivo($original, null);
             if ($fijo !== $original) {
                 $this->line("[page_blocks:#{$pb->id} tipo={$pb->type} page_id={$pb->page_id}]");
                 $tocados++;
@@ -218,7 +218,7 @@ class FixMissingAccents extends Command
                 }
             }
             $reqOriginal = $c->requirements;
-            $reqFijo = $this->fixArrayRecursivo($reqOriginal);
+            $reqFijo = $this->fixArrayRecursivo($reqOriginal, null);
             if ($reqFijo !== $reqOriginal) {
                 $cambios['requirements'] = $reqFijo;
             }
@@ -252,15 +252,86 @@ class FixMissingAccents extends Command
         return self::SUCCESS;
     }
 
-    protected function fixArrayRecursivo(mixed $valor): mixed
+    /**
+     * Claves de array que son URLs/rutas/slugs, no texto visible. Nunca se
+     * les debe agregar tildes: una tilde en una URL rompe el enlace.
+     */
+    protected array $clavesUrl = [
+        'url', 'href', 'slug', 'link', 'cta_url', 'cta1_url', 'cta2_url',
+        'bases_pdf', 'cover_image', 'gallery',
+    ];
+
+    protected function esClaveUrl(mixed $clave): bool
+    {
+        if (!is_string($clave)) {
+            return false;
+        }
+        return in_array($clave, $this->clavesUrl, true) || str_ends_with($clave, '_url');
+    }
+
+    protected function fixArrayRecursivo(mixed $valor, mixed $clave): mixed
     {
         if (is_array($valor)) {
-            return array_map(fn ($v) => $this->fixArrayRecursivo($v), $valor);
+            $resultado = [];
+            foreach ($valor as $k => $v) {
+                $resultado[$k] = $this->fixArrayRecursivo($v, $k);
+            }
+            return $resultado;
         }
         if (is_string($valor)) {
+            if ($this->esClaveUrl($clave)) {
+                // No se le agregan tildes, pero sí se revierte si una
+                // corrida anterior (con el bug de mb_strtoupper) ya le puso
+                // tildes por error a esta URL.
+                return $this->revertirUrl($valor);
+            }
             return $this->fixText($valor);
         }
         return $valor;
+    }
+
+    /**
+     * Deshace, solo en campos de tipo URL, cualquier tilde que una corrida
+     * anterior de este comando le haya agregado por error. Las URLs/slugs
+     * son casi siempre minúsculas, así que la búsqueda es insensible a
+     * mayúsculas pero el reemplazo siempre se escribe en minúscula (nunca
+     * se usa la forma "Capitalizada" del mapa, que rompería el casing del
+     * slug, ej. dejar "/Guia-de-viaje" en vez de "/guia-de-viaje").
+     */
+    protected function revertirUrl(string $valor): string
+    {
+        foreach ($this->palabras as $rota => $correcta) {
+            $buscar = $this->minusculaSegura($correcta);
+            $reemplazo = strtolower($rota);
+            $valor = str_ireplace($buscar, $reemplazo, $valor);
+        }
+        return $valor;
+    }
+
+    /**
+     * Mayúscula segura para español: strtoupper() es seguro con UTF-8 (solo
+     * toca a-z, deja intactos los bytes de caracteres multibyte) pero no
+     * sabe convertir minúsculas acentuadas a mayúsculas acentuadas. mb_strtoupper
+     * debería hacerlo, pero en este servidor no convierte bien í/ó (deja
+     * "GUíA" en vez de "GUÍA"), así que la conversión de acentos se hace a
+     * mano con strtr, sin depender de mbstring.
+     */
+    protected function mayusculaSegura(string $s): string
+    {
+        $s = strtoupper($s);
+        return strtr($s, [
+            'á' => 'Á', 'é' => 'É', 'í' => 'Í', 'ó' => 'Ó', 'ú' => 'Ú',
+            'ñ' => 'Ñ', 'ü' => 'Ü',
+        ]);
+    }
+
+    protected function minusculaSegura(string $s): string
+    {
+        $s = strtolower($s);
+        return strtr($s, [
+            'Á' => 'á', 'É' => 'é', 'Í' => 'í', 'Ó' => 'ó', 'Ú' => 'ú',
+            'Ñ' => 'ñ', 'Ü' => 'ü',
+        ]);
     }
 
     protected function fixText(?string $texto): ?string
@@ -271,11 +342,13 @@ class FixMissingAccents extends Command
 
         foreach ($this->palabras as $rota => $correcta) {
             // Genera las 3 variantes de capitalización a partir de la forma
-            // "Capitalizada" escrita en el mapa.
+            // "Capitalizada" escrita en el mapa. $rota nunca lleva tildes
+            // (por definición: es la forma rota), así que strtolower/strtoupper
+            // nativos de PHP son seguros para ella sin pasar por mbstring.
             $variantes = [
-                $rota => $correcta,                              // Capitalizada
-                mb_strtolower($rota) => mb_strtolower($correcta), // minuscula
-                mb_strtoupper($rota) => mb_strtoupper($correcta), // MAYUSCULA
+                $rota => $correcta,
+                strtolower($rota) => $this->minusculaSegura($correcta),
+                strtoupper($rota) => $this->mayusculaSegura($correcta),
             ];
 
             foreach ($variantes as $buscar => $reemplazo) {
@@ -284,6 +357,32 @@ class FixMissingAccents extends Command
             }
         }
 
-        return $texto;
+        return $this->repararMayusculasMixtas($texto);
+    }
+
+    /**
+     * Repara palabras en mayúsculas que se quedaron con un acento suelto en
+     * minúscula (ej. "GUíA" en vez de "GUÍA"). Pasa esto en cualquier
+     * ejecución, sea la primera vez (por si el texto ya traía el problema
+     * de otra fuente) o una repetición sobre datos que una corrida anterior
+     * de este mismo comando dejó a medias por un bug de mb_strtoupper en
+     * este servidor.
+     *
+     * No depende de mbstring para decidir: solo mira si, al ignorar los
+     * acentos en minúscula de la palabra, lo que queda es puro ASCII en
+     * mayúsculas (ninguna a-z minúscula). Una palabra normal como "José" o
+     * "Información" nunca cumple esto (les queda una minúscula ASCII), así
+     * que no se tocan.
+     */
+    protected function repararMayusculasMixtas(string $texto): string
+    {
+        return preg_replace_callback('/\b[\p{L}]+\b/u', function ($m) {
+            $palabra = $m[0];
+            $soloAscii = preg_replace('/[áéíóúñü]/u', '', $palabra);
+            if ($soloAscii !== '' && preg_match('/[A-Z]/', $soloAscii) && !preg_match('/[a-z]/', $soloAscii)) {
+                return $this->mayusculaSegura($palabra);
+            }
+            return $palabra;
+        }, $texto);
     }
 }
